@@ -1,0 +1,42 @@
+﻿create Procedure [dbo].[SecurityActualizarPerfilUsuario]
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de inserción del perfil del usuario
+	para el usuario
+'*	Input			: 	@pIdModulo - Codigo del modulo,
+						@pIdPerfil - Codigo del perfil,
+						@pIdUsuario - Codigo del usuario,
+						@pFlagExpiracion - Flag de expiracion del perfil,
+						@pFechaExpiracion - Fecha de expiracion del perfil,
+						@pEstado - Estado del perfil del usuario,
+						@pUsuarioModificacion - Usuario de modificacion
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación		: 15/12/2014
+'**********************************************************************************
+*/
+(
+	@pIdModulo char(8),
+	@pIdPerfil varchar(20),
+	@pIdUsuario varchar(20),
+	@pFlagExpiracion char(1),
+	@pFechaExpiracion datetime,
+	@pEstado char(1),
+	@pUsuarioModificacion varchar(20)
+	
+)
+As
+Begin
+	update SecurityPerfilUsuario
+	set 
+	FlagExpiracion = @pFlagExpiracion,
+	FechaExpiracion = @pFechaExpiracion,
+	Estado = @pEstado,
+	FechaModificacion = GETDATE(),
+	UsuarioModificacion = @pUsuarioModificacion
+	where
+	(@pIdModulo is null OR IdModulo = @pIdModulo) AND
+	(@pIdPerfil is null OR IdPerfil = @pIdPerfil) AND
+	(@pIdUsuario is null OR IdUsuario = @pIdUsuario)
+
+End

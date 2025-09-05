@@ -1,0 +1,199 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Default.master" AutoEventWireup="true" CodeFile="ReporteUbicacionAperturaHora.aspx.cs" Inherits="Forms_Reporte_ReporteUbicacionAperturaHora" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx" Combine="false" Compress="false" Minify="false">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Base/jquery.validate/jquery.validate.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.validate/additional-methods.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.datatables/jquery.dataTables.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.datatables/jquery.datatables.responsive.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.datatables/bootstrap.datatables.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.datatables/bootstrap.datatables.responsive.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.datetimepicker/bootstrap.datetimepicker.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.datetimepicker/locales/bootstrap.datetimepicker.es.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.bootpag/jquery.bootpag.min.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.flot/jquery.flot.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.flot/jquery.flot.resize.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.flot/jquery.flot.pie.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.flot/jquery.flot.categories.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+    <cc:ScriptCombine ID="ScriptCombine" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx" Combine="false" Minify="false">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Forms/Reporte/ReporteUbicacionAperturaHora.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+    <cc:CssCombine ID="CSSCombiner" runat="server" CSSHandler="~/Ashx/Combine/CSSHandler.ashx">
+        <CSSReferences>
+            <cc:CssReference Path="~/Style/Base/jquery.datatables/jquery.datatables.css" />
+            <cc:CssReference Path="~/Style/Base/jquery.datatables/jquery.datatables.responsive.css" />
+            <cc:CssReference Path="~/Style/Base/bootstrap.datatables/bootstrap.datatables.css" />
+            <cc:CssReference Path="~/Style/Base/bootstrap.datetimepicker/bootstrap.datetimepicker.css" />
+        </CSSReferences>
+    </cc:CssCombine>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-warning collapsed-box">
+                <div class="box-header">
+                    <h3 class="box-title">Criterios de Búsqueda</h3>
+                    <div class="box-tools pull-right">
+                        <button id="btnCriterios" class="btn btn-default btn-sm" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="ddlEmpresa">Empresa:</label>
+                                <asp:DropDownList ID="ddlEmpresa" runat="server" CssClass="form-control" ClientIDMode="Static">
+                                </asp:DropDownList>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="ddlLocal">Local:</label>
+                                <asp:DropDownList ID="ddlLocal" runat="server" CssClass="form-control" ClientIDMode="Static">
+                                </asp:DropDownList>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="ddlUbicacionTipo">Tipo de Ubicación:</label>
+                                <asp:DropDownList ID="ddlUbicacionTipo" runat="server" CssClass="form-control" ClientIDMode="Static">
+                                </asp:DropDownList>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="txtNroUbicacion">Nro. Ubicación:</label>
+                                <asp:TextBox ID="txtNroUbicacion" runat="server" CssClass="form-control" ClientIDMode="Static" MaxLength="50" placeholder="Ingrese el número de ubicación" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="txtFecha">Fecha:</label>
+                                <div id="txtFecha" class="input-group date datetime">
+                                    <input id="txtFecha_input" name="txtFecha_input" class="form-control" size="16" type="text" value="" placeholder="Ingrese la fecha" />
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="txtHoraInicio">Hora inicio:</label>
+                                <asp:TextBox ID="txtHoraInicio" runat="server" CssClass="form-control" ClientIDMode="Static" MaxLength="24" placeholder="Ingrese la hora de inicio" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="txtHoraFin">HoraFinal:</label>
+                                <asp:TextBox ID="txtHoraFin" runat="server" CssClass="form-control" ClientIDMode="Static" MaxLength="24" placeholder="Ingrese la hora final" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-warning">
+                <div class="box-header">
+                    <!-- /.btn-group -->
+                    <button id="btnBuscar" title="Generar" class="btn btn-default btn-sm"><i class="fa fa-cog"></i></button>
+                    <!-- /.pull-right -->
+                </div>
+
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="box box-warning">
+                                <div class="box-header with-border">
+                                    <i class="fa fa-bar-chart-o"></i>
+                                    <h3 class="box-title">Aperturas de mesas por horas</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <div id="divGrafico1" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="box box-warning">
+                                <div class="box-header with-border">
+                                    <i class="fa fa-bar-chart-o"></i>
+                                    <h3 class="box-title">Aperturas de box por horas</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <div id="divGrafico2" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-warning">
+                <%--<div class="box-header">
+                    <!-- Check all button -->
+                    <div class="btn-group">
+                        <button id="btnExportar" title="Exportar" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-file-excel-o"></i></button>
+                    </div>
+                </div>--%>
+                <!-- /.box-header -->
+                <h2>Ubicaciones aperturadas por horas</h2>
+                <div class="box-body">
+                    <div id="divGrilla" style="width: 100%">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div id="divPaginacionInfo" class="dataTables_info"></div>
+                        </div>
+                        <div class="col-sm-7">
+                            <div id="divPaginacion" class="dataTables_paginate paging_simple_numbers"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <asp:HiddenField ID="hdHoraInicio" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdHoraFin" runat="server" ClientIDMode="Static" />
+</asp:Content>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

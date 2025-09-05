@@ -1,0 +1,16 @@
+﻿CREATE TABLE [dbo].[FileServerDocumento]
+(
+	[IdAlmacen] [int] NOT NULL,
+	[IdRegistro] [int] NOT NULL,
+	[IdDocumento] [int] NOT NULL,
+	[DescripcionFisica] [varchar](200) NULL,
+	[DescripcionLogica] [varchar](200) NULL,
+	[Extension] [varchar](5) NULL,
+	[Estado] [char](1) NULL,
+	[UsuarioCreacion] [varchar](20) NULL,
+	[FechaCreacion] [datetime] NULL,
+	[UsuarioModificacion] [varchar](20) NULL,
+	[FechaModificacion] [datetime] NULL,
+	CONSTRAINT [PK_FileServerDocumento] PRIMARY KEY ([IdAlmacen],[IdRegistro],[IdDocumento]), 
+    CONSTRAINT [FK_FileServerDocumento_FileServerAlmacen] FOREIGN KEY ([IdAlmacen]) REFERENCES [FileServerAlmacen]([IdAlmacen])
+)

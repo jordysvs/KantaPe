@@ -1,0 +1,436 @@
+﻿using Kruma.Core.Security.Entity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Usuario</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>18-07-2016</FecCrea></item></list></remarks>
+
+    public class Usuario
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado Usuario</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de usuarios</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Usuario> Listar(
+             string str_pIdUsuario, string str_pUsuarioRed, int? int_pIdPersona,
+            string str_pNombreCompleto, string str_pCodigo, string str_pPerfil,
+            string str_pSistema, string str_pEstado, int? int_pIdEmpresa,
+            int? int_pIdLocal, int? int_pNumPagina, int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Usuario.Listar(
+                str_pIdUsuario,
+                str_pUsuarioRed,
+                int_pIdPersona,
+                str_pNombreCompleto,
+                str_pCodigo,
+                str_pPerfil,
+                str_pSistema,
+                str_pEstado,
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /// <summary>Autenticar Usuario</summary>
+        /// <param name="str_pUsuario">Id del usuario</param>
+        /// <param name="str_pClave">Clave del usuario</param>
+        /// <returns>Resultado de seguridad</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>18-07-2016</FecCrea></item></list></remarks>
+        public static SecurityResult Autenticar(string str_pIdUsuario, string str_pClave)
+        {
+            SecurityResult obj_Resultado = Kruma.Core.Security.SecurityManager.Authenticate(str_pIdUsuario, str_pClave);
+            return obj_Resultado;
+        }
+
+        /// <summary>Autenticar Usuario</summary>
+        /// <param name="obj_pUsuario">Usuario</param>
+        /// <returns>Resultado de seguridad</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>17-04-2017</FecCrea></item></list></remarks>
+        public static SecurityResult AutenticarToken(Kruma.KantaPe.Entidad.Usuario obj_pUsuario)
+        {
+            //Autenticacion del usuario
+            SecurityResult obj_Resultado = Kruma.Core.Security.SecurityManager.Authenticate(obj_pUsuario.IdUsuario, obj_pUsuario.Clave);
+            if (obj_Resultado.ValidationResult == Core.Security.Enum.ValidationResult.Authenticated)
+                //Actualizacion del token
+                ActualizarToken(obj_pUsuario.IdUsuario, obj_pUsuario.IdToken);
+            return obj_Resultado;
+        }
+
+        /// <summary>Actualizar Tokken</summary>
+        /// <param name="obj_pUsuario">Usuario</param>
+        /// <returns>Resultado de seguridad</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Jordy Vilchez</CreadoPor></item>
+        /// <item><FecCrea>22-06-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ActualizarToken(Kruma.KantaPe.Entidad.Usuario obj_pUsuario)
+        {
+
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+
+            try {
+                ActualizarToken(obj_pUsuario.IdUsuario, obj_pUsuario.IdToken);
+                obj_Resultado = new Core.Util.Common.ProcessResult(obj_pUsuario.IdUsuario);
+
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            
+            return obj_Resultado;
+
+        }
+
+        
+
+        /// <summary>
+        /// Actualizacion del token del usuario
+        /// </summary>
+        /// <param name="str_pIdUsuario">Id del usuario</param>
+        /// <param name="str_pIdToken">Token del usuario</param>
+        private static void ActualizarToken(string str_pIdUsuario, string str_pIdToken)
+        {
+            KantaPe.Entidad.Token obj_Token = KantaPe.Data.Token.Obtener(str_pIdUsuario);
+            if (obj_Token != null)
+            {
+                obj_Token.IdToken = str_pIdToken;
+                obj_Token.Estado = KantaPe.Entidad.Constante.Estado_Activo;
+                obj_Token.UsuarioModificacion = str_pIdUsuario;
+                KantaPe.Data.Token.Modificar(obj_Token);
+            }
+            else
+            {
+                obj_Token = new Entidad.Token();
+                obj_Token.IdUsuario = str_pIdUsuario;
+                obj_Token.IdToken = str_pIdToken;
+                obj_Token.Estado = KantaPe.Entidad.Constante.Estado_Activo;
+                obj_Token.UsuarioCreacion = str_pIdUsuario;
+                KantaPe.Data.Token.Insertar(obj_Token);
+            }
+
+            //Test Token
+            //Mensajes a la aplicacion cundo se inicia Session
+            //Notificacion.Enviar(str_pIdUsuario, "Autenticacion", "A iniciado sesión a KantaPe");
+        }
+
+        /// <summary>Obtener Usuario</summary>
+        /// <param name="str_pIdUsuario">Id del usuario</param>
+        /// <returns>Objeto usuario</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>18-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Usuario Obtener(string str_pIdUsuario)
+        {
+            Kruma.KantaPe.Entidad.Usuario obj_Usuario = null;
+            Kruma.Core.Security.Entity.Usuario obj_UsuarioKruma = Kruma.Core.Security.Logical.Usuario.Obtener(str_pIdUsuario, null);
+
+            if (obj_UsuarioKruma != null)
+            {
+                //Se obtiene la persona
+                Kruma.Core.Business.Entity.Persona obj_Persona = Kruma.Core.Business.Data.Persona.Obtener(obj_UsuarioKruma.IdPersona);
+
+                //Datos del usuario
+                obj_Usuario = new Entidad.Usuario();
+                obj_Usuario.IdUsuario = obj_UsuarioKruma.IdUsuario;
+                obj_Usuario.IdPersona = obj_Persona.IdPersona;
+                obj_Usuario.Nombres = obj_Persona.Nombres;
+                obj_Usuario.ApellidoPaterno = obj_Persona.ApellidoPaterno;
+                obj_Usuario.ApellidoMaterno = obj_Persona.ApellidoMaterno;
+                obj_Usuario.NombreCompleto = obj_Persona.NombreCompleto;
+                obj_Usuario.FechaNacimiento = obj_Persona.FechaNacimiento;
+                obj_Usuario.IdEstadoCivil = obj_Persona.IdEstadoCivil;
+                obj_Usuario.Genero = obj_Persona.Genero;
+                obj_Usuario.Estado = obj_UsuarioKruma.Estado;
+                obj_Usuario.UsuarioCreacion = obj_UsuarioKruma.UsuarioCreacion;
+                obj_Usuario.UsuarioModificacion = obj_Usuario.UsuarioCreacion;
+
+                //Mail de la persona
+                List<Kruma.Core.Business.Entity.PersonaMail> lst_PersonaMail =
+                        Kruma.Core.Business.Logical.PersonaMail.Listar(
+                        obj_UsuarioKruma.IdPersona, null, null, null,
+                        Kruma.Core.Business.Entity.Constante.Condicion_Positivo,
+                        Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null).Result;
+                if (lst_PersonaMail.Count > 0)
+                {
+                    Kruma.Core.Business.Entity.PersonaMail obj_PersonaMail = lst_PersonaMail[0];
+                    obj_Usuario.Mail = obj_PersonaMail.Mail;
+                }
+
+                //Perfil Mozo
+                string str_Perfil = Kruma.Core.Business.Logical.Parametro.Obtener(
+                    Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                    Kruma.KantaPe.Entidad.Constante.Parametro.Perfil_Mozo
+                    ).Valor;
+
+                obj_Usuario.FlagMozo = Kruma.KantaPe.Entidad.Constante.Condicion_Negativo;
+                if (Kruma.Core.Security.Logical.PerfilUsuario.Listar(obj_UsuarioKruma.IdUsuario, Kruma.KantaPe.Entidad.Constante.Parametro.Modulo, str_Perfil, Kruma.KantaPe.Entidad.Constante.Estado_Activo).Count() > 0)
+                    obj_Usuario.FlagMozo = Kruma.KantaPe.Entidad.Constante.Condicion_Positivo;
+
+            }
+            return obj_Usuario;
+        }
+
+        /// <summary>Insertar usuario</summary>
+        /// <param name="obj_pUsuario">Usuario</param>
+        /// <returns>Id de Album</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>18-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult InsertarMovil(Kruma.KantaPe.Entidad.Usuario obj_pUsuario)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_TransactionScope = new TransactionScope())
+                {
+                    //Persona
+                    Kruma.Core.Business.Entity.Persona obj_Persona = new Core.Business.Entity.Persona();
+                    obj_Persona.Nombres = obj_pUsuario.Nombres;
+                    obj_Persona.ApellidoPaterno = obj_pUsuario.ApellidoPaterno;
+                    obj_Persona.ApellidoMaterno = obj_pUsuario.ApellidoMaterno;
+                    obj_Persona.FechaNacimiento = obj_pUsuario.FechaNacimiento;
+                    obj_Persona.IdEstadoCivil = obj_pUsuario.IdEstadoCivil;
+                    obj_Persona.Genero = obj_pUsuario.Genero;
+
+                    if (!string.IsNullOrEmpty(obj_pUsuario.FechaNacimientoString))
+                        obj_Persona.FechaNacimiento = DateTime.ParseExact(obj_pUsuario.FechaNacimientoString, obj_pUsuario.FechaNacimientoFormat, System.Globalization.CultureInfo.InvariantCulture);
+
+                    obj_Persona.Sistema = Kruma.Core.Business.Entity.Constante.Condicion_Negativo;
+                    obj_Persona.Estado = Kruma.Core.Security.Entity.Constante.Estado_Activo;
+                    obj_Persona.UsuarioCreacion = obj_pUsuario.IdUsuario;
+                    obj_Persona.UsuarioModificacion = obj_pUsuario.IdUsuario;
+                    obj_Persona.IdPersona = Kruma.Core.Business.Data.Persona.Insertar(obj_Persona);
+
+                    //Mail de la persona
+                    Kruma.Core.Business.Entity.PersonaMail obj_PersonaMail = new Core.Business.Entity.PersonaMail();
+                    obj_PersonaMail.IdPersona = obj_Persona.IdPersona;
+                    obj_PersonaMail.IdMailTipo =
+                        ((Kruma.Core.Business.Entity.MailTipo)int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                        Kruma.KantaPe.Entidad.Constante.Parametro.Modulo_Movil,
+                        Kruma.KantaPe.Entidad.Constante.Parametro.TipoMail_Personal).Valor));
+                    obj_PersonaMail.Mail = obj_pUsuario.Mail;
+                    obj_PersonaMail.Principal = Kruma.KantaPe.Entidad.Constante.Condicion_Positivo;
+                    obj_PersonaMail.Estado = Kruma.Core.Business.Entity.Constante.Estado_Activo;
+                    obj_PersonaMail.UsuarioCreacion = obj_pUsuario.IdUsuario;
+                    obj_PersonaMail.UsuarioModificacion = obj_pUsuario.IdUsuario;
+                    Kruma.Core.Business.Data.PersonaMail.Insertar(obj_PersonaMail);
+
+                    //Usuario
+                    Kruma.Core.Security.Entity.Usuario obj_Usuario = new Kruma.Core.Security.Entity.Usuario();
+                    obj_Usuario.IdUsuario = obj_pUsuario.IdUsuario;
+                    obj_Usuario.Clave = obj_pUsuario.Clave;
+                    obj_Usuario.IdPersona = obj_Persona.IdPersona;
+                    obj_Usuario.FlagExpiracion = Kruma.Core.Security.Entity.Constante.Condicion_Negativo;
+                    obj_Usuario.FechaExpiracion = null;
+                    obj_Usuario.Estado = Kruma.Core.Security.Entity.Constante.Estado_Activo;
+                    obj_Usuario.UsuarioCreacion = obj_pUsuario.IdUsuario;
+                    obj_Usuario.UsuarioModificacion = obj_pUsuario.IdUsuario;
+
+                    //Perfil
+                    Kruma.Core.Security.Entity.PerfilUsuario obj_PerfilUsuario = new Core.Security.Entity.PerfilUsuario();
+                    obj_PerfilUsuario.IdUsuario = obj_Usuario.IdUsuario;
+                    obj_PerfilUsuario.IdModulo = Kruma.KantaPe.Entidad.Constante.Parametro.Modulo_Movil;
+                    obj_PerfilUsuario.IdPerfil = Kruma.Core.Business.Logical.Parametro.Obtener(
+                        Kruma.KantaPe.Entidad.Constante.Parametro.Modulo_Movil,
+                        Kruma.KantaPe.Entidad.Constante.Parametro.Perfil_Usuario).Valor;
+                    obj_PerfilUsuario.Estado = Kruma.Core.Security.Entity.Constante.Estado_Activo;
+                    obj_PerfilUsuario.UsuarioCreacion = obj_pUsuario.IdUsuario;
+                    obj_PerfilUsuario.UsuarioModificacion = obj_Usuario.IdUsuario;
+                    obj_Usuario.Perfiles.Add(obj_PerfilUsuario);
+
+                    obj_Resultado = Kruma.Core.Security.Logical.Usuario.Insertar(obj_Usuario);
+
+                    if (obj_Resultado.OperationResult == Core.Util.Common.Enum.OperationResult.Success)
+                        obj_TransactionScope.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Usuario</summary>
+        /// <param name="obj_pUsuario">Usuario</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>18-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarMovil(Kruma.KantaPe.Entidad.Usuario obj_pUsuario)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_TransactionScope = new TransactionScope())
+                {
+                    Kruma.Core.Security.Entity.Usuario obj_UsuarioKruma = Kruma.Core.Security.Logical.Usuario.Obtener(obj_pUsuario.IdUsuario, null);
+
+                    //Persona
+                    Kruma.Core.Business.Entity.Persona obj_Persona = Kruma.Core.Business.Logical.Persona.Obtener(obj_UsuarioKruma.IdPersona);
+                    obj_Persona.Nombres = obj_pUsuario.Nombres;
+                    obj_Persona.ApellidoPaterno = obj_pUsuario.ApellidoPaterno;
+                    obj_Persona.ApellidoMaterno = obj_pUsuario.ApellidoMaterno;
+
+                    if (!string.IsNullOrEmpty(obj_pUsuario.FechaNacimientoString))
+                        obj_Persona.FechaNacimiento = DateTime.ParseExact(obj_pUsuario.FechaNacimientoString, obj_pUsuario.FechaNacimientoFormat, System.Globalization.CultureInfo.InvariantCulture);
+
+                    obj_Persona.IdEstadoCivil = obj_pUsuario.IdEstadoCivil;
+                    obj_Persona.Genero = obj_pUsuario.Genero;
+                    obj_Persona.UsuarioModificacion = obj_UsuarioKruma.IdUsuario;
+
+                    Kruma.Core.Business.Data.Persona.Modificar(obj_Persona);
+
+                    //Mail de la persona
+                    bool bln_Mail = false;
+
+                    //Se verifica si la persona tiene un mail principal
+                    List<Kruma.Core.Business.Entity.PersonaMail> lst_PersonaMail =
+                        Kruma.Core.Business.Data.PersonaMail.Listar(obj_UsuarioKruma.IdPersona.Value, null, null, null, Kruma.Core.Business.Entity.Constante.Condicion_Positivo, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null).Result;
+
+                    if (lst_PersonaMail.Count > 0)
+                    {
+                        //Se inactiva los mail principales
+                        Kruma.Core.Business.Entity.PersonaMail obj_PersonaMailAnterior = lst_PersonaMail[0];
+                        if (obj_PersonaMailAnterior.Mail != obj_pUsuario.Mail)
+                        {
+                            obj_PersonaMailAnterior.Estado = Kruma.Core.Business.Entity.Constante.Estado_Inactivo;
+                            obj_PersonaMailAnterior.UsuarioModificacion = obj_UsuarioKruma.IdUsuario;
+                            Kruma.Core.Business.Data.PersonaMail.Modificar(obj_PersonaMailAnterior);
+                            bln_Mail = true;
+                        }
+                    }
+
+                    //En caso de insertar o actualizar mail
+                    if (bln_Mail)
+                    {
+                        List<Kruma.Core.Business.Entity.PersonaMail> lstPersonaMail = Kruma.Core.Business.Data.PersonaMail.Listar(obj_UsuarioKruma.IdPersona, null, obj_pUsuario.Mail, null, null, null, null, null).Result;
+                        Kruma.Core.Business.Entity.PersonaMail obj_PersonaMailExiste = null;
+
+                        //Si el nuevo mail existe
+                        if (lstPersonaMail.Count > 0)
+                            obj_PersonaMailExiste = lstPersonaMail[0];
+                        //Kruma.Core.Business.Data.PersonaMail.Obtener(obj_UsuarioKruma.IdPersona.Value, obj_pUsuario.Mail);
+
+
+                        //Si existe se actualiza
+                        if (obj_PersonaMailExiste != null)
+                        {
+                            obj_PersonaMailExiste.Principal = Kruma.Core.Business.Entity.Constante.Condicion_Positivo;
+                            obj_PersonaMailExiste.Estado = Kruma.Core.Business.Entity.Constante.Estado_Activo;
+                            obj_PersonaMailExiste.UsuarioModificacion = obj_pUsuario.IdUsuario;
+                            Kruma.Core.Business.Data.PersonaMail.Modificar(obj_PersonaMailExiste);
+                        }
+                        //se inserta un nuevo mail como principal
+                        else
+                        {
+                            Kruma.Core.Business.Entity.PersonaMail obj_PersonaMail = new Core.Business.Entity.PersonaMail();
+                            obj_PersonaMail.IdPersona = obj_Persona.IdPersona;
+                            obj_PersonaMail.IdMailTipo =
+                                ((Kruma.Core.Business.Entity.MailTipo)int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo_Movil,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.TipoMail_Personal).Valor));
+                            obj_PersonaMail.Mail = obj_pUsuario.Mail;
+                            obj_PersonaMail.Principal = Kruma.KantaPe.Entidad.Constante.Condicion_Positivo;
+                            obj_PersonaMail.Estado = Kruma.Core.Business.Entity.Constante.Estado_Activo;
+                            obj_PersonaMail.UsuarioCreacion = obj_pUsuario.IdUsuario;
+                            obj_PersonaMail.UsuarioModificacion = obj_pUsuario.IdUsuario;
+                            Kruma.Core.Business.Data.PersonaMail.Insertar(obj_PersonaMail);
+                        }
+                    }
+                    obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pUsuario.IdUsuario);
+                    obj_TransactionScope.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Insertar usuario</summary>
+        /// <param name="obj_pUsuario">Usuario</param>
+        /// <returns>Id de Album</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>18-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult Insertar(Kruma.KantaPe.Entidad.Usuario obj_pUsuario)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_TransactionScope = new TransactionScope())
+                {
+                    //Insercion de empleado
+                    Kruma.KantaPe.Entidad.Empleado obj_Empleado = new Entidad.Empleado();
+                    obj_Empleado.IdPersona = obj_pUsuario.IdPersona;
+                    obj_Empleado.IdEmpresa = obj_pUsuario.IdEmpresa;
+                    obj_Empleado.IdLocal = obj_pUsuario.IdLocal;
+                    obj_Empleado.Estado = Kruma.Core.Security.Entity.Constante.Estado_Activo;
+                    obj_Empleado.UsuarioCreacion = Kruma.Core.Security.SecurityManager.Usuario.IdUsuario;
+                    Kruma.KantaPe.Data.Empleado.Insertar(obj_Empleado);
+
+                    obj_Resultado = Kruma.Core.Security.Logical.Usuario.Insertar(obj_pUsuario);
+                    if (obj_Resultado.OperationResult == Core.Util.Common.Enum.OperationResult.Success)
+                        obj_TransactionScope.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Usuario</summary>
+        /// <param name="obj_pUsuario">Usuario</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>18-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult Modificar(Kruma.KantaPe.Entidad.Usuario obj_pUsuario)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_TransactionScope = new TransactionScope())
+                {
+                    Kruma.KantaPe.Entidad.Empleado obj_Empleado = Kruma.KantaPe.Data.Empleado.Obtener(null, obj_pUsuario.IdPersona.Value);
+                    obj_Empleado.IdEmpresa = obj_pUsuario.IdEmpresa.Value;
+                    obj_Empleado.IdLocal = obj_pUsuario.IdLocal.Value;
+                    obj_Empleado.IdPersona = obj_pUsuario.IdPersona.Value;
+                    Kruma.KantaPe.Data.Empleado.Modificar(obj_Empleado);
+
+                    obj_Resultado = Kruma.Core.Security.Logical.Usuario.Modificar(obj_pUsuario);
+
+                    if (obj_Resultado.OperationResult == Kruma.Core.Util.Common.Enum.OperationResult.Success)
+                        obj_TransactionScope.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        #endregion
+    }
+}

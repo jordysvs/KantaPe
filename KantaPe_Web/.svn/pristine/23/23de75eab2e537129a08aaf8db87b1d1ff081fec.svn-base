@@ -1,0 +1,291 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+using System.Transactions;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Producto</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo </CreadoPor></item>
+    /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+
+    public class Producto
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Producto</summary>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdProducto">Id del producto</param>
+        /// <param name="str_pNombre">Nombre</param>
+        /// <param name="int_pIdProductoTipo">Id del tipo de producto</param>
+        /// <param name="dec_pCosto">Costo</param>
+        /// <param name="dec_pPrecio">Precio</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Producto</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Producto> Listar(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pIdProducto,
+            string str_pNombre,
+            int? int_pIdProductoTipo,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Producto> lst_Lista = Kruma.KantaPe.Data.Producto.Listar(
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pIdProducto,
+                str_pNombre,
+                int_pIdProductoTipo,
+                str_pEstado,
+                int_pNumPagina,
+                int_pTamPagina);
+
+            foreach (Kruma.KantaPe.Entidad.Producto obj_Producto in lst_Lista.Result)
+                if (obj_Producto.IdImagen != null)
+                    obj_Producto.ImagenURL = ObtenerProductoImagenURL(obj_Producto.IdLocal, obj_Producto.IdImagen);
+            return lst_Lista;
+        }
+
+        /// <summary>Obtener Producto</summary>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdProducto">Id del producto</param>
+        /// <returns>Objeto Producto</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Producto Obtener(
+            int int_pIdLocal,
+            int int_pIdProducto)
+        {
+            Kruma.KantaPe.Entidad.Producto obj_Producto = Kruma.KantaPe.Data.Producto.Obtener(
+                int_pIdLocal,
+                int_pIdProducto);
+
+            if (obj_Producto.IdImagen != null)
+                obj_Producto.ImagenURL = ObtenerProductoImagenURL(obj_Producto.IdLocal, obj_Producto.IdImagen);
+
+            return obj_Producto;
+        }
+
+        /// <summary>Insertar Producto</summary>
+        /// <param name="obj_pProducto">Producto</param>
+        /// <returns>Id de Producto</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Insertar(Kruma.KantaPe.Entidad.Producto obj_pProducto)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Inserción del producto
+                    obj_pProducto.IdProducto = Kruma.KantaPe.Data.Producto.Insertar(obj_pProducto);
+
+                    //Actualización de la imagen
+                    Kruma.KantaPe.Entidad.Producto obj_ProductoInsertado = Obtener(obj_pProducto.IdLocal.Value, obj_pProducto.IdProducto.Value);
+                    obj_ProductoInsertado.Foto = obj_pProducto.Foto;
+
+                    if (obj_ProductoInsertado.Foto != null)
+                    {
+                        if (obj_ProductoInsertado.Foto.IdDocumento.HasValue)
+                        {
+                            int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Producto).Valor);
+
+                            Kruma.Core.FileServer.Entity.FileUpload obj_Foto = new Kruma.Core.FileServer.FileServerManager().copyFile(
+                                obj_ProductoInsertado.Foto.IdAlmacen.Value,
+                                obj_ProductoInsertado.Foto.IdRegistro.Value,
+                                obj_ProductoInsertado.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_ProductoInsertado.IdProducto.Value,
+                                obj_ProductoInsertado.UsuarioCreacion);
+
+                            obj_ProductoInsertado.IdImagen = obj_Foto.IdDocumento;
+                            Kruma.KantaPe.Data.Producto.Modificar(obj_ProductoInsertado);
+                        }
+                    }
+                    obj_Resultado = new ProcessResult(obj_ProductoInsertado.IdProducto);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Producto</summary>
+        /// <param name="obj_pProducto">Producto</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Modificar(Kruma.KantaPe.Entidad.Producto obj_pProducto)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    Kruma.KantaPe.Entidad.Producto obj_ProductoAModificar = Obtener(obj_pProducto.IdLocal.Value, obj_pProducto.IdProducto.Value);
+                    obj_ProductoAModificar.Nombre = obj_pProducto.Nombre;
+                    obj_ProductoAModificar.IdProductoTipo = obj_pProducto.IdProductoTipo;
+                    obj_ProductoAModificar.Costo = obj_pProducto.Costo;
+                    obj_ProductoAModificar.Precio = obj_pProducto.Precio;
+                    obj_ProductoAModificar.Estado = obj_pProducto.Estado;
+                    obj_ProductoAModificar.UsuarioModificacion = obj_pProducto.UsuarioModificacion;
+
+                    //Actualización de la imagen
+                    obj_ProductoAModificar.Foto = obj_pProducto.Foto;
+                    if (obj_ProductoAModificar.Foto != null)
+                    {
+                        int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Producto).Valor);
+
+                        Kruma.Core.FileServer.FileServerManager obj_FileServerManager = new Kruma.Core.FileServer.FileServerManager();
+                        if (obj_ProductoAModificar.IdImagen.HasValue)
+                        {
+                            Kruma.Core.FileServer.Entity.FileUpload obj_Foto = obj_FileServerManager.getFile(int_IdAlmacenDestino, obj_ProductoAModificar.IdLocal.Value, obj_ProductoAModificar.IdImagen.Value);
+                            obj_FileServerManager.deleteFile(obj_Foto.IdDocumento.Value, obj_Foto.IdAlmacen.Value, obj_Foto.IdRegistro.Value, obj_ProductoAModificar.UsuarioModificacion);
+                        }
+                        if (obj_ProductoAModificar.Foto.IdDocumento.HasValue)
+                        {
+                            Kruma.Core.FileServer.Entity.FileUpload obj_Foto = obj_FileServerManager.copyFile(
+                                obj_ProductoAModificar.Foto.IdAlmacen.Value,
+                                obj_ProductoAModificar.Foto.IdRegistro.Value,
+                                obj_ProductoAModificar.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_ProductoAModificar.IdProducto.Value,
+                                obj_ProductoAModificar.UsuarioModificacion);
+
+                            obj_ProductoAModificar.IdImagen = obj_Foto.IdDocumento;
+                        }
+                    }
+
+                    Kruma.KantaPe.Data.Producto.Modificar(obj_ProductoAModificar);
+
+                    obj_Resultado = new ProcessResult(obj_ProductoAModificar.IdProducto);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado Producto</summary>
+        /// <param name="obj_pProducto">Producto</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.Producto obj_pProducto)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.Producto obj_Producto = Kruma.KantaPe.Data.Producto.Obtener(
+                    obj_pProducto.IdLocal.Value,
+                    obj_pProducto.IdProducto.Value);
+
+                if (obj_Producto.Estado == obj_pProducto.Estado)
+                {
+                    string str_Mensaje = obj_pProducto.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "El producto ya se encuentra activo." :
+                        "El producto ya se encuentra inactivo.";
+                    return new Kruma.Core.Util.Common.ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_Producto.Estado = obj_pProducto.Estado;
+                obj_Producto.UsuarioModificacion = obj_pProducto.UsuarioModificacion;
+                Kruma.KantaPe.Data.Producto.Modificar(obj_Producto);
+
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pProducto.IdProducto);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        public static ProcessResult SolicitarPedido(KantaPe.Entidad.Alerta obj_pAlerta)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                //Creacion de la alerta
+                obj_pAlerta.FechaAlerta = DateTime.Now;
+                obj_pAlerta.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Pendiente;
+
+                int int_IdAlerta = Kruma.KantaPe.Data.Alerta.Insertar(obj_pAlerta);
+                obj_Resultado = new ProcessResult(int_IdAlerta);
+                obj_Resultado.Message = "Se ha notificado al mozo correctamente.";
+
+                //Notificacion de mozos
+                KantaPe.Negocio.Alerta.NotificarMozos(obj_pAlerta);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        #endregion
+
+        #region Metodos Privados
+
+        /// <summary>
+        /// Permite obtener la URL de la imagen
+        /// </summary>
+        /// <param name="int_pIdRegistro">Id del registro</param>
+        /// <returns>URL de la imagen</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>John Castillo</CreadoPor></item>
+        /// <item><FecCrea>19/10/2016</FecCrea></item></list></remarks>
+        public static string ObtenerProductoImagenURL(int? int_pIdRegistro, int? int_pIdDocumento)
+        {
+            string str_UrlImagen = string.Empty;
+            int? int_IdAlmacen = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+              Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+              Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Producto).Valor);
+
+            if (int_IdAlmacen.HasValue && int_pIdRegistro.HasValue)
+            {
+                string str_WebSiteUrl = string.Empty;
+                Kruma.Core.Business.Entity.Modulo obj_Modulo = Kruma.Core.Business.Logical.Modulo.Obtener(Kruma.KantaPe.Entidad.Constante.Parametro.Modulo);
+                if (!string.IsNullOrEmpty(obj_Modulo.SitioWeb))
+                    str_WebSiteUrl = string.Format("{0}/", obj_Modulo.SitioWeb);
+                else
+                    str_WebSiteUrl = ((System.Web.UI.Page)System.Web.HttpContext.Current.Handler).ResolveUrl("~");
+
+                str_UrlImagen = string.Format("{0}Ashx/FileServerViewHandler.ashx?ref={1}",
+                    str_WebSiteUrl,
+                    System.Web.HttpUtility.UrlEncode(
+                    new Kruma.Core.Criptography.CriptographyManager().Encrypt(
+                    string.Format("{0}|{1}|{2}", int_IdAlmacen, int_pIdRegistro, int_pIdDocumento)
+                    )));
+            }
+            return str_UrlImagen;
+        }
+
+        #endregion
+    }
+}

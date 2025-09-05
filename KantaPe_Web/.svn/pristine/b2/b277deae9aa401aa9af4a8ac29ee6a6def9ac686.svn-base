@@ -1,0 +1,15 @@
+﻿CREATE TABLE [dbo].[SecurityGrupo]
+(
+	[IdModulo] [char](8) NOT NULL,
+	[IdGrupo] [char](8) NOT NULL,
+	[Descripcion] [varchar](50) NULL,
+	[Orden] [int] NULL,
+	[IdImagen] [int] NULL,
+	[Estado] [char](1) NULL,
+	[UsuarioCreacion] [varchar](20) NULL,
+	[FechaCreacion] [datetime] NULL,
+	[UsuarioModificacion] [varchar](20) NULL,
+	[FechaModificacion] [datetime] NULL,
+	CONSTRAINT [PK_SecurityGrupo] PRIMARY KEY ([IdModulo],[IdGrupo]), 
+    CONSTRAINT [FK_SecurityGrupo_CoreModulo] FOREIGN KEY ([IdModulo]) REFERENCES [CoreModulo]([IdModulo])
+)

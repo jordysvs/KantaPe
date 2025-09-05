@@ -1,0 +1,217 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+using System.Transactions;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Evento</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+
+    public class Evento
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Evento</summary>
+        /// <param name="int_pIdEmpresa">Id de la empresa</param>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdEvento">Id del evento</param>
+        /// <param name="str_pNombre">Nombre</param>
+        /// <param name="str_pDescripcion">Descripcion</param>
+        /// <param name="dt_pFechaEvento">Fecha del evento</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Evento</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Evento> Listar(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pIdEvento,
+            string str_pNombre,
+            string str_pDescripcion,
+            DateTime? dtm_pFechaInicio,
+            DateTime? dtm_pFechaFin,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Evento.Listar(
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pIdEvento,
+                str_pNombre,
+                str_pDescripcion,
+                dtm_pFechaInicio,
+                dtm_pFechaFin,
+                str_pEstado,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /// <summary>Obtener Evento</summary>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdEvento">Id del evento</param>
+        /// <returns>Objeto Evento</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Evento Obtener(
+            int int_pIdLocal,
+            int int_pIdEvento)
+        {
+            return Kruma.KantaPe.Data.Evento.Obtener(
+                int_pIdLocal,
+                int_pIdEvento);
+        }
+
+        /// <summary>Insertar Evento</summary>
+        /// <param name="obj_pEvento">Evento</param>
+        /// <returns>Id de Evento</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Insertar(Kruma.KantaPe.Entidad.Evento obj_pEvento)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Inserción del evento
+                    obj_pEvento.IdEvento = Kruma.KantaPe.Data.Evento.Insertar(obj_pEvento);
+
+                    //Actualización de la imagen
+                    Kruma.KantaPe.Entidad.Evento obj_EventoInsertado = Obtener(obj_pEvento.IdLocal.Value, obj_pEvento.IdEvento.Value);
+                    obj_EventoInsertado.Foto = obj_pEvento.Foto;
+
+                    if (obj_EventoInsertado.Foto != null)
+                    {
+                        if (obj_EventoInsertado.Foto.IdDocumento.HasValue)
+                        {
+                            int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Evento).Valor);
+
+                            new Kruma.Core.FileServer.FileServerManager().copyFile(
+                                obj_EventoInsertado.Foto.IdAlmacen.Value,
+                                obj_EventoInsertado.Foto.IdRegistro.Value,
+                                obj_EventoInsertado.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_EventoInsertado.IdImagen.Value,
+                                obj_EventoInsertado.UsuarioCreacion);
+                        }
+                    }
+                    obj_Resultado = new ProcessResult(obj_EventoInsertado.IdEvento);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Evento</summary>
+        /// <param name="obj_pEvento">Evento</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Modificar(Kruma.KantaPe.Entidad.Evento obj_pEvento)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    Kruma.KantaPe.Entidad.Evento obj_EventoAModificar = Obtener(obj_pEvento.IdLocal.Value, obj_pEvento.IdEvento.Value);
+                    obj_EventoAModificar.Nombre = obj_pEvento.Nombre;
+                    obj_EventoAModificar.Descripcion = obj_pEvento.Descripcion;
+                    obj_EventoAModificar.FechaEvento = obj_pEvento.FechaEvento;
+                    obj_EventoAModificar.Estado = obj_pEvento.Estado;
+                    obj_EventoAModificar.UsuarioModificacion = obj_pEvento.UsuarioModificacion;
+                    obj_EventoAModificar.Foto = obj_pEvento.Foto;
+
+                    //Actualización del evento
+                    Kruma.KantaPe.Data.Evento.Modificar(obj_EventoAModificar);
+
+                    //Actualización de la imagen
+                    if (obj_EventoAModificar.Foto != null)
+                    {
+                        int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Evento).Valor);
+
+                        Kruma.Core.FileServer.FileServerManager obj_FileServerManager = new Kruma.Core.FileServer.FileServerManager();
+                        System.Collections.Generic.List<Kruma.Core.FileServer.Entity.FileUpload> lstFotos = obj_FileServerManager.getFiles(int_IdAlmacenDestino, obj_EventoAModificar.IdImagen.Value);
+                        foreach (Kruma.Core.FileServer.Entity.FileUpload obj_Foto in lstFotos)
+                            obj_FileServerManager.deleteFile(
+                                obj_Foto.IdDocumento.Value, obj_Foto.IdAlmacen.Value, obj_Foto.IdRegistro.Value, obj_EventoAModificar.UsuarioModificacion);
+
+                        if (obj_EventoAModificar.Foto.IdDocumento.HasValue)
+                            obj_FileServerManager.copyFile(
+                                obj_EventoAModificar.Foto.IdAlmacen.Value,
+                                obj_EventoAModificar.Foto.IdRegistro.Value,
+                                obj_EventoAModificar.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_EventoAModificar.IdImagen.Value,
+                                obj_EventoAModificar.UsuarioModificacion);
+                    }
+
+                    obj_Resultado = new ProcessResult(obj_EventoAModificar.IdEvento);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado Evento</summary>
+        /// <param name="obj_pEvento">Evento</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.Evento obj_pEvento)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.Evento obj_Evento = Kruma.KantaPe.Data.Evento.Obtener(
+                    obj_pEvento.IdLocal.Value,
+                    obj_pEvento.IdEvento.Value);
+
+                if (obj_Evento.Estado == obj_pEvento.Estado)
+                {
+                    string str_Mensaje = obj_pEvento.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "El evento ya se encuentra activo." :
+                        "El evento ya se encuentra inactivo.";
+                    return new Kruma.Core.Util.Common.ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_Evento.Estado = obj_pEvento.Estado;
+                obj_Evento.UsuarioModificacion = obj_pEvento.UsuarioModificacion;
+                Kruma.KantaPe.Data.Evento.Modificar(obj_Evento);
+
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pEvento.IdEvento);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+
+            return obj_Resultado;
+        }
+        #endregion
+    }
+}

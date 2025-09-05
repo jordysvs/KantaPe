@@ -1,0 +1,82 @@
+﻿create PROCEDURE [dbo].[SecurityListarGrupoDetalle] 
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de listado de SecurityGrupoDetalle
+'* Input :
+		@pIdModulo - IdModulo del SecurityGrupoDetalle
+		@pIdGrupo - IdGrupo del SecurityGrupoDetalle
+		@pIdDetalle - IdDetalle del SecurityGrupoDetalle
+		@pDescripcion - Descripcion del SecurityGrupoDetalle
+		@pIdDetallePadre - IdDetallePadre del SecurityGrupoDetalle
+		@pURL - URL del SecurityGrupoDetalle,
+		@pFlagVisible - Visibilidad del SceurityGrupoDetalle,
+		@pEstado - Estado del SecurityGrupoDetalle
+		@pNumPagina - Número de pagina
+		@pTamPagina - Cantidad de registros por pagina
+'* Output : Lista de SecurityGrupoDetalle
+'* Creado Por : Kruma
+'* Fecha Creación : 27-07-2015
+'**********************************************************************************
+*/
+(
+	@pIdModulo varchar(8) = null,
+	@pIdGrupo varchar(8) = null, 
+	@pIdDetalle varchar(8) = null, 
+	@pDescripcion varchar(50) = null, 
+	@pIdDetallePadre varchar(8) = null, 
+	@pURL varchar(500) = null,
+	@pFlagVisible char(1) = null,
+	@pEstado varchar(1) = null, 
+	@pNumPagina int = null, 
+	@pTamPagina int = null
+)
+AS
+BEGIN
+		Select TBL.*
+		From(
+			Select
+				ROW_NUMBER() OVER (ORDER BY T.Orden ASC) AS Num_Fila,
+				T.IdModulo,
+				T.IdGrupo,
+				T.IdDetalle,
+				T.Descripcion,
+				T.IdDetallePadre,
+				T.Orden,
+				T.URL,
+				T.FlagVisible,
+				T.IdImagen,
+				T.Estado,
+				T.UsuarioCreacion,
+				T.FechaCreacion,
+				T.UsuarioModificacion,
+				T.FechaModificacion,
+				(
+					select count(1) from SecurityGrupoDetalle SGD
+					where 
+					SGD.IdModulo = T.IdModulo AND
+					SGD.IdGrupo = T.IdGrupo AND
+					SGD.IdDetallePadre = T.IdDetalle AND
+					(@pDescripcion is null or SGD.Descripcion like '%' + @pDescripcion + '%') AND
+					(@pFlagVisible is null or SGD.FlagVisible = @pFlagVisible) AND
+					(@pURL is null or SGD.URL like '%' + @pURL + '%') AND
+					(@pEstado is null or SGD.Estado = @pEstado)
+				) Total_Detalle,
+				COUNT(*) OVER() Total_Filas
+			From SecurityGrupoDetalle T
+			Where 
+				(@pIdModulo is null or T.IdModulo = @pIdModulo) AND
+				(@pIdGrupo is null or T.IdGrupo = @pIdGrupo) AND
+				(@pIdDetalle is null or T.IdDetalle = @pIdDetalle) AND
+				(@pDescripcion is null or T.Descripcion like '%' + @pDescripcion + '%') AND
+				(@pFlagVisible is null or T.FlagVisible = @pFlagVisible) AND
+				(@pURL is null or T.URL like '%' + @pURL + '%') AND			
+				(
+				(@pIdDetallePadre is not null AND T.IdDetallePadre = @pIdDetallePadre)
+				OR (@pIdDetallePadre is null AND @pIdGrupo is null and @pIdDetalle is null) 
+				OR (@pIdDetallePadre is null AND @pIdGrupo is not null and @pIdDetalle is not null) 
+				OR (@pIdDetallePadre is null AND @pIdGrupo is not null and T.IdDetallePadre is null) 
+				) AND
+				(@pEstado is null or T.Estado = @pEstado)
+		) TBL
+		Where (@pTamPagina IS NULL OR TBL.Num_Fila BETWEEN (@pNumPagina * @pTamPagina)- @pTamPagina + 1 AND (@pNumPagina * @pTamPagina));
+END

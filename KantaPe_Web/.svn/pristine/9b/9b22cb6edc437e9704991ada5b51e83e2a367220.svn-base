@@ -1,0 +1,78 @@
+﻿//Atributos
+var urlPrincipal = 'Artista.aspx';
+var urlEdicion = 'RegistroArtista.aspx';
+
+$(function () {
+    cargarInicial();
+    cargarControles();
+    obtenerArtista();
+});
+
+function cargarInicial() {
+
+    jQuery.validator.addMethod('selectEstado', function (value) {
+        return (value != '');
+    }, "Seleccione el estado");
+
+    $('#frmContent').validate({
+        rules: {
+            ctl00$cphBody$txtNombre: { required: true, },
+            ctl00$cphBody$ddlEstado: { selectEstado: true }
+        },
+        messages: {
+            ctl00$cphBody$txtNombre: { required: 'Ingrese el nombre' },
+        },
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+}
+
+function cargarControles() {
+
+    $(".btnGrabar").click(function () {
+        return guardarArtista();
+    });
+
+    $(".btnCancelar").click(function () {
+        ConfirmJQ('¿Está seguro de regresar a la ventana anterior?', function () { document.location.href = urlPrincipal });
+        return false;
+    });
+
+    $("#txtNombre").focus();
+}
+
+function guardarArtista() {
+
+    if ($('#frmContent').valid()) {
+
+        obj_Artista = new Object();
+        obj_Artista.IdArtista = $("#hdIdArtista").val();
+        obj_Artista.Nombre = $("#txtNombre").val();
+        obj_Artista.Estado = $("#ddlEstado").val();
+
+        Accion('RegistroArtista.aspx/GuardarArtista', { "str_pArtista": JSON.stringify(obj_Artista) },
+            function () { document.location.href = urlPrincipal; });
+    }
+    return false;
+}
+
+function obtenerArtista() {
+    var int_IdArtista = $("#hdIdArtista").val();
+    if (int_IdArtista != '') {
+        var obj_Artista = ObtenerData("RegistroArtista.aspx/ObtenerArtista", { "int_pIdArtista": int_IdArtista });
+        if (obj_Artista != null) {
+            $("#txtNombre").val(obj_Artista.Nombre);
+            $("#ddlEstado").val(obj_Artista.Estado);
+
+            //Auditoria
+            $("#ddUsuarioCreacion").html(obj_Artista.UsuarioCreacion);
+            $("#ddUsuarioModificacion").html(obj_Artista.UsuarioModificacion);
+            $("#ddFechaCreacion").html(ToDateTimeString(obj_Artista.FechaCreacion));
+            $("#ddFechaModificacion").html(ToDateTimeString(obj_Artista.FechaModificacion));
+        }
+    }
+}

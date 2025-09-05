@@ -1,0 +1,214 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Default.master" AutoEventWireup="true" CodeFile="RegistroLocal.aspx.cs" Inherits="Forms_Maestro_RegistroLocal" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx" Combine="false" Compress="false">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Forms/FileServer/FileServer.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.validate/jquery.validate.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.validate/additional-methods.js" />
+            <cc:ScriptReference Path="~/Script/Forms/Maestro/RegistroLocal.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABg14p6UzRJC7e6VCvTRrPJa9QBjaa55Y&libraries=places"></script>
+    <style>
+        #map {
+            height: 400px;
+        }
+
+        #txtBuscadorMapa {
+            width: 60%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-warning">
+                <div class="box-header">
+                    <div class="btn-group">
+                        <button title="Grabar" class="btnGrabar btn btn-default btn-sm checkbox-toggle"><i class="fa fa-floppy-o"></i></button>
+                        <button title="Cancelar" class="btnCancelar btn btn-default btn-sm"><i class="fa fa-arrow-left"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box box-warning">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="fileUpload">Foto:</label>
+                                <div class="user-header" style="text-align: center;">
+                                    <asp:Image CssClass="user-image" Style="max-height: 200px;" alt="" ID="imgLocalImagen" runat="server" ClientIDMode="Static" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label></label>
+                                <input id="fileUpload" name="fileUpload" type="file" />
+                                <a id="lnkEliminarFoto" runat="server" href="#">Eliminar Foto</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="ddlEmpresa">Empresa:</label>
+                                    <asp:DropDownList ID="ddlEmpresa" runat="server" ClientIDMode="Static" CssClass="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="txtNombre">Nombre:</label>
+                                    <asp:TextBox ID="txtNombre" runat="server" ClientIDMode="Static" MaxLength="100" CssClass="form-control" placeholder="Ingrese el nombre" />
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="txtHoraInicio">Hora de Inicio de Atención:</label>
+                                    <asp:TextBox ID="txtHoraInicio" runat="server" CssClass="form-control" ClientIDMode="Static" MaxLength="2" placeholder="Ingrese la hora inicio de atención" />
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="txtHoraFin">Hora Fin de Atención:</label>
+                                    <asp:TextBox ID="txtHoraFin" runat="server" CssClass="form-control" ClientIDMode="Static" MaxLength="2" placeholder="Ingrese la hora fin de atención" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="txtDireccion">Dirección:</label>
+                                <asp:TextBox ID="txtDireccion" runat="server" ClientIDMode="Static" MaxLength="100" CssClass="form-control" placeholder="Ingrese la dirección" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="ddlPais">País:</label>
+                                <asp:DropDownList ID="ddlPais" runat="server" ClientIDMode="Static" CssClass="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="ddlDepartamento">Departamento:</label>
+                                <asp:DropDownList ID="ddlDepartamento" runat="server" ClientIDMode="Static" CssClass="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="ddlProvincia">Provincia:</label>
+                                <asp:DropDownList ID="ddlProvincia" runat="server" ClientIDMode="Static" CssClass="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="ddlDistrito">Distrito:</label>
+                                <asp:DropDownList ID="ddlDistrito" runat="server" ClientIDMode="Static" CssClass="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="txtLatitud">Latitud:</label>
+                                <asp:TextBox ID="txtLatitud" runat="server" ClientIDMode="Static" MaxLength="100" CssClass="form-control" placeholder="Ingrese la latitud" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="txtLongitud">Longitud:</label>
+                                <asp:TextBox ID="txtLongitud" runat="server" ClientIDMode="Static" MaxLength="100" CssClass="form-control" placeholder="Ingrese la longitud" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="txtRadio">Radio en Metros:</label>
+                                <asp:TextBox ID="txtRadio" runat="server" ClientIDMode="Static" MaxLength="100" CssClass="form-control soloNumerosDecimal" placeholder="Ingrese el radio en metros" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="ddlEstado">Estado:</label>
+                                <asp:DropDownList ID="ddlEstado" runat="server" ClientIDMode="Static" CssClass="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="divMap" class="col-lg-12">
+                            <input id="txtBuscadorMapa" type="text" placeholder="Ingrese el lugar....">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row auditoria">
+        <div class="col-xs-12">
+            <div class="box box box-warning">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="dl-horizontal">
+                                <span class="label">Usuario de Creación:</span>
+                                <span class="field" id="ddUsuarioCreacion"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="dl-horizontal">
+                                <span class="label">Fecha de Creación:</span>
+                                <span class="field" id="ddFechaCreacion"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="dl-horizontal">
+                                <span class="label">Usuario de Modificación:</span>
+                                <span class="field" id="ddUsuarioModificacion"></span>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="dl-horizontal">
+                                <span class="label">Fecha de Modificación:</span>
+                                <span class="field" id="ddFechaModificacion"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-warning">
+                <div class="box-header">
+                    <div class="btn-group">
+                        <button title="Grabar" class="btnGrabar btn btn-default btn-sm checkbox-toggle"><i class="fa fa-floppy-o"></i></button>
+                        <button title="Cancelar" class="btnCancelar btn btn-default btn-sm"><i class="fa fa-arrow-left"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <asp:HiddenField ID="hdIdLocal" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdIdAlmacen" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdIdDocumento" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdLocalImagen" runat="server" ClientIDMode="Static" />
+</asp:Content>
+

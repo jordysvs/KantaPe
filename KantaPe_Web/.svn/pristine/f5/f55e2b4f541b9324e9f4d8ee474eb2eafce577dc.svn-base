@@ -1,0 +1,140 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Idioma</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+
+    public class Idioma
+    {
+
+        #region Metodos Públicos
+
+        /// <summary>Listado de idioma</summary>
+        /// <param name="int_pIdIdioma">Id del idioma</param>
+        /// <param name="str_pDescripcion">Descripción del idioma</param>
+        /// <param name="str_pEstado">Estado del idioma</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de idioma</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma> Listar(
+            string str_pDescripcion,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Idioma.Listar(
+                null,
+                str_pDescripcion,
+                str_pEstado,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /// <summary>Obtener Idioma</summary>
+        /// <param name="int_pIdIdioma">Id del idioma</param>
+        /// <returns>Objeto Idioma</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Idioma Obtener(int int_pIdIdioma)
+        {
+            return Kruma.KantaPe.Data.Idioma.Obtener(int_pIdIdioma);
+        }
+
+        /// <summary>Insertar idioma</summary>
+        /// <param name="obj_pIdioma">Idioma</param>
+        /// <returns>Id de Idioma</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult Insertar(Kruma.KantaPe.Entidad.Idioma obj_pIdioma)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                System.Collections.Generic.List<Kruma.KantaPe.Entidad.Idioma> lst_Registros = Kruma.KantaPe.Data.Idioma.Listar(null, null, null, null, null).Result;
+                if (lst_Registros.Where(x => x.Descripcion.Trim().ToLower().Equals(obj_pIdioma.Descripcion.Trim().ToLower())
+                                                || x.Descripcion.Trim().ToUpper().Equals(obj_pIdioma.Descripcion.Trim().ToUpper()))
+                                                                .ToList().Count > 0)
+                    return new ProcessResult(new Exception("Ya existe un idioma con la misma descripción."));
+                else
+                {
+                    int int_IdIdioma = Kruma.KantaPe.Data.Idioma.Insertar(obj_pIdioma);
+                    obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(int_IdIdioma);
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Idioma</summary>
+        /// <param name="obj_pIdioma">Idioma</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult Modificar(Kruma.KantaPe.Entidad.Idioma obj_pIdioma)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Data.Idioma.Modificar(obj_pIdioma);
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pIdioma.IdIdioma);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado Idioma</summary>
+        /// <param name="obj_pIdioma">Idioma</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.Idioma obj_pIdioma)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.Idioma obj_Idioma = Kruma.KantaPe.Data.Idioma.Obtener(obj_pIdioma.IdIdioma.Value);
+                if (obj_Idioma.Estado == obj_pIdioma.Estado)
+                {
+                    string str_Mensaje = obj_pIdioma.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "El Idioma ya se encuentra activa." :
+                        "El Idioma ya se encuentra inactiva.";
+                    return new Kruma.Core.Util.Common.ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_Idioma.Estado = obj_pIdioma.Estado;
+                obj_Idioma.UsuarioModificacion = obj_pIdioma.UsuarioModificacion;
+                Kruma.KantaPe.Data.Idioma.Modificar(obj_Idioma);
+
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pIdioma.IdIdioma);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+
+            return obj_Resultado;
+        }
+
+        #endregion
+
+    }
+}

@@ -1,0 +1,236 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Cancion de la apertura</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+    public class AperturaCancion
+    {
+        #region Atributos
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> lstReporteCancionPedido;
+
+        #endregion
+
+        #region Metodos Públicos
+
+        /// <summary>Obtener cancion de la apertura</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pIdAperturaCancion">IdAperturaCancion</param>
+        /// <returns>Objeto AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.AperturaCancion Obtener(int int_pIdLocal, int int_pIdApertura, int int_pIdAperturaCancion)
+        {
+            return Kruma.KantaPe.Data.AperturaCancion.Obtener(int_pIdLocal, int_pIdApertura, int_pIdAperturaCancion);
+        }
+
+        /// <summary>Modificar cancion de la apertura</summary>
+        /// <param name="obj_pAperturaCancion">AperturaCancion</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Cancelar(Kruma.KantaPe.Entidad.AperturaCancion obj_pAperturaCancion)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                //Se obtiene la cancion de la apertura
+                Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancionAModificar =
+                    Kruma.KantaPe.Data.AperturaCancion.Obtener(
+                    obj_pAperturaCancion.IdLocal.Value, obj_pAperturaCancion.IdApertura.Value, obj_pAperturaCancion.IdAperturaCancion.Value);
+
+                //Se establece los valores a modificar
+                obj_AperturaCancionAModificar.Estado = KantaPe.Entidad.Constante.Estado_Inactivo;
+                obj_AperturaCancionAModificar.UsuarioModificacion = obj_pAperturaCancion.UsuarioModificacion;
+
+                //Se modifica la cancion de la apertura
+                Kruma.KantaPe.Data.AperturaCancion.Modificar(obj_AperturaCancionAModificar);
+                obj_Resultado = new ProcessResult(obj_AperturaCancionAModificar.IdAperturaCancion);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Listado de canciones de la apertura</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pIdAperturaCancion">IdAperturaCancion</param>
+        /// <param name="str_pIdUsuario">IdUsuario</param>
+        /// <param name="int_pIdCancion">IdCancion</param>
+        /// <param name="int_pIdAperturaCancionTipo">IdAperturaCancionTipo</param>
+        /// <param name="int_pOrden">Orden</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> Listar(
+            int? int_pIdLocal,
+            int? int_pIdApertura,
+            int? int_pIdAperturaCancion,
+            string str_pIdUsuario,
+            int? int_pIdLocalCancion,
+            int? int_pIdAperturaCancionTipo,
+            int? int_pOrden,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> lst_Lista = Kruma.KantaPe.Data.AperturaCancion.Listar(int_pIdLocal, int_pIdApertura, int_pIdAperturaCancion, str_pIdUsuario, int_pIdLocalCancion, int_pIdAperturaCancionTipo, str_pEstado, int_pNumPagina, int_pTamPagina);
+            foreach (Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion in lst_Lista.Result)
+                if (obj_AperturaCancion.LocalCancion.IdAlbum != null)
+                    obj_AperturaCancion.LocalCancion.Album.ImagenURL = Kruma.KantaPe.Negocio.LocalCancion.ObtenerAlbumImagenURL(obj_AperturaCancion.LocalCancion.IdAlbum);
+            return lst_Lista;
+        }
+
+        /// <summary>Actualizar AperturaCancion </summary>
+		/// <param name="obj_pAperturaCancion">AperturaCancion</param>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+		/// <item><FecCrea>20-03-2017</FecCrea></item></list></remarks>
+		public static ProcessResult Modificar(Kruma.KantaPe.Entidad.AperturaCancion obj_pAperturaCancion)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Data.AperturaCancion.Modificar(obj_pAperturaCancion);
+                obj_Resultado = new ProcessResult(obj_pAperturaCancion.IdAperturaCancion);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Solicitar cancion de la apertura</summary>
+        /// <param name="obj_pAperturaCancion">AperturaCancion</param>
+        /// <returns>Id de AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Solicitar(Kruma.KantaPe.Entidad.AperturaCancion obj_pAperturaCancion)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                //Se obtiene el id del tipo de apertura de solicitado
+                Kruma.Core.Business.Entity.Parametro obj_Parametro = Kruma.Core.Business.Logical.Parametro.Obtener(
+                    Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                    Kruma.KantaPe.Entidad.Constante.Parametro.AperturaCancion_Solicitada);
+
+                //Se establece los valores a insertar
+                obj_pAperturaCancion.IdAperturaCancionTipo = int.Parse(obj_Parametro.Valor);
+                obj_pAperturaCancion.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+                obj_pAperturaCancion.UsuarioCreacion = obj_pAperturaCancion.IdUsuario;
+                obj_pAperturaCancion.UsuarioModificacion = obj_pAperturaCancion.IdUsuario;
+
+                //Se inserta la cancion en la apertura
+                int int_IdAperturaCancion = Kruma.KantaPe.Data.AperturaCancion.Insertar(obj_pAperturaCancion);
+                obj_Resultado = new ProcessResult(int_IdAperturaCancion);
+
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>REPORTE CANCIONES MAS PEDIDAS</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ReporteCancionPedida(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            string str_pDesArtista,
+            string str_pDesAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            lstReporteCancionPedido = Kruma.KantaPe.Data.AperturaCancion.ReporteCancionPedida(int_pIdEmpresa, int_pIdLocal, dt_pFechaInicio, dt_pFechaFin, str_pDesArtista, str_pDesAlbum, int_pIdGenero, int_pIdIdioma, int_pNumPagina, int_pTamPagina);
+            return lstReporteCancionPedido;
+        }
+
+        /// <summary>LISTAR TOP 5 ARTISTAS</summary>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarArtistaTop(
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            string str_pDesArtista,
+            string str_pDesAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma)
+        {
+            return Kruma.KantaPe.Data.AperturaCancion.ListarArtistaTop(dt_pFechaInicio, dt_pFechaFin, int_pIdEmpresa, int_pIdLocal, str_pDesArtista, str_pDesAlbum, int_pIdGenero, int_pIdIdioma);
+        }
+
+        /// <summary>LISTAR TOP 5 ARTISTAS</summary>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarGeneroTop(
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            string str_pDesArtista,
+            string str_pDesAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma)
+        {
+            return Kruma.KantaPe.Data.AperturaCancion.ListarGeneroTop(dt_pFechaInicio, dt_pFechaFin, int_pIdEmpresa, int_pIdLocal, str_pDesArtista, str_pDesAlbum, int_pIdGenero, int_pIdIdioma);
+        }
+        /// <summary>LISTAR TOP 5 IDIOMA</summary>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarIdiomaTop(
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            string str_pDesArtista,
+            string str_pDesAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma)
+        {
+            return Kruma.KantaPe.Data.AperturaCancion.ListarIdiomaTop(dt_pFechaInicio, dt_pFechaFin, int_pIdEmpresa, int_pIdLocal, str_pDesArtista, str_pDesAlbum, int_pIdGenero, int_pIdIdioma);
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarRanking()
+        {
+            return Kruma.KantaPe.Data.AperturaCancion.ListarRanking();
+        }
+
+        #endregion
+    }
+}

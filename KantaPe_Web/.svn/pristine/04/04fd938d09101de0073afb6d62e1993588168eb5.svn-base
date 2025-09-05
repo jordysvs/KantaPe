@@ -1,0 +1,154 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+	/// <summary>Turno</summary>
+	/// <remarks><list type="bullet">
+	/// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+	/// <item><FecCrea>20-03-2017</FecCrea></item></list></remarks>
+
+	public class Turno
+	{
+		#region Metodos Públicos
+
+		/// <summary>Listado de Turno</summary>
+		/// <param name="int_pIdLocal">IdLocal</param>
+		/// <param name="int_pIdTurno">IdTurno</param>
+		/// <param name="dt_pFechaTurno">FechaTurno</param>
+		/// <param name="str_pEstado">Estado</param>
+		/// <param name="int_pNumPagina" >Numero de pagina</param>
+		/// <param name="int_pTamPagina" >Tamaño de pagina</param>
+		/// <returns>Lista de Turno</returns>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+		/// <item><FecCrea>20-03-2017</FecCrea></item></list></remarks>
+		public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Turno> Listar(int? int_pIdLocal, int? int_pIdTurno, DateTime? dt_pFechaTurno, string str_pEstado,  int? int_pNumPagina, int? int_pTamPagina)
+		{
+			Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Turno> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Turno>();
+			obj_Lista.PageNumber = int_pNumPagina;
+			obj_Lista.Total = 0;
+
+			DataOperation dop_Operacion = new DataOperation("ListarTurno");
+			dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+			dop_Operacion.Parameters.Add(new Parameter("@pIdTurno", int_pIdTurno.HasValue ? int_pIdTurno.Value : (object)DBNull.Value));
+			dop_Operacion.Parameters.Add(new Parameter("@pFechaTurno", dt_pFechaTurno.HasValue ? dt_pFechaTurno.Value : (object)DBNull.Value));
+			dop_Operacion.Parameters.Add(new Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+			dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+			dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+			DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+			List<Kruma.KantaPe.Entidad.Turno> lst_Turno= new List<Kruma.KantaPe.Entidad.Turno>();
+			Kruma.KantaPe.Entidad.Turno obj_Turno= new Kruma.KantaPe.Entidad.Turno();
+			foreach (DataRow obj_Row in dt_Resultado.Rows)
+			{
+				if (lst_Turno.Count == 0)
+					obj_Lista.Total = (int)obj_Row["Total_Filas"];
+				obj_Turno = new Kruma.KantaPe.Entidad.Turno();
+			    obj_Turno.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+			    obj_Turno.IdTurno = obj_Row["IdTurno"] is DBNull ? null : (int?)obj_Row["IdTurno"];
+			    obj_Turno.FechaTurno = obj_Row["FechaTurno"] is DBNull ? null : (DateTime?)obj_Row["FechaTurno"];
+			    obj_Turno.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+			    obj_Turno.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+			    obj_Turno.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+			    obj_Turno.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+			    obj_Turno.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+			    lst_Turno.Add(obj_Turno);
+			}
+
+			obj_Lista.Result = lst_Turno;
+			return obj_Lista;
+		}
+
+		/// <summary>Obtener Turno</summary>
+		/// <param name="int_pIdLocal">IdLocal</param>
+		/// <param name="int_pIdTurno">IdTurno</param>
+		/// <returns>Objeto Turno</returns>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+		/// <item><FecCrea>20-03-2017</FecCrea></item></list></remarks>
+		public static Kruma.KantaPe.Entidad.Turno Obtener(int int_pIdLocal, int int_pIdTurno)
+		{
+			Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Turno> lst_Turno = Listar(int_pIdLocal, int_pIdTurno, null, null, null, null);
+			return lst_Turno.Result.Count > 0 ? lst_Turno.Result[0] : null;
+		}
+
+		/// <summary>Insertar Turno</summary>
+		/// <param name="obj_pTurno">Turno</param>
+		/// <returns>Id de Turno</returns>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+		/// <item><FecCrea>20-03-2017</FecCrea></item></list></remarks>
+		public static int Insertar(Kruma.KantaPe.Entidad.Turno obj_pTurno)
+		{
+			DataOperation dop_Operacion = new DataOperation("InsertarTurno");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pTurno.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pTurno.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioCreacion", obj_pTurno.UsuarioCreacion));
+
+            Parameter dtm_FechaTurno = new Parameter("@pFechaTurno", DbType.DateTime);
+			dtm_FechaTurno.Direction = ParameterDirection.Input;
+			dtm_FechaTurno.Value = obj_pTurno.FechaTurno.HasValue ? obj_pTurno.FechaTurno.Value : (object)DBNull.Value;
+			dop_Operacion.Parameters.Add(dtm_FechaTurno);
+            
+			Parameter obj_IdTurno= new Parameter("@pIdTurno", DbType.Int32);
+			obj_IdTurno.Direction = ParameterDirection.Output;
+			dop_Operacion.Parameters.Add(obj_IdTurno);
+
+			DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+			int int_IdTurno = (int)obj_IdTurno.Value;
+			return int_IdTurno;
+		}
+
+		/// <summary>Actualizar Turno</summary>
+		/// <param name="obj_pTurno">Turno</param>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+		/// <item><FecCrea>20-03-2017</FecCrea></item></list></remarks>
+		public static void Modificar(Kruma.KantaPe.Entidad.Turno obj_pTurno)
+		{
+			DataOperation dop_Operacion = new DataOperation("ActualizarTurno");
+
+			dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pTurno.IdLocal));
+			dop_Operacion.Parameters.Add(new Parameter("@pIdTurno", obj_pTurno.IdTurno));
+			dop_Operacion.Parameters.Add(new Parameter("@pFechaTurno", obj_pTurno.FechaTurno));
+			dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pTurno.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioModificacion", obj_pTurno.UsuarioModificacion));
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+		}
+
+        /// <summary>Listado de Turno</summary>
+		/// <param name="int_pIdLocal">IdLocal</param>
+		/// <param name="int_pIdTurno">IdTurno</param>
+		/// <param name="dt_pFechaTurno">FechaTurno</param>
+		/// <param name="str_pEstado">Estado</param>
+		/// <param name="int_pNumPagina" >Numero de pagina</param>
+		/// <param name="int_pTamPagina" >Tamaño de pagina</param>
+		/// <returns>Lista de Turno</returns>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+		/// <item><FecCrea>20-03-2017</FecCrea></item></list></remarks>
+		public static int? ObtenerUltimoTurno(int? int_pIdLocal, int? int_pIdApertura)
+        {
+            DataOperation dop_Operacion = new DataOperation("ObtenerUltimoTurno");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", int_pIdApertura.HasValue ? int_pIdApertura.Value : (object)DBNull.Value));
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+            int? int_IdTurno = null;
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+                int_IdTurno = obj_Row["IdTurno"] is DBNull ? null : (int?)obj_Row["IdTurno"];
+
+            return int_IdTurno;
+        }
+
+        #endregion
+    }
+}

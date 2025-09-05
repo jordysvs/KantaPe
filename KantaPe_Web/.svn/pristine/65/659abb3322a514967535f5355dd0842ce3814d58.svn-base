@@ -1,0 +1,138 @@
+﻿//Atributos
+var urlPrincipal = 'Ubicacion.aspx';
+var urlEdicion = 'RegistroUbicacion.aspx';
+
+$(function () {
+    CargarInicial();
+    CargarControles();
+    ObtenerUbicacion();
+});
+
+function CargarInicial() {
+
+    $('#ddlEmpresa').change(function () {
+        CargarLocal(true, null);
+    });
+
+    jQuery.validator.addMethod('selectEmpresa', function (value) {
+        return (value != '');
+    }, "Seleccione la empresa");
+
+    jQuery.validator.addMethod('selectLocal', function (value) {
+        return (value != '');
+    }, "Seleccione el local");
+
+    jQuery.validator.addMethod('selectUbicacionTipo', function (value) {
+        return (value != '');
+    }, "Seleccione el tipo de ubicación");
+
+    jQuery.validator.addMethod('selectEstado', function (value) {
+        return (value != '');
+    }, "Seleccione el estado");
+
+    $('#frmContent').validate({
+        rules: {
+            ctl00$cphBody$ddlEmpresa: { selectEmpresa: true },
+            ctl00$cphBody$ddlLocal: { selectLocal: true },
+            ctl00$cphBody$ddlUbicacionTipo: { selectUbicacionTipo: true },
+            ctl00$cphBody$txtNumero: { required: true },
+            ctl00$cphBody$txtCapacidad: { required: true },
+            ctl00$cphBody$ddlEstado: { selectEstado: true }
+        },
+        messages: {
+            ctl00$cphBody$txtNumero: { required: 'Ingrese el número' },
+            ctl00$cphBody$txtCapacidad: { required: 'Ingrese la capacidad' },
+        },
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+}
+
+function CargarControles() {
+
+    $(".btnGrabar").click(function () {
+        return GuardarUbicacion();
+    });
+
+    $(".btnCancelar").click(function () {
+        ConfirmJQ('¿Está seguro de regresar a la ventana anterior?', function () { document.location.href = urlPrincipal });
+        return false;
+    });
+
+    $("#ddlEmpresa").focus();
+}
+
+function GuardarUbicacion() {
+
+    if ($('#frmContent').valid()) {
+
+        obj_Ubicacion = new Object();
+        obj_Ubicacion.IdUbicacion = $("#hdIdUbicacion").val();
+        obj_Ubicacion.IdLocal = $("#ddlLocal").val();
+        obj_Ubicacion.IdUbicacionTipo = $("#ddlUbicacionTipo").val();
+        obj_Ubicacion.Numero = $("#txtNumero").val();
+        obj_Ubicacion.Capacidad = $("#txtCapacidad").val();
+        obj_Ubicacion.Estado = $("#ddlEstado").val();
+
+        Accion('RegistroUbicacion.aspx/GuardarUbicacion', { "str_pUbicacion": JSON.stringify(obj_Ubicacion) },
+            function () { document.location.href = urlPrincipal; });
+    }
+    return false;
+}
+
+function ObtenerUbicacion() {
+    var int_IdLocal = $("#hdIdLocal").val();
+    var int_IdUbicacion = $("#hdIdUbicacion").val();
+    if (int_IdUbicacion != '') {
+        var obj_Ubicacion = ObtenerData("RegistroUbicacion.aspx/ObtenerUbicacion", {
+            "int_pIdLocal": int_IdLocal,
+            "int_pIdUbicacion": int_IdUbicacion
+        });
+        if (obj_Ubicacion != null) {
+            $("#ddlEmpresa").val(obj_Ubicacion.Local.IdEmpresa);
+            CargarLocal(true, obj_Ubicacion.Local.IdDireccion);
+
+            $("#ddlUbicacionTipo").val(obj_Ubicacion.IdUbicacionTipo);
+            $("#txtNumero").val(obj_Ubicacion.Numero);
+            $("#txtCapacidad").val(obj_Ubicacion.Capacidad);
+            $("#ddlEstado").val(obj_Ubicacion.Estado);
+
+            //Auditoria
+            $("#ddUsuarioCreacion").html(obj_Ubicacion.UsuarioCreacion);
+            $("#ddUsuarioModificacion").html(obj_Ubicacion.UsuarioModificacion);
+            $("#ddFechaCreacion").html(ToDateTimeString(obj_Ubicacion.FechaCreacion));
+            $("#ddFechaModificacion").html(ToDateTimeString(obj_Ubicacion.FechaModificacion));
+
+            $("#ddlEmpresa").prop('disabled', true);
+            $("#ddlLocal").prop('disabled', true);
+        }
+    }
+}
+
+function CargarLocal(bln_pAsync, int_pIdDireccion) {
+
+    var ddlLocal = $("#ddlLocal");
+    ddlLocal.empty();
+    ddlLocal.html('');
+    ddlLocal.append($("<option value=''>--Seleccione--</option>"));
+
+    var int_IdPersona = $("#ddlEmpresa").val();
+    if (int_IdPersona != '') {
+        var obj_Data = { "int_pIdPersona": int_IdPersona };
+        AccionDefault(bln_pAsync, "RegistroUbicacion.aspx/ListarLocal", obj_Data,
+             function (obj_pLista) {
+                 //ddlNivel.prop("disabled", false);
+                 var str_Selected = '';
+                 for (var i = 0; i < obj_pLista.Result.length; i++) {
+                     if (int_pIdDireccion != null)
+                         str_Selected = (obj_pLista.Result[i].IdDireccion == int_pIdDireccion) ? 'selected' : '';
+                     ddlLocal.append($("<option value='" + obj_pLista.Result[i].IdDireccion + "' " + str_Selected + ">" + obj_pLista.Result[i].Nombre + "</option>"));
+                 }
+                 // ddlLocal.prop("disabled", true);
+             }, null, null, null, 1);
+    }
+}

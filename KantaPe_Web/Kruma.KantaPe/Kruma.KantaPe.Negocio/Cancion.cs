@@ -1,0 +1,138 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>CancionSimple</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+    /// <item><FecCrea>10-03-2017</FecCrea></item></list></remarks>
+
+    public class Cancion
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de CancionSimple</summary>
+        /// <param name="int_pIdCancionSimple">Id del CancionSimple</param>
+        /// <param name="str_pDescripcion">Descripción del CancionSimple</param>
+        /// <param name="str_pEstado">Estado del CancionSimple</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de CancionSimple</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>10-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Cancion> Listar(
+            string str_pDescripcion,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Cancion.Listar(
+                null,
+                str_pDescripcion,
+                str_pEstado,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /// <summary>Obtener CancionSimple</summary>
+        /// <param name="int_pIdCancionSimple">Id del CancionSimple</param>
+        /// <returns>Objeto CancionSimple</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>10-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Cancion Obtener(int int_pIdCancionSimple)
+        {
+            return Kruma.KantaPe.Data.Cancion.Obtener(int_pIdCancionSimple);
+        }
+
+        /// <summary>Insertar CancionSimple</summary>
+        /// <param name="obj_pCancionSimple">CancionSimple</param>
+        /// <returns>Id de CancionSimple</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>10-03-2017</FecCrea></item></list></remarks>
+        public static ProcessResult Insertar(Kruma.KantaPe.Entidad.Cancion obj_pCancion)
+        {
+            ProcessResult obj_Resultado = null;
+
+            try
+            {
+                System.Collections.Generic.List<Kruma.KantaPe.Entidad.Cancion> lst_Registros = Kruma.KantaPe.Data.Cancion.Listar(null, null, null, null, null).Result;
+                if (lst_Registros.Where(x => x.Descripcion.Trim().ToLower().Equals(obj_pCancion.Descripcion.Trim().ToLower())
+                                                || x.Descripcion.Trim().ToUpper().Equals(obj_pCancion.Descripcion.Trim().ToUpper()))
+                                                                .ToList().Count > 0)
+                    return new ProcessResult(new Exception("Ya existe una cancion con la misma descripción."));
+                else
+                {
+                    int int_IdCancion = Kruma.KantaPe.Data.Cancion.Insertar(obj_pCancion);
+                    obj_Resultado = new ProcessResult(int_IdCancion);
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar CancionSimple</summary>
+        /// <param name="obj_pCancionSimple">CancionSimple</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>10-03-2017</FecCrea></item></list></remarks>
+        public static ProcessResult Modificar(Kruma.KantaPe.Entidad.Cancion obj_pCancion)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Data.Cancion.Modificar(obj_pCancion);
+                obj_Resultado = new ProcessResult(obj_pCancion.IdCancion);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado CancionSimple</summary>
+        /// <param name="obj_pCancionSimple">CancionSimple</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>10-03-2017</FecCrea></item></list></remarks>
+        public static ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.Cancion obj_pCancion)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.Cancion obj_CancionSimple = Kruma.KantaPe.Data.Cancion.Obtener(obj_pCancion.IdCancion.Value);
+                if (obj_CancionSimple.Estado == obj_pCancion.Estado)
+                {
+                    string str_Mensaje = obj_pCancion.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "El género ya se encuentra activa." :
+                        "El género ya se encuentra inactiva.";
+                    return new ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_CancionSimple.Estado = obj_pCancion.Estado;
+                obj_CancionSimple.UsuarioModificacion = obj_pCancion.UsuarioModificacion;
+                Kruma.KantaPe.Data.Cancion.Modificar(obj_CancionSimple);
+
+                obj_Resultado = new ProcessResult(obj_pCancion.IdCancion);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+
+            return obj_Resultado;
+        }
+        #endregion
+    }
+}

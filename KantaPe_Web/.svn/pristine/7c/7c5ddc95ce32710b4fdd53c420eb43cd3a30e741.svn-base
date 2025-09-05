@@ -1,0 +1,68 @@
+﻿CREATE PROCEDURE [CoreListarParametro] 
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de inserción del empleado
+	para el usuario
+'*	Input			:	@pIdEmpleado - Id del empleado,
+						@pIdUsuario - Codigo del usuario,
+						@pApellidoPaterno - Apellido paterno del empleado,
+						@pApellidoMaterno - Apellido materno del empleado,
+						@pNombres - Nombre del empleado,
+						@pMail - Mail del empleado,
+						@pEstado - Estado del empleado,
+						@pUsuarioCreacion - Usuario creacion
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación		: 15/12/2014
+'**********************************************************************************
+*/
+(
+	@pIdModulo		varchar(max) = null,
+	@pIdParametro	varchar(20) = null,
+	@pDescripcion	varchar(100) = null,
+	@pSistema		char(1) = null,
+	@pEstado		char(1) = null,
+	@pNumPagina int = null,
+	@pTamPagina int = null
+)
+As
+Begin
+		Select tbl.*
+		from(
+		Select
+		ROW_NUMBER() OVER (ORDER BY P.IdParametro ASC) AS Num_Fila,
+		P.IdModulo,
+		P.IdParametro,
+		P.Descripcion,
+		P.Valor,
+		P.Sistema,
+		P.Estado,
+		P.UsuarioCreacion,
+		P.FechaCreacion,
+		P.UsuarioModificacion,
+		P.FechaModificacion,
+		M.IdModulo as Modulo_IdModulo,
+		M.Descripcion as Modulo_Descripcion,
+		M.Estado as Modulo_Estado,
+		COUNT(*) OVER() Total_Filas
+		From CoreParametro P
+		Inner join CoreModulo M on
+		M.IdModulo = P.IdModulo AND
+		M.Estado = 'A'
+		Where 
+		(@pIdModulo is null or P.IdModulo in 
+			(SELECT item FROM Split(',',@pIdModulo))) AND
+		(@pIdParametro IS NULL OR P.IdParametro = @pIdParametro) AND
+		(@pDescripcion IS NULL OR P.Descripcion like '%' + @pDescripcion + '%') AND
+		(@pSistema IS NULL OR P.Sistema = @pSistema) AND
+		(@pEstado IS NULL OR P.Estado = @pEstado) 
+		) tbl
+		WHERE (@pTamPagina IS NULL OR tbl.Num_Fila BETWEEN (@pNumPagina * @pTamPagina)- @pTamPagina + 1 AND (@pNumPagina * @pTamPagina));
+End
+
+
+
+
+
+
+

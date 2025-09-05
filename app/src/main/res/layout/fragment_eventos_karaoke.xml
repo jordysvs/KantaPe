@@ -1,0 +1,25 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/cantando"
+    android:orientation="vertical"
+    tools:context="com.kruma.kanta.view.fragments.EventoKaraokeFragment">
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/lstEventos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"></android.support.v4.view.ViewPager>
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="#000" />
+
+
+
+</RelativeLayout>

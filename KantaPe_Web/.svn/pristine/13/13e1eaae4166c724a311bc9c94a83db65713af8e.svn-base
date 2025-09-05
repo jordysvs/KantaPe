@@ -1,0 +1,18 @@
+﻿CREATE TABLE [dbo].[FileServerAlmacen]
+(
+	[IdAlmacen] [int] NOT NULL,
+	[IdModulo] [char](8) NULL,
+	[Descripcion] [varchar](50) NULL,
+	[Ruta] [varchar](200) NULL,
+	[TipoAlmacen] [int] NULL,
+	[Usuario] [varchar](50) NULL,
+	[Clave] [varchar](50) NULL,
+	[Dominio] [varchar](50) NULL,
+	[Estado] [char](1) NULL,
+	[UsuarioCreacion] [varchar](20) NULL,
+	[FechaCreacion] [datetime] NULL,
+	[UsuarioModificacion] [varchar](20) NULL,
+	[FechaModificacion] [datetime] NULL,
+	CONSTRAINT [PK_FileServerAlmacen] PRIMARY KEY ([IdAlmacen]), 
+    CONSTRAINT [FK_FileServerAlmacen_CoreModulo] FOREIGN KEY ([IdModulo]) REFERENCES [CoreModulo]([IdModulo])
+)

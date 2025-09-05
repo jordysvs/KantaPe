@@ -1,0 +1,134 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+    /// <summary>Genero</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+
+    public class Genero
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Genero</summary>
+        /// <param name="int_pIdGenero">Id del genero</param>
+        /// <param name="str_pDescripcion">Descripción del genero</param>
+        /// <param name="str_pEstado">Estado del genero</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Genero</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Genero> Listar(
+            int? int_pIdGenero,
+            string str_pDescripcion,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Genero> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Genero>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarGenero");
+            
+            dop_Operacion.Parameters.Add(new Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pDescripcion", !string.IsNullOrEmpty(str_pDescripcion) ? str_pDescripcion : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Genero> lst_Genero = new List<Kruma.KantaPe.Entidad.Genero>();
+
+            Kruma.KantaPe.Entidad.Genero obj_Genero = new Kruma.KantaPe.Entidad.Genero();
+
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Genero.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+
+                obj_Genero = new Kruma.KantaPe.Entidad.Genero();
+
+                obj_Genero.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Genero.Descripcion = obj_Row["Descripcion"] is DBNull ? null : obj_Row["Descripcion"].ToString();
+                obj_Genero.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Genero.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_Genero.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Genero.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Genero.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                lst_Genero.Add(obj_Genero);
+            }
+
+            obj_Lista.Result = lst_Genero;
+
+            return obj_Lista;
+        }
+
+        /// <summary>Obtener Genero</summary>
+        /// <param name="int_pIdGenero">Id del genero</param>
+        /// <returns>Objeto GEnero</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Genero Obtener(int int_pIdGenero)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Genero> lst_Genero = Listar(int_pIdGenero, null, null, null, null);
+            return lst_Genero.Result.Count > 0 ? lst_Genero.Result[0] : null;
+        }
+
+        /// <summary>Insertar Genero</summary>
+        /// <param name="obj_pGenero">Genero</param>
+        /// <returns>Id de Genero</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static int Insertar(Kruma.KantaPe.Entidad.Genero obj_pGenero)
+        {
+            DataOperation dop_Operacion = new DataOperation("InsertarGenero");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pDescripcion", obj_pGenero.Descripcion));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pGenero.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioCreacion", obj_pGenero.UsuarioCreacion));
+
+            Parameter obj_IdGenero = new Parameter("@pIdGenero", DbType.Int32);
+            obj_IdGenero.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdGenero);
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdGenero = (int)obj_IdGenero.Value;
+            return int_IdGenero;
+        }
+
+        /// <summary>Modificar Genero</summary>
+        /// <param name="obj_pGenero">Genero</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static void Modificar(Kruma.KantaPe.Entidad.Genero obj_pGenero)
+        {
+            DataOperation dop_Operacion = new DataOperation("ActualizarGenero");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdGenero", obj_pGenero.IdGenero));
+            dop_Operacion.Parameters.Add(new Parameter("@pDescripcion", obj_pGenero.Descripcion));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pGenero.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioModificacion", obj_pGenero.UsuarioModificacion));
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,127 @@
+﻿var int_NumPagina = 1;
+var int_TamPagina = 10;
+
+var urlHome = '/Forms/Portal/Home.aspx';
+var urlRanking = '/Forms/Portal/Ranking.aspx';
+var urlKaraoke = '/Forms/Portal/Karaoke.aspx';
+var urlEventos = '/Forms/Portal/Eventos.aspx';
+$(function () {
+    CargarCabecera();
+    ListarRankiados();
+});
+
+function CargarCabecera() {
+    var divRowCategorias = $("#divBotones");
+    divRowCategorias.append("<button onclick= 'IrHome();return false;' style='border-style: solid;border-width:0px; color: white; padding: 30px 360px 10px 20px;' class='btn btn-sm btn-info'> " + "HOME" + "</button>");
+    divRowCategorias.append("<button onclick= 'IrRanking();return false;' style='border-style: solid;border-width:0px; color: white; padding: 30px 360px 10px 20px;' class='btn btn-sm btn-info'>" + "RANKING" + "</button>");
+    divRowCategorias.append("<button onclick= 'IrKaraoke();return false;' style='border-style: solid;border-width:0px; color: white; padding: 30px 360px 10px 20px;' class='btn btn-sm btn-info'>" + "KARAOKE" + "</button>");
+}
+//Lista de Rankiados
+function ListarRankiados() {
+    AccionDefault(true, "Ranking.aspx/ListarRankiados", {}, CargarGrilla, null, null, null, 1);
+}
+
+//Carga la grilla de cursos
+function CargarGrilla(obj_pLista) {
+    var urlContador = 1;
+    var contador = 1;
+
+    var int_Indice = 0;
+    var int_Columnas = 3;
+    var str_HTML = "";
+    var int_Puesto = 1;
+    var div_Eventos = $("#divRankiados");
+    div_Eventos.html('');
+
+    if (obj_pLista.Result.length <= 0) {
+        str_HTML += "<div class='col-lg-12' align='center' style='margin-top: 25px;'>No tiene eventos.</div>";
+        $("#divRankiados").append(str_HTML);
+    }
+    else {
+        var str_Titulo = '';
+        var str_Descripcion = '';
+        var str_ImagenURL = '';
+        for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+            str_Titulo = '';
+            str_Descripcion = '';
+            str_URL = '';
+
+            if (int_Indice == 0) {
+                div_Row = $("<div class='row'></div>");
+                div_Eventos.append(div_Row);
+            }
+
+            if (obj_pLista.Result[i].LocalCancion.Album.IdAlbum != null) {
+                str_Titulo = obj_pLista.Result[i].LocalCancion.Cancion.Descripcion;
+                str_ImagenURL = obj_pLista.Result[i].LocalCancion.Album.ImagenURL;
+            }
+            
+            //OBTENER LA URL DE LA IMAGEN DEL NUMERO
+            var url_Numero = "../../Images/Numero/Numero"+urlContador+".png";
+            //var url_Ranking_Texto = "../../Images/Textos/Ranking-Texto.png";
+
+
+
+            str_HTML = '';
+            if (contador == 4) {
+                contador = 1;
+            }
+            if (contador == 1) {
+                str_HTML += "<div class='col-lg-1' align='rigth' style='margin-top: 50px;'>";
+                str_HTML += "</div>";
+            }
+                str_HTML += "<div class='col-lg-1' align='rigth' style='margin-top: 50px;'>";
+                str_HTML += "<table>";
+                str_HTML += "<tbody>";
+                str_HTML += "<tr>";
+                str_HTML += "<td align='rigth' style='padding: 1px 1px 1px 1px;'>";
+                str_HTML += "<img alt='' style='max-height: 150px;min-height: 150px;max-width:150px;200px;min-width:150px;' src='" + url_Numero + "'  />";
+                str_HTML += "</tr>";
+                str_HTML += "</tbody>";
+                str_HTML += "</table>";
+                str_HTML += "</div>";
+                str_HTML += "<div class='col-lg-2' align='left' style='margin-top: 50px;'>";
+                str_HTML += "<table style='height: 120px; width: 120px; border-color: white; border-style: solid; border-width: thin; color: black;'>";
+                str_HTML += "<tbody>";
+                str_HTML += "<td align='left' style='padding: 1px 1px 1px 1px;'>";
+                str_HTML += "<img alt='' style='max-height: 120px;min-height: 120px;max-width:170px;200px;min-width:170px;' src='" + str_ImagenURL + "'  /></td>";
+                str_HTML += "</tr>";
+                str_HTML += "<tr>";
+                str_HTML += "<td style='background-color:#1F3C83;' align='center'>";
+                str_HTML += "<button class='btnLocal btn btn-info' Onclick='return false' style='width:100%;'>";
+                str_HTML += "" + str_Titulo + "</button>";
+                str_HTML += "</td>";
+                str_HTML += "</tr>";
+                str_HTML += "</tbody>";
+                str_HTML += "</table>";
+                str_HTML += "</div>";
+            
+            div_Row.append($(str_HTML));
+
+            contador++;
+            urlContador++;
+            int_Indice += 1;
+            int_Puesto += 1;
+            if (int_Indice == int_Columnas)
+                int_Indice = 0;
+        }
+    }
+}
+function IrHome() {
+    MostrarMensajeCargando();
+    document.location.href = urlHome;
+}
+
+
+function IrRanking() {
+    MostrarMensajeCargando();
+    document.location.href = urlRanking;
+}
+function IrKaraoke() {
+    MostrarMensajeCargando();
+    document.location.href = urlKaraoke;
+}
+
+
+

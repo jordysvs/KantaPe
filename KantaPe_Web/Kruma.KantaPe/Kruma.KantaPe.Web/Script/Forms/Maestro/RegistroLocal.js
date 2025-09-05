@@ -1,0 +1,503 @@
+﻿var urlPrincipal = 'Local.aspx';
+var urlEdicion = 'RegistroLocal.aspx';
+var markers = [];
+
+$(function () {
+    CargarInicial();
+    CargarControles();
+    ObtenerLocal();
+    initMap();
+});
+
+function CargarInicial() {
+    $('#chkFlagLocalizacion').bootstrapSwitch();
+    $('.icheck').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass: 'iradio_flat-green'
+    });
+
+    jQuery.validator.addMethod('selectEmpresa', function (value) {
+        return (value != '');
+    }, "Seleccione la empresa");
+
+    jQuery.validator.addMethod('selectEstado', function (value) {
+        return (value != '');
+    }, "Seleccione el estado");
+
+    $('#frmContent').validate({
+        rules: {
+            ctl00$cphBody$txtRadio: { required: true, },
+            ctl00$cphBody$ddlEmpresa: { selectEmpresa: true },
+            ctl00$cphBody$txtNombre: { required: true, },
+            ctl00$cphBody$txtDireccion: { required: true, },
+            ctl00$cphBody$txtHoraInicio: { required: true },
+            ctl00$cphBody$txtHoraFin: { required: true },
+            ctl00$cphBody$ddlEstado: { selectEstado: true }
+        },
+        messages: {
+            ctl00$cphBody$txtRadio: { required: 'Ingrese la radio' },
+            ctl00$cphBody$txtNombre: { required: 'Ingrese el nombre' },
+            ctl00$cphBody$txtDireccion: { required: 'Ingrese la dirección' },
+            ctl00$cphBody$txtHoraInicio: { required: 'Ingrese la hora de inicio de atención' },
+            ctl00$cphBody$txtHoraFin: { required: 'Ingrese la hora fin de atención' }
+        },
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+}
+
+function CargarControles() {
+
+    //controles
+    $("#fileUpload").fileserver(
+    {
+        idAlmacen: $("#hdIdAlmacen").val(),
+        idRegistro: -1,
+        autoUpload: true,
+        replace: true,
+        successMessage: false,
+        success: function (obj_pResultado) {
+            $("#lnkEliminarFoto").css('display', '');
+            $("#hdIdDocumento").val(obj_pResultado.ReturnId);
+            VerArchivoElemento('imgLocalImagen', $("#hdIdAlmacen").val(), -1, obj_pResultado.ReturnId);
+        }
+    });
+
+    //Eliminar Foto
+    $("#lnkEliminarFoto").click(function () { ConfirmJQ('¿Está seguro de eliminar la foto?', EliminarFoto); });
+    $("#lnkEliminarFoto").css('display', 'none');
+
+    $(".btnGrabar").click(function () {
+        GuardarLocal();
+        return false;
+    });
+
+    $(".btnCancelar").click(function () {
+        ConfirmJQ('¿Está seguro de regresar a la ventana anterior?', function () { document.location.href = urlPrincipal });
+        return false;
+    });
+
+    //Configuracion del ubigeo
+    $("#ddlPais").change(function () {
+        CargarDepartamento();
+        CargarProvincia();
+        CargarDistrito();
+        return false;
+    });
+
+    $("#ddlDepartamento").change(function () {
+        CargarProvincia();
+        CargarDistrito();
+        return false;
+    });
+
+    $("#ddlProvincia").change(function () {
+        CargarDistrito();
+        return false;
+    });
+
+    CargarPais(null);
+
+    $("#ddlEmpresa").focus();
+
+    $('#txtLongitud').prop("readonly", true);
+    $('#txtLatitud').prop("readonly", true);
+    $('#txtDireccion').prop("readonly", true);
+
+    KeyPressEnter("divMap",
+     function () {
+     });
+
+}
+
+function GuardarLocal() {
+
+    if ($('#frmContent').valid()) {
+        if (markers.length <= 0) {
+            AlertJQ(4, "Por favor idicar la ubicación.");
+            return false;
+        }
+        obj_Local = new Object();
+        obj_Local.IdLocal = $("#hdIdLocal").val();
+        obj_Local.IdEmpresa = $("#ddlEmpresa").val();
+        obj_Local.Nombre = $("#txtNombre").val();
+        obj_Local.Direccion = $("#txtDireccion").val();
+        obj_Local.Latitud = $("#txtLatitud").val();
+        obj_Local.Longitud = $("#txtLongitud").val();
+        obj_Local.Radio = $("#txtRadio").val();
+
+        if ($("#chkFlagLocalizacion").prop('checked')) {
+            obj_Local.FlagLocalizacion = 'S';
+        } else {
+            obj_Local.FlagLocalizacion = 'N';
+        }
+
+        obj_Local.Ubigeo = new Object();
+        obj_Local.Ubigeo.IdPais = null;
+        if ($("#ddlPais").val() != '-1')
+            obj_Local.Ubigeo.IdPais = $("#ddlPais").val();
+
+        obj_Local.Ubigeo.IdDepartamento = null;
+        if ($("#ddlDepartamento").val() != '-1')
+            obj_Local.Ubigeo.IdDepartamento = $("#ddlDepartamento").val();
+
+        obj_Local.Ubigeo.IdProvincia = null;
+        if ($("#ddlProvincia").val() != '-1')
+            obj_Local.Ubigeo.IdProvincia = $("#ddlProvincia").val();
+
+        obj_Local.Ubigeo.IdDistrito = null;
+        if ($("#ddlDistrito").val() != '-1')
+            obj_Local.Ubigeo.IdDistrito = $("#ddlDistrito").val();
+
+        obj_Local.HoraInicio = $("#txtHoraInicio").val();
+        obj_Local.HoraFin = $("#txtHoraFin").val();
+
+        obj_Local.Promocion = 0;
+        if ($("#txtPromocion").val() != '')
+            obj_Local.Promocion = $("#txtPromocion").val();
+
+        obj_Local.Estado = $("#ddlEstado").val();
+
+        //Eliminacion de la imagen
+        var str_Ruta = $('#hdLocalImagen').val();
+        if (str_Ruta == $("#imgLocalImagen").attr('src')) {
+            obj_Local.Foto = new Object();
+            obj_Local.Foto.IdAlmacen = $("#hdIdAlmacen").val();
+            obj_Local.Foto.IdRegistro = -1;
+            obj_Local.Foto.IdDocumento = null;
+        }
+
+        //Anexar Imagen
+        if ($("#hdIdDocumento").val() != '') {
+            obj_Local.Foto = new Object();
+            obj_Local.Foto.IdAlmacen = $("#hdIdAlmacen").val();
+            obj_Local.Foto.IdRegistro = -1;
+            obj_Local.Foto.IdDocumento = $("#hdIdDocumento").val();
+        }
+
+        Accion('RegistroLocal.aspx/GuardarLocal', { "str_pLocal": JSON.stringify(obj_Local) },
+            function () { document.location.href = urlPrincipal; });
+    }
+}
+
+function ObtenerLocal() {
+    var int_IdLocal = $("#hdIdLocal").val();
+    if (int_IdLocal != '') {
+        var obj_Local = ObtenerData("RegistroLocal.aspx/ObtenerLocal", { "int_pIdLocal": int_IdLocal });
+        if (obj_Local != null) {
+
+            $("#txtNombre").val(obj_Local.Nombre);
+            $("#txtDireccion").val(obj_Local.Direccion);
+            $("#ddlEmpresa").val(obj_Local.IdEmpresa);
+            $("#txtLatitud").val(obj_Local.Latitud);
+            $("#txtLongitud").val(obj_Local.Longitud);
+            $("#txtHoraInicio").val(obj_Local.HoraInicio);
+            $("#txtHoraFin").val(obj_Local.HoraFin);
+            $("#txtPromocion").val(obj_Local.Promocion);
+            $("#txtRadio").val(obj_Local.Radio);
+            $("#ddlEstado").val(obj_Local.Estado);
+
+            if (obj_Local.FlagLocalizacion == "S") {
+                $("#chkFlagLocalizacion").bootstrapSwitch('state', true);
+            } else {
+                $("#chkFlagLocalizacion").bootstrapSwitch('state', false);
+            }
+            //Ubigeo
+            if (obj_Local.Ubigeo != null) {
+                CargarPais(obj_Local.Ubigeo.IdPais);
+                CargarDepartamento(obj_Local.Ubigeo.IdDepartamento);
+                CargarProvincia(obj_Local.Ubigeo.IdProvincia);
+                CargarDistrito(obj_Local.Ubigeo.IdDistrito);
+            }
+            //Auditoria
+            $("#ddUsuarioCreacion").html(obj_Local.UsuarioCreacion);
+            $("#ddUsuarioModificacion").html(obj_Local.UsuarioModificacion);
+            $("#ddFechaCreacion").html(ToDateTimeString(obj_Local.FechaCreacion));
+            $("#ddFechaModificacion").html(ToDateTimeString(obj_Local.FechaModificacion));
+
+            $("#ddlEmpresa").prop('disabled', true);
+
+            //Foto
+            AccionValor('RegistroLocal.aspx/ObtenerImagenURL', { "int_pIdRegistro": obj_Local.IdLocal },
+            function (str_pUrl) {
+                $("#lnkEliminarFoto").css('display', '');
+
+                if (str_pUrl == '') {
+                    str_pUrl = $("#hdLocalImagen").val();
+                    $("#lnkEliminarFoto").css('display', 'none');
+                }
+                $("#imgLocalImagen").attr("src", str_pUrl);
+            });
+        }
+    }
+}
+
+function EliminarFoto() {
+    $("#hdIdDocumento").val('');
+    var str_Ruta = $('#hdLocalImagen').val();
+    $("#imgLocalImagen").attr('src', str_Ruta);
+    $("#lnkEliminarFoto").css('display', 'none');
+}
+
+function CargarPais(int_pIdPais) {
+    var ddlPais = $("#ddlPais");
+    ddlPais.html('');
+    ddlPais.append($("<option value='-1'>--Seleccione--</option>"));
+    AccionDefault((int_pIdPais == null), "RegistroLocal.aspx/ListarPais", {},
+    function (obj_pLista) {
+        var str_Selected = '';
+        for (var i = 0; i < obj_pLista.length; i++) {
+            str_Selected = (obj_pLista[i].Pais.IdPais == int_pIdPais) ? 'selected' : '';
+            ddlPais.append($("<option value='" + obj_pLista[i].Pais.IdPais + "' " + str_Selected + " >" + obj_pLista[i].Pais.Descripcion + "</option>"));
+        }
+    }, null, null, null, 1);
+}
+
+function CargarDepartamento(int_pIdDepartamento) {
+    var ddlDepartamento = $("#ddlDepartamento");
+    ddlDepartamento.html('');
+    ddlDepartamento.append($("<option value='-1'>--Seleccione--</option>"));
+
+    if ($("#ddlPais").val() != '-1') {
+        var obj_Data = { "int_pIdPais": $("#ddlPais").val() };
+        AccionDefault((int_pIdDepartamento == null), "RegistroLocal.aspx/ListarDepartamento", obj_Data,
+        function (obj_pLista) {
+            var str_Selected = '';
+            for (var i = 0; i < obj_pLista.length; i++) {
+                str_Selected = (obj_pLista[i].Departamento.IdDepartamento == int_pIdDepartamento) ? 'selected' : '';
+                ddlDepartamento.append($("<option value='" + obj_pLista[i].Departamento.IdDepartamento + "' " + str_Selected + " >" + obj_pLista[i].Departamento.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+function CargarProvincia(int_pIdProvincia) {
+    var ddlProvincia = $("#ddlProvincia");
+    ddlProvincia.html('');
+    ddlProvincia.append($("<option value='-1'>--Seleccione--</option>"));
+
+    if ($("#ddlDepartamento").val() != '-1') {
+        var obj_Data = {
+            "int_pIdPais": $("#ddlPais").val(),
+            "int_pIdDepartamento": $("#ddlDepartamento").val()
+        };
+        AccionDefault((int_pIdProvincia == null), "RegistroLocal.aspx/ListarProvincia", obj_Data,
+        function (obj_pLista) {
+            var str_Selected = '';
+            for (var i = 0; i < obj_pLista.length; i++) {
+                str_Selected = (obj_pLista[i].Provincia.IdProvincia == int_pIdProvincia) ? 'selected' : '';
+                ddlProvincia.append($("<option value='" + obj_pLista[i].Provincia.IdProvincia + "' " + str_Selected + " >" + obj_pLista[i].Provincia.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+
+function CargarDistrito(int_pIdDistrito) {
+    var ddlDistrito = $("#ddlDistrito");
+    ddlDistrito.html('');
+    ddlDistrito.append($("<option value='-1'>--Seleccione--</option>"));
+
+    if ($("#ddlProvincia").val() != '-1') {
+        var obj_Data = {
+            "int_pIdPais": $("#ddlPais").val(),
+            "int_pIdDepartamento": $("#ddlDepartamento").val(),
+            "int_pIdProvincia": $("#ddlProvincia").val()
+        };
+        AccionDefault((int_pIdDistrito == null), "RegistroLocal.aspx/ListarDistrito", obj_Data,
+        function (obj_pLista) {
+            var str_Selected = '';
+            for (var i = 0; i < obj_pLista.length; i++) {
+                str_Selected = (obj_pLista[i].Distrito.IdDistrito == int_pIdDistrito) ? 'selected' : '';
+                ddlDistrito.append($("<option value='" + obj_pLista[i].Distrito.IdDistrito + "' " + str_Selected + " >" + obj_pLista[i].Distrito.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+//-----------------------------         MAPA         ----------------------------
+function initMap() {
+    var str_Latitud = $("#txtLatitud").val();
+    var str_Longitud = $("#txtLongitud").val();
+    var map;
+    if (str_Latitud != null && str_Latitud != "") {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: parseFloat(str_Latitud), lng: parseFloat(str_Longitud) },
+            zoom: 15
+        });
+        // var infoWindow = new google.maps.InfoWindow({ map: map });
+        var obj_Point = new google.maps.LatLng(parseFloat(str_Latitud), parseFloat(str_Longitud));
+        AddMaker(obj_Point, map, 'Ubicación actual');
+    } else {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: -12.04731599171454, lng: -77.03016757965088 },
+            zoom: 15
+        });
+        // var infoWindow = new google.maps.InfoWindow({ map: map });
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                //infoWindow.setPosition(pos);
+                //infoWindow.setContent('Ubicación actual.');
+                //map.setCenter(pos);
+                var obj_Point = new google.maps.LatLng(pos.lat, pos.lng);
+                AddMaker(obj_Point, map, 'Ubicación actual');
+            }, function () {
+                //handleLocationError(true, infoWindow, map.getCenter());
+            });
+        } else {
+            //handleLocationError(false, infoWindow, map.getCenter());
+        }
+    }
+    map.addListener('click', function (e) {
+        AddMaker(e.latLng, map, '');
+    });
+
+    var centerControlDiv = document.createElement('div');
+    var centerControl = new CenterControl(centerControlDiv, map);
+
+    centerControlDiv.index = 1;
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(centerControlDiv);
+
+    var input = document.getElementById('txtBuscadorMapa');
+    var searchBox = new google.maps.places.SearchBox(input);
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+
+    map.addListener('bounds_changed', function () {
+        searchBox.setBounds(map.getBounds());
+    });
+
+
+    searchBox.addListener('places_changed', function () {
+        var places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+            return;
+        }
+
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function (place) {
+            if (!place.geometry) {
+                return;
+            }
+            var icon = {
+                url: place.icon,
+                size: new google.maps.Size(71, 71),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(17, 34),
+                scaledSize: new google.maps.Size(25, 25)
+            };
+
+            AddMaker(place.geometry.location, map, place.name);
+            if (place.geometry.viewport) {
+                bounds.union(place.geometry.viewport);
+            } else {
+                bounds.extend(place.geometry.location);
+            }
+        });
+        map.fitBounds(bounds);
+    });
+
+
+
+}
+function AddMaker(obj_pPosition, obj_pMap, str_pTitle) {
+    setMapClean();
+
+    var str_Latitud = obj_pPosition.lat();
+    var str_Longitud = obj_pPosition.lng();
+
+    var marker = new google.maps.Marker({
+        position: obj_pPosition,
+        map: obj_pMap,
+        title: str_pTitle
+    });
+    obj_pMap.panTo(obj_pPosition);
+    markers.push(marker);
+    $("#txtLatitud").val(str_Latitud);
+    $("#txtLongitud").val(str_Longitud);
+
+
+    //Obtener la direccion y llenar la caja de texto
+    var geocoder = new google.maps.Geocoder;
+    var infowindow = new google.maps.InfoWindow;
+    geocodeLatLng(geocoder, map, infowindow);
+
+}
+
+function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    infoWindow.setPosition(pos);
+    //infoWindow.setContent(browserHasGeolocation ?
+    //                      'Active su GPS por favor.' :
+    //                      'Error: El navegador no soporta geolocalización.');
+}
+
+function setMapClean() {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+}
+
+function CenterControl(controlDiv, map) {
+
+    // Set CSS for the control border.
+    var controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = '#fff';
+    controlUI.style.border = '2px solid #fff';
+    controlUI.style.borderRadius = '3px';
+    controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.marginBottom = '22px';
+    controlUI.style.textAlign = 'center';
+    controlUI.title = 'Click para limpiar la marca';
+    controlDiv.appendChild(controlUI);
+
+    // Set CSS for the control interior.
+    var controlText = document.createElement('div');
+    controlText.style.color = 'rgb(25,25,25)';
+    controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+    controlText.style.fontSize = '12px';
+    controlText.style.lineHeight = '38px';
+    controlText.style.paddingLeft = '5px';
+    controlText.style.paddingRight = '5px';
+    controlText.innerHTML = 'Limpiar';
+    controlUI.appendChild(controlText);
+
+    // Setup the click event listeners: simply set the map to Chicago.
+    controlUI.addEventListener('click', function () {
+        setMapClean();
+        $("#txtLatitud").val('');
+        $("#txtLongitud").val('');
+    });
+
+}
+
+function geocodeLatLng(geocoder, map, infowindow) {
+    //var input = document.getElementById('latlng').value;
+    //var latlngStr = input.split(',', 2);
+    var latlng = { lat: parseFloat($("#txtLatitud").val()), lng: parseFloat($("#txtLongitud").val()) };
+    geocoder.geocode({ 'location': latlng }, function (results, status) {
+        if (status === 'OK') {
+            if (results[1]) {
+                //map.setZoom(11);
+                var marker = new google.maps.Marker({
+                    position: latlng,
+                    map: map
+                });
+                //infowindow.setContent(results[1].formatted_address);
+                //infowindow.open(map, marker);
+                $("#txtDireccion").val('')
+                $("#txtDireccion").val(results[1].formatted_address)
+
+            }
+        }
+    });
+}

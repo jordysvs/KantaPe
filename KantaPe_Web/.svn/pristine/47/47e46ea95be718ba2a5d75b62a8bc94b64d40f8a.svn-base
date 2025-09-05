@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Kruma.KantaPe.Service.Logical.Genero" CodeBehind="~/App_Code/Logical/Genero.cs" %>

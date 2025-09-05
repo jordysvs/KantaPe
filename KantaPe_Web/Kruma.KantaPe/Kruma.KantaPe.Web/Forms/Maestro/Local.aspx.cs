@@ -1,0 +1,152 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Forms_Maestro_Local : System.Web.UI.Page
+{
+    #region Eventos
+
+    /// <summary>
+    /// Carga inicial de la pagina
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+            CargaInicial();
+    }
+
+    #endregion
+
+    #region Metodos Privados
+
+    /// <summary>
+    /// Carga inicial del formulario
+    /// </summary>
+    private void CargaInicial()
+    {
+        Master_Default obj_MasterPage = (Master_Default)this.Master;
+        obj_MasterPage.TituloPagina = "Local";
+
+        //Lista de empresa
+        List<Kruma.KantaPe.Entidad.Empresa> lst_Empresa = null;
+        if (Kruma.Core.Security.SecurityManager.Usuario.Sistema == Kruma.Core.Security.Entity.Constante.Condicion_Positivo)
+            lst_Empresa = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        else
+        {
+            List<Kruma.KantaPe.Entidad.Empleado> lst_Empleado = Kruma.KantaPe.Negocio.Empleado.Listar(null, null, Kruma.Core.Security.SecurityManager.Usuario.IdPersona.Value, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+            lst_Empresa = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+            lst_Empresa = (from obj_Empresa in lst_Empresa
+                           from obj_Empleado in lst_Empleado.Where(x => obj_Empresa.IdEmpresa == x.IdEmpresa).DefaultIfEmpty()
+                           select obj_Empresa).ToList();
+        }
+
+        ddlEmpresa.DataSource = lst_Empresa;
+        ddlEmpresa.DataValueField = "IdEmpresa";
+        ddlEmpresa.DataTextField = "NombreComercial";
+        ddlEmpresa.DataBind();
+        ddlEmpresa.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //Estado
+        ddlEstado.DataSource = Kruma.Core.Util.CommonUtil.ListarEstado();
+        ddlEstado.DataValueField = "Code";
+        ddlEstado.DataTextField = "Description";
+        ddlEstado.DataBind();
+        ddlEstado.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //Ubigeo
+        ddlDepartamento.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+        ddlProvincia.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+        ddlDistrito.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+    }
+
+    #endregion
+
+    #region Metodos Publicos
+
+    [WebMethod]
+    public static List<Kruma.Core.Business.Entity.Ubigeo> ListarPais()
+    {
+        return Kruma.Core.Business.Logical.Ubigeo.ListarPais(
+            null, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null).Result;
+    }
+
+
+    [WebMethod]
+    public static List<Kruma.Core.Business.Entity.Ubigeo> ListarDepartamento(
+        int int_pIdPais)
+    {
+        return Kruma.Core.Business.Logical.Ubigeo.ListarDepartamento(
+            null, int_pIdPais, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null).Result;
+    }
+
+    [WebMethod]
+    public static List<Kruma.Core.Business.Entity.Ubigeo> ListarProvincia(
+        int int_pIdPais,
+        int int_pIdDepartamento)
+    {
+        return Kruma.Core.Business.Logical.Ubigeo.ListarProvincia(
+            null, int_pIdPais, int_pIdDepartamento, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null).Result;
+    }
+
+    [WebMethod]
+    public static List<Kruma.Core.Business.Entity.Ubigeo> ListarDistrito(
+        int int_pIdPais,
+        int int_pIdDepartamento,
+        int int_pIdProvincia)
+    {
+        return Kruma.Core.Business.Logical.Ubigeo.ListarDistrito(
+            null, int_pIdPais, int_pIdDepartamento, int_pIdProvincia, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null).Result;
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local> ListarLocal(
+        int? int_pIdEmpresa,
+        string str_pNombre,
+        int? int_pIdPais,
+        int? int_pIdDepartamento,
+        int? int_pIdProvincia,
+        int? int_pIdDistrito,
+        string str_pEstado,
+        int? int_pHoraInicio,
+        int? int_pHoraFin,
+        string str_pFlagLocalizacion,
+        int? int_pNumPagina,
+        int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Local.Listar(
+            null,
+            int_pIdEmpresa,
+            null,
+            str_pNombre,
+            null,
+            int_pIdPais,
+            int_pIdDepartamento,
+            int_pIdProvincia,
+            int_pIdDistrito,
+            str_pEstado,
+            int_pHoraInicio,
+            int_pHoraFin,
+            str_pFlagLocalizacion,
+            null,
+            int_pNumPagina,
+            int_pTamPagina);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(
+        int int_pIdLocal, string str_pEstado)
+    {
+        Kruma.KantaPe.Entidad.Local obj_Local = new Kruma.KantaPe.Entidad.Local();
+        obj_Local.IdLocal = int_pIdLocal;
+        obj_Local.Estado = str_pEstado;
+        return Kruma.KantaPe.Negocio.Local.ModificarEstado(obj_Local);
+    }
+
+    #endregion
+}

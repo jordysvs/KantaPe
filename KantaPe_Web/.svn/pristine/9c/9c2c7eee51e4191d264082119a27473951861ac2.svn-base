@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{20E88311-55D2-4470-A3CF-2573E892DF9F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kruma.KantaPe.Data</RootNamespace>
+    <AssemblyName>Kruma.KantaPe.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Kruma.Core.Business">
+      <HintPath>..\Componentes\Kruma.Core.Business.dll</HintPath>
+    </Reference>
+    <Reference Include="Kruma.Core.Data, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Componentes\Kruma.Core.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Kruma.Core.Security">
+      <HintPath>..\Componentes\Kruma.Core.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Kruma.Core.Util">
+      <HintPath>..\Componentes\Kruma.Core.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Album.cs" />
+    <Compile Include="Alerta.cs" />
+    <Compile Include="AlertaTipo.cs" />
+    <Compile Include="Apertura.cs" />
+    <Compile Include="AperturaCancion.cs" />
+    <Compile Include="AperturaCancionSolicitud.cs" />
+    <Compile Include="Empleado.cs" />
+    <Compile Include="Empresa.cs" />
+    <Compile Include="Cancion.cs" />
+    <Compile Include="Local.cs" />
+    <Compile Include="LocalCancionTemporal.cs" />
+    <Compile Include="ProductoTipo.cs" />
+    <Compile Include="Token.cs" />
+    <Compile Include="TokenNotificacion.cs" />
+    <Compile Include="Turno.cs" />
+    <Compile Include="TurnoDetalle.cs" />
+    <Compile Include="Usuario.cs" />
+    <Compile Include="SolicitudCancion.cs" />
+    <Compile Include="UbicacionTipo.cs" />
+    <Compile Include="AperturaCancionTipo.cs" />
+    <Compile Include="AperturaUbicacion.cs" />
+    <Compile Include="AperturaUsuario.cs" />
+    <Compile Include="Artista.cs" />
+    <Compile Include="Evento.cs" />
+    <Compile Include="LocalCancion.cs" />
+    <Compile Include="CancionSolicitud.cs" />
+    <Compile Include="Genero.cs" />
+    <Compile Include="Conexiones.cs" />
+    <Compile Include="Horario.cs" />
+    <Compile Include="Idioma.cs" />
+    <Compile Include="Insumo.cs" />
+    <Compile Include="LocalInsumo.cs" />
+    <Compile Include="Mozo.cs" />
+    <Compile Include="Oferta.cs" />
+    <Compile Include="Producto.cs" />
+    <Compile Include="ProductoInsumo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ubicacion.cs" />
+    <Compile Include="UnidadMedida.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kruma.KantaPe.Entidad\Kruma.KantaPe.Entidad.csproj">
+      <Project>{2fb16b07-8692-45e7-b161-6e6d2763da67}</Project>
+      <Name>Kruma.KantaPe.Entidad</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

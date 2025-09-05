@@ -1,0 +1,338 @@
+﻿$(function () {
+    CargarInicial();
+    CargarControles();
+});
+
+function CargarInicial() {
+}
+function CargarControles() {
+    if ($("#hdIdLocal").val() != null && $("#hdIdLocal").val() != "") {
+        ListarAperturaMesaInicio(1);
+        ListarAperturaBoxInicio(1);
+    }
+}
+function ListarAperturaMesaInicio() {
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdLocal = null;
+    if ($("#hdIdLocal").val() != '')
+        obj_Filtro.IdLocal = $("#hdIdLocal").val();
+
+    var obj_Data = {
+
+        "int_pIdUbicacionTipo": 1,
+        "int_pIdLocal": obj_Filtro.IdLocal
+    };
+    AccionDefault(true, "Index.aspx/ListarAperturaMesaInicio", obj_Data, ListarGraficoAperturaMesaInicio, null, null, null, 1);
+}
+function ListarGraficoAperturaMesaInicio(obj_pLista) {
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdLocal = null;
+    if ($("#hdIdLocal").val() != '')
+        obj_Filtro.IdLocal = $("#hdIdLocal").val();
+
+    var int_pTotalUbicacion;
+
+    var lst_TotalUbicacion = ObtenerData('Index.aspx/ListarTotalUbicacion', {
+        "int_pIdUbicacionTipo": 1,
+        "int_pIdLocal": obj_Filtro.IdLocal
+    });
+
+    var int_pTotalMesa = 0;
+    var int_pTotalMesaAperturada = 0;
+    var int_pTotalMesaPendiente = 0;
+
+
+    if (lst_TotalUbicacion.Result.length == 0) {
+        int_pTotalUbicacion = 0;
+    }
+    else {
+        for (var n = 0; n < lst_TotalUbicacion.Result.length; n++) {
+            int_pTotalUbicacion = lst_TotalUbicacion.Result[n].Cantidad;
+        }
+    }
+
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+        int_pTotalMesaAperturada = obj_pLista.Result[i].Cantidad;
+        int_pTotalMesaPendiente = int_pTotalUbicacion - int_pTotalMesaAperturada
+    }
+    int_pTotalMesa = int_pTotalUbicacion;
+
+    var obj_DashBoard = new Object();
+    obj_DashBoard.TotalMesa = int_pTotalMesa;
+    obj_DashBoard.TotalMesaAperturada = int_pTotalMesaAperturada;
+    obj_DashBoard.TotalMesaPendiente = int_pTotalMesaPendiente;
+
+    var GraficoMesa = AmCharts.makeChart("divGrafico2", {
+        "type": "gauge",
+        "theme": "none",
+        "axes": [{
+            "axisThickness": 1,
+            "axisAlpha": 0.1,
+            "tickAlpha": 0.1,
+            "valueInterval": (
+                Math.floor(obj_DashBoard.TotalMesa / 6) == 0 ?
+                1 : Math.floor(obj_DashBoard.TotalMesa / 6)),
+            "bands": [{
+                "color": "#cc4748",
+                //"endValue": Math.ceil(obj_DashBoard.TotalMesa / 3),
+                //"startValue": 0
+                "endValue": (obj_DashBoard.TotalMesa == 0 || (obj_DashBoard.TotalMesa == 1 && obj_DashBoard.TotalMesaAperturada >= 0)) ? 0 : Math.ceil(obj_DashBoard.TotalMesa / 3),
+                "startValue": 0
+            },
+            {
+                "color": "#fdd400",
+                //"endValue": (Math.ceil(obj_DashBoard.TotalMesa / 3) * 2),
+                //"startValue": Math.ceil(obj_DashBoard.TotalMesa / 3)
+                "endValue": (obj_DashBoard.TotalMesa == 0 ? 1 :
+                (obj_DashBoard.TotalMesa == 1 && obj_DashBoard.TotalMesaAperturada >= 0) ? 1 : (Math.ceil(obj_DashBoard.TotalMesa / 3) * 2)),
+                "startValue": (obj_DashBoard.TotalMesa == 0 || (obj_DashBoard.TotalMesa == 1 && obj_DashBoard.TotalMesaAperturada >= 0)) ? 0 : Math.ceil(obj_DashBoard.TotalMesa / 3)
+            },
+            {
+                "color": "#84b761",
+                //"endValue": obj_DashBoard.TotalMesa,
+                //"startValue": (Math.ceil(obj_DashBoard.TotalMesa / 3) * 2)
+                "endValue": (obj_DashBoard.TotalMesa == 0 ? 1 : obj_DashBoard.TotalMesa),
+                "startValue": (obj_DashBoard.TotalMesa == 0 || (obj_DashBoard.TotalMesa == 1 && obj_DashBoard.TotalMesaAperturada >= 0)) ? 1 : (Math.ceil(obj_DashBoard.TotalMesa / 3) * 2)
+            }],
+            "bottomTextYOffset": -20,
+            //"endValue": obj_DashBoard.TotalMesa
+            "endValue": (obj_DashBoard.TotalMesa == 0 ? 1 : obj_DashBoard.TotalMesa)
+        }],
+        "arrows": [{}]
+    });
+
+    setInterval(function () {
+        var value = obj_DashBoard.TotalMesaAperturada;
+        GraficoMesa.arrows[0].setValue(value);
+        GraficoMesa.axes[0].setBottomText(value + " Mesas aperturadas");
+        $("#divGraficoComentario2").html("Usted tiene " + obj_DashBoard.TotalMesaAperturada + " mesa(s) aperturadas:<br>" +
+            "<br>- <b>Mesas cerradas</b>: " + obj_DashBoard.TotalMesaPendiente +
+            "<br>- <b>Mesas aperturadas</b>: " + obj_DashBoard.TotalMesaAperturada +
+            "<br>- <b>Total de mesas</b>: " + obj_DashBoard.TotalMesa
+            );
+    }, 2000);
+    //setInterval(MesaValue, 2000);
+}
+
+
+function ListarAperturaBoxInicio() {
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdLocal = null;
+    if ($("#hdIdLocal").val() != '')
+        obj_Filtro.IdLocal = $("#hdIdLocal").val();
+
+    var obj_Data = {
+
+        "int_pIdUbicacionTipo": 2,
+        "int_pIdLocal": obj_Filtro.IdLocal
+    };
+    AccionDefault(true, "Index.aspx/ListarAperturaMesaInicio", obj_Data, ListarGraficoAperturaBoxInicio, null, null, null, 1);
+}
+
+function ListarGraficoAperturaBoxInicio(obj_pLista) {
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdLocal = null;
+    if ($("#hdIdLocal").val() != '')
+        obj_Filtro.IdLocal = $("#hdIdLocal").val();
+
+    var int_pTotalUbicacion;
+
+    var lst_TotalUbicacion = ObtenerData('Index.aspx/ListarTotalUbicacion', {
+        "int_pIdUbicacionTipo": 2,
+        "int_pIdLocal": obj_Filtro.IdLocal
+    });
+
+    var int_pTotalMesa = 0;
+    var int_pTotalMesaAperturada = 0;
+    var int_pTotalMesaPendiente = 0;
+
+
+    if (lst_TotalUbicacion.Result.length == 0) {
+        int_pTotalUbicacion = 0;
+    }
+    else {
+        for (var n = 0; n < lst_TotalUbicacion.Result.length; n++) {
+            int_pTotalUbicacion = lst_TotalUbicacion.Result[n].Cantidad;
+        }
+    }
+
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+        int_pTotalMesaAperturada = obj_pLista.Result[i].Cantidad;
+        int_pTotalMesaPendiente = int_pTotalUbicacion - int_pTotalMesaAperturada
+
+    }
+    int_pTotalMesa = int_pTotalUbicacion;
+
+    var obj_DashBoard = new Object();
+    obj_DashBoard.TotalCancion = int_pTotalMesa;
+    obj_DashBoard.TotalCancionSolicitada = int_pTotalMesaAperturada;
+    obj_DashBoard.TotalCancionPendiente = int_pTotalMesaPendiente;
+
+    var GraficoCancion = AmCharts.makeChart("divGrafico1", {
+        "type": "gauge",
+        "theme": "none",
+        "axes": [{
+            "axisThickness": 1,
+            "axisAlpha": 0.1,
+            "tickAlpha": 0.1,
+            "valueInterval": (
+                Math.floor(obj_DashBoard.TotalCancion / 6) == 0 ?
+                1 : Math.floor(obj_DashBoard.TotalCancion / 6)),
+            "bands": [{
+
+                "color": "#84b761",
+                //"endValue": Math.ceil(obj_DashBoard.TotalCancion / 3),
+                "endValue": (obj_DashBoard.TotalCancion == 0 || (obj_DashBoard.TotalCancion == 1 && obj_DashBoard.TotalCancionSolicitada >= 0)) ? 0 : Math.ceil(obj_DashBoard.TotalCancion / 3),
+                "startValue": 0
+            },
+            {
+                "color": "#fdd400",
+                //"endValue": (Math.ceil(obj_DashBoard.TotalCancion / 3) * 2),
+                //"startValue": Math.ceil(obj_DashBoard.TotalCancion / 3)
+                "endValue": (obj_DashBoard.TotalCancion == 0 ? 1 :
+                (obj_DashBoard.TotalCancion == 1 && obj_DashBoard.TotalCancionSolicitada > 0) ? 1 : (Math.ceil(obj_DashBoard.TotalCancion / 3) * 2)),
+                "startValue": (obj_DashBoard.TotalCancion == 0 || (obj_DashBoard.TotalCancion == 1 && obj_DashBoard.TotalCancionSolicitada >= 0)) ? 0 : Math.ceil(obj_DashBoard.TotalCancion / 3)
+            },
+            {
+                "color": "#cc4748",
+                //"endValue": obj_DashBoard.TotalCancion,
+                //"startValue": (Math.ceil(obj_DashBoard.TotalCancion / 3) * 2)
+                "endValue": (obj_DashBoard.TotalCancion == 0 ? 1 : obj_DashBoard.TotalCancion),
+                "startValue": (obj_DashBoard.TotalCancion == 0 || (obj_DashBoard.TotalCancion == 1 && obj_DashBoard.TotalCancionSolicitada >= 0)) ? 1 : (Math.ceil(obj_DashBoard.TotalCancion / 3) * 2)
+            }],
+            "bottomTextYOffset": -20,
+            //"endValue": obj_DashBoard.TotalCancion
+            "endValue": (obj_DashBoard.TotalCancion == 0 ? 1 : obj_DashBoard.TotalCancion)
+        }],
+        "arrows": [{}]
+    });
+
+    setInterval(function () {
+        var value = obj_DashBoard.TotalCancionSolicitada;
+        GraficoCancion.arrows[0].setValue(value);
+        GraficoCancion.axes[0].setBottomText(value + " Box aperturadas");
+        $("#divGraficoComentario1").html("Usted tiene " + obj_DashBoard.TotalCancionSolicitada + " Box aperturadas:<br>" +
+            "<br>- <b>Box cerradas</b>: " + obj_DashBoard.TotalCancionPendiente +
+            "<br>- <b>Box aperturadas</b>: " + obj_DashBoard.TotalCancionSolicitada +
+            "<br>- <b>Total de box</b>: " + obj_DashBoard.TotalCancion
+            );
+    }, 2000);
+    //setInterval(CancionValue, 2000);
+}
+
+
+
+
+
+//function MesaValue() {
+//    var value = obj_DashBoard.TotalMesaAperturada;
+//    GraficoMesa.arrows[0].setValue(value);
+//    GraficoMesa.axes[0].setBottomText(value + " Mesas solicitadas");
+//    $("#divGraficoComentario2").html("Usted tiene " + obj_DashBoard.TotalMesaAperturada + " mesa(s) aperturadas(s):<br>" +
+//        "<br>- <b>Mesas pendientes</b>: " + obj_DashBoard.TotalMesaPendiente +
+//        "<br>- <b>Mesas aperturadas</b>: " + obj_DashBoard.TotalMesaAperturada +
+//        "<br>- <b>Total de mesas</b>: " + obj_DashBoard.TotalMesa
+//        );
+//}
+
+
+
+
+//var obj_DashBoard = ObtenerData("Index.aspx/ObtenerDashBoard");
+
+//var gcAtendidos = AmCharts.makeChart("gcAtendidos", {
+//    "type": "gauge",
+//    "theme": "none",
+//    "axes": [{
+//        "axisThickness": 1,
+//        "axisAlpha": 0.1,
+//        "tickAlpha": 0.1,
+//        "valueInterval": (
+//            Math.floor(obj_DashBoard.TotalTramite / 6) == 0 ?
+//            1 : Math.floor(obj_DashBoard.TotalTramite / 6)),
+//        "bands": [{
+//            "color": "#cc4748",
+//            "endValue": Math.ceil(obj_DashBoard.TotalTramite / 3),
+//            "startValue": 0
+//        },
+//        {
+//            "color": "#fdd400",
+//            "endValue": (Math.ceil(obj_DashBoard.TotalTramite / 3) * 2),
+//            "startValue": Math.ceil(obj_DashBoard.TotalTramite / 3)
+//        },
+//        {
+//            "color": "#84b761",
+//            "endValue": obj_DashBoard.TotalTramite,
+//            "startValue": (Math.ceil(obj_DashBoard.TotalTramite / 3) * 2)
+//        }],
+//        "bottomTextYOffset": -20,
+//        "endValue": obj_DashBoard.TotalTramite
+//    }],
+//    "arrows": [{}]
+//});
+
+//setInterval(AtentidoValue, 2000);
+
+//function AtentidoValue() {
+//    var value = obj_DashBoard.TotalTramiteAtendido;
+//    gcAtendidos.arrows[0].setValue(value);
+//    gcAtendidos.axes[0].setBottomText(value + " Trámites atendidos");
+//    $("#gcAtendidosComentario").html("Usted tiene " + obj_DashBoard.TotalTramiteAtendido + " trámite(s) atendido(s):<br>" +
+//        "<br>- <b>Trámites pendientes</b>: " + obj_DashBoard.TotalTramitePendiente +
+//        "<br>- <b>Trámites atendidos</b>: " + obj_DashBoard.TotalTramiteAtendido +
+//        "<br>- <b>Total de trámites</b>: " + obj_DashBoard.TotalTramite
+//        );
+//}
+
+//$(function () {
+
+//    ListarGraficoTramitePendiente()
+
+//})
+
+//function ListarGraficoTramitePendiente() {
+
+//    $("#gcAtendidosATiempoComentario").html("Usted tiene " + obj_DashBoard.TotalTramiteATiempo + " trámite(s) pendiente(s):<br>" +
+//    "<br>- <b>Trámites pendientes</b>: " + obj_DashBoard.TotalTramitePendiente +
+//    "<br>- <b>Trámites pendientes a tiempo</b>: " + obj_DashBoard.TotalTramiteATiempo +
+//    "<br>- <b>Trámites pendientes fuera de tiempo</b>: " + obj_DashBoard.TotalTramiteFueraTiempo);
+
+//    var obj_data = [];
+//    obj_data.push(
+//        { label: "Trámites pendientes a tiempo", data: obj_DashBoard.TotalTramiteATiempo, color: "green" },
+//        { label: "Trámites pendientes fuera de tiempo", data: obj_DashBoard.TotalTramiteFueraTiempo, color: "red" }
+//           );
+
+
+//    $.plot("#divTramitePendiente", obj_data, {
+//        series: {
+//            pie: {
+//                show: true,
+//                radius: 1,
+//                innerRadius: 0.5,
+//                label: {
+//                    show: true,
+//                    radius: 2 / 3,
+//                    formatter: labelFormatter,
+//                    threshold: 0.1
+//                }
+
+//            }
+//        },
+//        legend: {
+//            show: true
+//        }
+//    });
+//}
+
+//function labelFormatter(label, series) {
+//    return "<div style='font-size:13px; text-align:center; padding:2px; color: #fff; font-weight: 600;'>"
+//            + "<br/>"
+//            + Math.round(series.percent) + "%</div>";
+//}

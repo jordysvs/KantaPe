@@ -1,0 +1,258 @@
+﻿//Atributos
+var int_NumPagina = 1;
+var int_TamPagina = 10;
+var int_PagMostrar = 9;
+var urlEdicion = 'RegistroLocalCancion.aspx';
+
+$(function () {
+
+
+    $("#ddlEmpresa").change(function () {
+        CargarLocal();
+        return false;
+    });
+
+    $("#btnAgregar").click(function () {
+        MostrarMensajeCargando();
+        document.location.href = urlEdicion;
+        return false;
+    });
+
+    $("#btnModificar").click(function () {
+        Editar();
+        return false;
+    });
+
+    $("#btnActivar").click(function () {
+        Activar();
+        return false;
+    });
+
+    $("#btnInactivar").click(function () {
+        Inactivar();
+        return false;
+    });
+
+    $("#btnBuscar").click(function () {
+        ListarLocalCancion(1);
+        return false;
+    });
+
+    KeyPressEnter("divFiltro",
+        function () {
+            $("#btnBuscar").click();
+        });
+
+    $("#btnBuscar").focus();
+
+    ListarLocalCancion(1);
+});
+
+function ObtenerFiltros() {
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdEmpresa = null;
+    if ($("#ddlEmpresa").val() != '')
+        obj_Filtro.IdEmpresa = $("#ddlEmpresa").val();
+
+    obj_Filtro.IdLocal = null;
+    if ($("#ddlLocal").val() != '')
+        obj_Filtro.IdLocal = $("#ddlLocal").val();
+
+    obj_Filtro.Titulo = $("#txtTitulo").val();
+    obj_Filtro.Artista = $("#txtArtista").val();
+    obj_Filtro.Album = $("#txtAlbum").val();
+
+    obj_Filtro.IdGenero = null;
+    if ($("#ddlGenero").val() != '')
+        obj_Filtro.IdGenero = $("#ddlGenero").val();
+
+    obj_Filtro.IdIdioma = null;
+    if ($("#ddlIdioma").val() != '')
+        obj_Filtro.IdIdioma = $("#ddlIdioma").val();
+
+    obj_Filtro.Estado = null;
+    if ($("#ddlEstado").val() != '')
+        obj_Filtro.Estado = $("#ddlEstado").val();
+    return obj_Filtro;
+}
+
+function CargarLocal() {
+    var ddlLocal = $("#ddlLocal");
+    ddlLocal.html('');
+    ddlLocal.append($("<option value='-1'>--Todos--</option>"));
+
+    if ($("#ddlEmpresa").val() != '-1') {
+        var obj_Data = { "int_pIdEmpresa": $("#ddlEmpresa").val() };
+        AccionDefault(true, "LocalCancion.aspx/ListarLocal", obj_Data,
+        function (obj_pLista) {
+            for (var i = 0; i < obj_pLista.length; i++) {
+                ddlLocal.append($("<option value='" + obj_pLista[i].IdLocal + "'>" + obj_pLista[i].Nombre + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+function ListarLocalCancion(int_pNumPagina) {
+    int_NumPagina = int_pNumPagina;
+    var obj_Filtro = ObtenerFiltros();
+    var obj_Data = {
+        "int_pIdEmpresa": obj_Filtro.IdEmpresa,
+        "int_pIdLocal": obj_Filtro.IdLocal,
+        "str_pTitulo": obj_Filtro.Titulo,
+        "str_pArtista": obj_Filtro.Artista,
+        "str_pAlbum": obj_Filtro.Album,
+        "int_pIdGenero": obj_Filtro.IdGenero,
+        "int_pIdIdioma": obj_Filtro.IdIdioma,
+        "str_pEstado": obj_Filtro.Estado,
+        "int_pNumPagina": int_pNumPagina,
+        "int_pTamPagina": int_TamPagina
+    };
+    AccionDefault(true, "LocalCancion.aspx/ListarLocalCancion", obj_Data, CargarGrilla, null, null, null, 1);
+}
+
+function CargarGrilla(obj_pLista) {
+
+    var obj_TablaPrincipal = $("<table id='tblLocalCancion' class='table table-bordered table-hover dt-responsive'></table>");
+    var obj_THead = $("<thead></thead>");
+    var obj_FilaPrincipal = $("<tr></tr>");
+    obj_FilaPrincipal.append($("<th style='width:15%;'>Empresa</th>"));
+    obj_FilaPrincipal.append($("<th style='width:15%;'>Local</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Artista</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Album</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Título</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Género</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Idioma</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Estado</th>"));
+    obj_THead.append(obj_FilaPrincipal);
+    obj_TablaPrincipal.append(obj_THead);
+
+    var str_Artista = '';
+    var str_Album = '';
+    var str_Genero = '';
+    var str_Idioma = '';
+    var str_Estado = '';
+
+    var obj_TBody = $("<tbody></tbody>");
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+        obj_FilaPrincipal = $("<tr idlocal='" + obj_pLista.Result[i].IdLocal + "' idcancion='" + obj_pLista.Result[i].IdCancion + "'></tr>");
+
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Local.Empresa.NombreComercial + "</td>"));
+
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Local.Nombre + "</td>"));
+
+        str_Artista = '';
+        if (obj_pLista.Result[i].Cancion.Artista != null)
+            str_Artista = obj_pLista.Result[i].Cancion.Artista.Nombre;
+        obj_FilaPrincipal.append($("<td>" + str_Artista + "</td>"));
+
+        str_Album = '';
+        if (obj_pLista.Result[i].Cancion.Album != null)
+            str_Album = obj_pLista.Result[i].Cancion.Album.Titulo;
+        obj_FilaPrincipal.append($("<td>" + str_Album + "</td>"));
+
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Cancion.Titulo + "</td>"));
+
+        str_Genero = '';
+        if (obj_pLista.Result[i].Cancion.Genero != null)
+            str_Genero = obj_pLista.Result[i].Cancion.Genero.Descripcion;
+        obj_FilaPrincipal.append($("<td>" + str_Genero + "</td>"));
+
+        str_Idioma = '';
+        if (obj_pLista.Result[i].Cancion.Idioma != null)
+            str_Idioma = obj_pLista.Result[i].Cancion.Idioma.Descripcion;
+        obj_FilaPrincipal.append($("<td>" + str_Idioma + "</td>"));
+
+        str_Estado = obj_pLista.Result[i].Estado == 'A' ? "Activo" : "Inactivo";
+        obj_FilaPrincipal.append($("<td style='text-align:center'>" + str_Estado + "</td>"));
+
+        obj_TBody.append(obj_FilaPrincipal);
+
+    }
+    obj_TablaPrincipal.append(obj_TBody);
+
+    var int_TotalPaginas = Math.ceil(obj_pLista.Total / int_TamPagina) == 0 ? 1 : Math.ceil(obj_pLista.Total / int_TamPagina);
+    $("#divPaginacionInfo").html("Página " + int_NumPagina + " de " + int_TotalPaginas);
+
+    $("#divPaginacion").unbind();
+    $("#divPaginacion").bootpag({
+        total: int_TotalPaginas,
+        page: int_NumPagina,
+        maxVisible: obj_pLista.Total == 0 ? 1 : int_PagMostrar
+    }).on('page', function (event, num) {
+        ListarLocalCancion(num);
+    });
+
+    $("#divGrilla").html('');
+    $("#divGrilla").append(obj_TablaPrincipal);
+
+    var obj_Tabla = $('#tblLocalCancion').dataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Página _PAGE_ de _PAGES_",
+            "infoEmpty": "",
+            "infoFiltered": "(Filtrado hasta _MAX_ total registros)"
+        },
+        "processing": false,
+        "bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": true,
+        "bInfo": false,
+        "bAutoWidth": false
+    });
+
+    $('#tblLocalCancion tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        }
+        else {
+            obj_Tabla.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+}
+
+function obtenerIdRegistro() {
+    var obj_Key = [];
+    var obj_Seleccion = $('#tblLocalCancion').find('.selected');
+    if (obj_Seleccion.length > 0) {
+        obj_Key.push($(obj_Seleccion[0]).attr('idlocal'));
+        obj_Key.push($(obj_Seleccion[0]).attr('idcancion'));
+    }
+    else
+        AlertJQ(1, 'Seleccione una canción.');
+    return obj_Key;
+}
+
+function Editar() {
+    var obj_Key = obtenerIdRegistro();
+    if (obj_Key.length > 0) {
+        MostrarMensajeCargando();
+        document.location.href = urlEdicion + "?id=" + obj_Key[0] + "&id2=" + obj_Key[1];
+    }
+}
+
+function Activar() {
+    var obj_Key = obtenerIdRegistro();
+    if (obj_Key.length > 0) {
+        ConfirmJQ('¿Está seguro de activar la canción?', ModificarEstado, [obj_Key, 'A']);
+    }
+}
+
+function Inactivar() {
+    var obj_Key = obtenerIdRegistro();
+    if (obj_Key.length > 0) {
+        ConfirmJQ('¿Está seguro de inactivar la canción?', ModificarEstado, [obj_Key, 'I']);
+    }
+}
+
+function ModificarEstado(obj_pKey, str_pEstado) {
+    Accion('LocalCancion.aspx/ModificarEstado', {
+        "int_pIdLocal": obj_pKey[0],
+        "int_pIdCancion": obj_pKey[1],
+        "str_pEstado": str_pEstado
+    }, function () { ListarLocalCancion(1); });
+}

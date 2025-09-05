@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Kruma.Core.DataBase</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{148e53b1-5949-47f5-ab6d-e90e0a09365a}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql110DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>Kruma.Core.DataBase</RootNamespace>
+    <AssemblyName>Kruma.Core.DataBase</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- VS10 without SP1 will not have VisualStudioVersion set, so do that here -->
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <!-- Default to the v10.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Procedures" />
+    <Folder Include="Tables" />
+    <Folder Include="Data" />
+    <Folder Include="Functions" />
+    <Folder Include="Data\Core" />
+    <Folder Include="Data\Core\Security" />
+    <Folder Include="Data\Core\FileServer" />
+    <Folder Include="Data\Core\Business" />
+    <Folder Include="Procedures\Core" />
+    <Folder Include="Procedures\Core\Security" />
+    <Folder Include="Procedures\Core\FileServer" />
+    <Folder Include="Procedures\Core\Business" />
+    <Folder Include="Tables\Core" />
+    <Folder Include="Tables\Core\Security" />
+    <Folder Include="Tables\Core\FileServer" />
+    <Folder Include="Tables\Core\Business" />
+    <Folder Include="Tables\KantaPe" />
+    <Folder Include="Procedures\KantaPe" />
+    <Folder Include="Procedures\KantaPe\Genero" />
+    <Folder Include="Data\KantaPe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Functions\Split.sql" />
+    <None Include="Data\Core\Security\SecurityGrupo.sql" />
+    <None Include="Data\Core\Security\SecurityGrupoDetalle.sql" />
+    <None Include="Data\Core\Security\SecurityPerfil.sql" />
+    <None Include="Data\Core\Security\SecurityPerfilGrupoDetalleAcceso.sql" />
+    <None Include="Data\Core\Security\SecurityPerfilUsuario.sql" />
+    <None Include="Data\Core\Security\SecurityUsuario.sql" />
+    <None Include="Data\Core\FileServer\FileServerAlmacen.sql" />
+    <None Include="Data\Core\FileServer\FileServerDocumento.sql" />
+    <None Include="Data\Core\Business\CoreModulo.sql" />
+    <None Include="Data\Core\Business\CoreParametro.sql" />
+    <None Include="Data\Core\Business\CorePersona.sql" />
+    <None Include="Data\Core\Business\CoreTipoDocumento.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarDispositivo.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarEstadoUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarGrupo.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarGrupoDetalle.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarGrupoDetalleOrden.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarGrupoDetalleProceso.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarPerfil.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarPerfilGrupoDetalleAcceso.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarPerfilUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarUsuarioOlvidoContrasenia.sql" />
+    <Build Include="Procedures\Core\Security\SecurityActualizarUsuarioUltimoLogin.sql" />
+    <Build Include="Procedures\Core\Security\SecurityInsertarDispositivo.sql" />
+    <Build Include="Procedures\Core\Security\SecurityInsertarGrupo.sql" />
+    <Build Include="Procedures\Core\Security\SecurityInsertarGrupoDetalle.sql" />
+    <Build Include="Procedures\Core\Security\SecurityInsertarGrupoDetalleProceso.sql" />
+    <Build Include="Procedures\Core\Security\SecurityInsertarPerfil.sql" />
+    <Build Include="Procedures\Core\Security\SecurityInsertarPerfilGrupoDetalleAcceso.sql" />
+    <Build Include="Procedures\Core\Security\SecurityInsertarPerfilUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityInsertarUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarDispositivo.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarGrupo.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarGrupoDetalle.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarGrupoDetalleProceso.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarPerfil.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarPerfilGrupoDetalleAcceso.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarPerfilGrupoDetalleAccesoPerfil.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarPerfilGrupoDetalleAccesoUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarPerfilGrupoDetalleProcesoAccesoUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarPerfilUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityListarUsuario.sql" />
+    <Build Include="Procedures\Core\Security\SecurityValidarUsuario.sql" />
+    <Build Include="Procedures\Core\FileServer\FileServerActualizarAlmacen.sql" />
+    <Build Include="Procedures\Core\FileServer\FileServerEliminarDocumento.sql" />
+    <Build Include="Procedures\Core\FileServer\FileServerInsertarAlmacen.sql" />
+    <Build Include="Procedures\Core\FileServer\FileServerListarAlmacen.sql" />
+    <Build Include="Procedures\Core\FileServer\FileServerObtenerAlmacen.sql" />
+    <Build Include="Procedures\Core\FileServer\FileServerObtenerDocumento.sql" />
+    <Build Include="Procedures\Core\FileServer\FileServerRegistrarDocumento.sql" />
+    <Build Include="Procedures\Core\Business\CoreActualizarModulo.sql" />
+    <Build Include="Procedures\Core\Business\CoreActualizarParametro.sql" />
+    <Build Include="Procedures\Core\Business\CoreActualizarPersona.sql" />
+    <Build Include="Procedures\Core\Business\CoreActualizarTipoDocumento.sql" />
+    <Build Include="Procedures\Core\Business\CoreInsertarModulo.sql" />
+    <Build Include="Procedures\Core\Business\CoreInsertarParametro.sql" />
+    <Build Include="Procedures\Core\Business\CoreInsertarPersona.sql" />
+    <Build Include="Procedures\Core\Business\CoreInsertarTipoDocumento.sql" />
+    <Build Include="Procedures\Core\Business\CoreListarModulo.sql" />
+    <Build Include="Procedures\Core\Business\CoreListarParametro.sql" />
+    <Build Include="Procedures\Core\Business\CoreListarPersona.sql" />
+    <Build Include="Procedures\Core\Business\CoreListarTipoDocumento.sql" />
+    <Build Include="Tables\Core\Security\SecurityDispositivo.sql" />
+    <Build Include="Tables\Core\Security\SecurityGrupo.sql" />
+    <Build Include="Tables\Core\Security\SecurityGrupoDetalle.sql" />
+    <Build Include="Tables\Core\Security\SecurityGrupoDetalleProceso.sql" />
+    <Build Include="Tables\Core\Security\SecurityPerfil.sql" />
+    <Build Include="Tables\Core\Security\SecurityPerfilGrupoDetalleAcceso.sql" />
+    <Build Include="Tables\Core\Security\SecurityPerfilGrupoDetalleProcesoAcceso.sql" />
+    <Build Include="Tables\Core\Security\SecurityPerfilUsuario.sql" />
+    <Build Include="Tables\Core\Security\SecurityUsuario.sql" />
+    <Build Include="Tables\Core\FileServer\FileServerAlmacen.sql" />
+    <Build Include="Tables\Core\FileServer\FileServerDocumento.sql" />
+    <Build Include="Tables\Core\Business\CoreModulo.sql" />
+    <Build Include="Tables\Core\Business\CoreParametro.sql" />
+    <Build Include="Tables\Core\Business\CorePersona.sql" />
+    <Build Include="Tables\Core\Business\CoreTipoDocumento.sql" />
+    <Build Include="Procedures\KantaPe\Genero\ListarGenero.sql" />
+    <Build Include="Procedures\KantaPe\Genero\InsertarGenero.sql" />
+    <Build Include="Procedures\KantaPe\Genero\ActualizarGenero.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+</Project>

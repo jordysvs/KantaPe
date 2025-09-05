@@ -1,0 +1,16 @@
+﻿CREATE TABLE [dbo].[SecurityPerfilUsuario]
+(
+	[IdModulo] [char](8) NOT NULL,
+	[IdPerfil] [varchar](20) NOT NULL,
+	[IdUsuario] [varchar](20) NOT NULL,
+	[FlagExpiracion] [char](1) NULL,
+	[FechaExpiracion] [datetime] NULL,
+	[Estado] [char](1) NULL,
+	[UsuarioCreacion] [varchar](20) NULL,
+	[FechaCreacion] [datetime] NULL,
+	[UsuarioModificacion] [varchar](20) NULL,
+	[FechaModificacion] [datetime] NULL,
+	CONSTRAINT [PK_SecurityPerfilUsuario] PRIMARY KEY ([IdModulo],[IdPerfil],[IdUsuario]), 
+	CONSTRAINT [PK_SecurityPerfilUsuario_SecurityPerfil] FOREIGN KEY ([IdModulo],[IdPerfil]) REFERENCES [SecurityPerfil]([IdModulo],[IdPerfil]),
+	CONSTRAINT [PK_SecurityPerfilUsuario_SecurityUsuario] FOREIGN KEY ([IdUsuario]) REFERENCES [SecurityUsuario]([IdUsuario])
+)

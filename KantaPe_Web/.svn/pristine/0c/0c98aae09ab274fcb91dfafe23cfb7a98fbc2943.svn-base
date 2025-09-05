@@ -1,0 +1,362 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Kruma.Core.Security;
+
+public partial class Forms_Gestion_Apertura : System.Web.UI.Page
+{
+    #region Eventos
+
+    /// <summary>
+    /// Carga inicial de la pagina
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+            CargaInicial();
+    }
+
+    #endregion
+
+    #region Metodos Privados
+
+    /// <summary>
+    /// Carga inicial del formulario
+    /// </summary>
+    private void CargaInicial()
+    {
+        Master_Default obj_MasterPage = (Master_Default)this.Master;
+        obj_MasterPage.TituloPagina = "Apertura de Mesas";
+
+
+        //Lista de empresa
+        List<Kruma.KantaPe.Entidad.Empresa> lst_Empresa = null;
+        if (Kruma.Core.Security.SecurityManager.Usuario.Sistema == Kruma.Core.Security.Entity.Constante.Condicion_Positivo)
+            lst_Empresa = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        else
+        {
+            List<Kruma.KantaPe.Entidad.Empleado> lst_Empleado = Kruma.KantaPe.Negocio.Empleado.Listar(null, null, Kruma.Core.Security.SecurityManager.Usuario.IdPersona.Value, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+            lst_Empresa = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+            lst_Empresa = (from obj_Empresa in lst_Empresa
+                           from obj_Empleado in lst_Empleado.Where(x => obj_Empresa.IdEmpresa == x.IdEmpresa).DefaultIfEmpty()
+                           select obj_Empresa).ToList();
+        }
+
+        int int_pIdPersona = SecurityManager.Usuario.IdPersona.Value;
+        Kruma.KantaPe.Entidad.Empleado obj_pEmpleado = Kruma.KantaPe.Negocio.Empleado.Listar(null, null, int_pIdPersona, null, null, null, null, null, null, null).Result[0];
+        hdIdLocal.Value = obj_pEmpleado.IdLocal.Value.ToString();
+
+        //ddlEmpresa.DataSource = lst_Empresa;
+        //ddlEmpresa.DataValueField = "IdEmpresa";
+        //ddlEmpresa.DataTextField = "NombreComercial";
+        //ddlEmpresa.DataBind();
+        //ddlEmpresa.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        ////Local
+        //ddlLocal.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //////Tipo Producto
+        //ddlUbicacionTipo.DataSource = Kruma.KantaPe.Negocio.UbicacionTipo.Listar(null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        //ddlUbicacionTipo.DataValueField = "IdUbicacionTipo";
+        //ddlUbicacionTipo.DataTextField = "Descripcion";
+        //ddlUbicacionTipo.DataBind();
+        //ddlUbicacionTipo.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //Imagen por defecto
+        string str_UrlImagen = string.Format("{0}{1}", Page.ResolveUrl("~"),
+        Kruma.Core.Business.Logical.Parametro.Obtener(
+        Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+        Kruma.KantaPe.Entidad.Constante.Parametro.Imagen_Microfono).Valor);
+        hdAperturaImagen.Value = str_UrlImagen;
+
+        //Id de cancion de apertura de tipo solicitada
+        Kruma.Core.Business.Entity.Parametro obj_ParametroAperturaCancionTipo = Kruma.Core.Business.Logical.Parametro.Obtener(
+        Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+        Kruma.KantaPe.Entidad.Constante.Parametro.AperturaCancion_Solicitada);
+
+        hdIdAperturaCancionTipoSolicitada.Value = obj_ParametroAperturaCancionTipo.Valor;
+    }
+
+    #endregion
+
+    #region Metodos Publicos
+
+    /// <summary>
+    /// Lista de apertura de ubicación
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdUbicacionTipo">Id tipo de ubicación</param>
+    /// <returns>Listado de ubicaciones</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Ubicacion> ListarApertura(
+            int? int_pIdLocal,
+            int? int_pIdUbicacionTipo)
+    {
+        //int int_pIdPersona = SecurityManager.Usuario.IdPersona.Value;
+        //Kruma.KantaPe.Entidad.Empleado obj_pEmpleado = Kruma.KantaPe.Negocio.Empleado.Listar(null, null, int_pIdPersona, null, null, null, null, null, null, null).Result[0];
+        //int_pIdLocal = obj_pEmpleado.IdLocal.Value;
+
+        return Kruma.KantaPe.Negocio.Apertura.ListarDashBoard(
+            int_pIdLocal,
+            null,
+            null,
+            int_pIdUbicacionTipo,
+            null,
+            null);
+    }
+
+    /// <summary>
+    /// Lista del local
+    /// </summary>
+    /// <param name="int_pIdEmpresa">Id de la empresa</param>
+    /// <returns>Listado del local</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static List<Kruma.KantaPe.Entidad.Local> ListarLocal(int int_pIdEmpresa)
+    {
+        return Kruma.KantaPe.Negocio.Local.Listar(null, int_pIdEmpresa, null, null, null, null, null, null, null, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null, null, null).Result;
+    }
+
+    /// <summary>
+    /// Obtiene la información de la alerta
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdUbicacion">Id de la ubicación</param>
+    /// <param name="int_pIdAlerta">Id de la alerta</param>
+    /// <returns>Información de la alerta</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.KantaPe.Entidad.Alerta ObtenerAlerta(
+        int int_pIdLocal,
+        int int_pIdUbicacion,
+        int int_pIdAlerta)
+    {
+        return Kruma.KantaPe.Negocio.Alerta.Obtener(int_pIdLocal, int_pIdUbicacion, int_pIdAlerta);
+    }
+
+    /// <summary>
+    /// Cerrar Alertas pendientes
+    /// </summary>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Diego Mendoza</CreadoPor></item>
+    /// <item><FecCrea>29/03/2017</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult CerrarAlertas(int? int_pIdLocal)
+    {
+        return Kruma.KantaPe.Negocio.Alerta.CerrarAlertas(int_pIdLocal);
+    }
+
+    /// <summary>
+    /// Apertura de ubicación
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdUbicacion">Id de la ubicación</param>
+    /// <param name="int_pIdAlerta">Id de la alerta</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult Aperturar(
+        int int_pIdLocal, int int_pIdUbicacion, int? int_pIdAlerta)
+    {
+        return Kruma.KantaPe.Negocio.Apertura.Aperturar(int_pIdLocal, int_pIdUbicacion, int_pIdAlerta, Kruma.Core.Security.SecurityManager.Usuario.IdUsuario);
+    }
+
+    /// <summary>
+    /// Atención de la alerta
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdUbicacion">Id de la ubicación</param>
+    /// <param name="int_pIdAlerta">Id de la alerta</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AtenderAlerta(
+        int int_pIdLocal, int int_pIdUbicacion, int int_pIdAlerta)
+    {
+        Kruma.KantaPe.Entidad.Alerta obj_Alerta = new Kruma.KantaPe.Entidad.Alerta();
+        obj_Alerta.IdLocal = int_pIdLocal;
+        obj_Alerta.IdUbicacion = int_pIdUbicacion;
+        obj_Alerta.IdAlerta = int_pIdAlerta;
+        obj_Alerta.FechaAtencion = DateTime.Now;
+        obj_Alerta.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Rechazado;
+        obj_Alerta.UsuarioModificacion = Kruma.Core.Security.SecurityManager.Usuario.IdUsuario;
+
+        return Kruma.KantaPe.Negocio.Alerta.Modificar(obj_Alerta);
+    }
+
+    /// <summary>
+    /// Obtiene la información de la apertura
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdApertura">Id de la apertura</param>
+    /// <returns>Información de la apertura</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.KantaPe.Entidad.Apertura ObtenerApertura(
+        int int_pIdLocal,
+        int int_pIdApertura)
+    {
+        return Kruma.KantaPe.Negocio.Apertura.Obtener(int_pIdLocal, int_pIdApertura);
+    }
+
+    /// <summary>
+    /// Listar de usuarios de la apertura
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdApertura">Id de la apertura</param>
+    /// <returns>Lista de usuarios de la apertura</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaUsuario> ListarAperturaUsuario(
+        int int_pIdLocal, int int_pIdApertura)
+    {
+        return Kruma.KantaPe.Negocio.AperturaUsuario.Listar(int_pIdLocal, int_pIdApertura, null, null, null, null, null, null, null);
+    }
+
+    /// <summary>
+    /// Listar de canciones de la apertura
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdApertura">Id de la apertura</param>
+    /// <returns>Lista de canciones de la apertura</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarAperturaCancion(
+        int int_pIdLocal, int int_pIdApertura)
+    {
+        return Kruma.KantaPe.Negocio.AperturaCancion.Listar(int_pIdLocal, int_pIdApertura, null, null, null, null, null, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null);
+    }
+
+    /// <summary>
+    /// Listar de ubicaciones de la apertura
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdApertura">Id de la apertura</param>
+    /// <returns>Lista de ubicaciones de la apertura</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaUbicacion> ListarAperturaUbicacion(
+        int int_pIdLocal, int int_pIdApertura)
+    {
+        return Kruma.KantaPe.Negocio.AperturaUbicacion.Listar(int_pIdLocal, int_pIdApertura, null, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null);
+    }
+
+    /// <summary>
+    /// Listar canción del local
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="str_pPalabraClave">Palabra clave de búsqueda</param>
+    /// <param name="int_pNumPagina">Número de página</param>
+    /// <param name="int_pTamPagina">Tamaño de página</param>
+    /// <returns>Lista de canciones del local</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static object ListarLocalCancion(
+        int? int_pIdLocal, string str_pPalabraClave, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.LocalCancion.Listar(null,null,null, null, null, null, null, null, null, null, null, null, null, str_pPalabraClave, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, int_pIdLocal, int_pNumPagina, int_pTamPagina);
+
+        //return Kruma.KantaPe.Negocio.LocalCancion.Listar(
+        //    int_pIdLocal, null, null, str_pPalabraClave, null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+
+    /// <summary>
+    /// Solicitar canción de la apertura
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdApertura">Id de la apertura</param>
+    /// <param name="int_pIdCancion">Id de la canción</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult SolicitarCancion(
+        int int_pIdLocal, int int_pIdApertura, int int_pIdCancion)
+    {
+        Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+        obj_AperturaCancion.IdLocal = int_pIdLocal;
+        obj_AperturaCancion.IdApertura = int_pIdApertura;
+        obj_AperturaCancion.IdLocalCancion = int_pIdCancion;
+        obj_AperturaCancion.IdUsuario = Kruma.Core.Security.SecurityManager.Usuario.IdUsuario;
+        obj_AperturaCancion.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_AperturaCancion.UsuarioCreacion = Kruma.Core.Security.SecurityManager.Usuario.IdUsuario;
+
+        return Kruma.KantaPe.Negocio.AperturaCancion.Solicitar(obj_AperturaCancion);
+    }
+
+    /// <summary>
+    /// Cancelar canción de la apertura
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdApertura">Id de la apertura</param>
+    /// <param name="int_pIdAperturaCancion">Id de la canción de la apertura</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult CancelarCancion(
+        int int_pIdLocal, int int_pIdApertura, int int_pIdAperturaCancion)
+    {
+        Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+        obj_AperturaCancion.IdLocal = int_pIdLocal;
+        obj_AperturaCancion.IdApertura = int_pIdApertura;
+        obj_AperturaCancion.IdAperturaCancion = int_pIdAperturaCancion;
+        obj_AperturaCancion.UsuarioModificacion = Kruma.Core.Security.SecurityManager.Usuario.IdUsuario;
+
+        return Kruma.KantaPe.Negocio.AperturaCancion.Cancelar(obj_AperturaCancion);
+    }
+
+    /// <summary>
+    /// Cancelar canción de la apertura
+    /// </summary>
+    /// <param name="int_pIdLocal">Id del local</param>
+    /// <param name="int_pIdApertura">Id de la apertura</param>
+    /// <param name="int_pIdAperturaCancion">Id de la canción de la apertura</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/10/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult CerrarApertura(
+        int int_pIdLocal, int int_pIdApertura)
+    {
+        Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+        obj_Apertura.IdLocal = int_pIdLocal;
+        obj_Apertura.IdApertura = int_pIdApertura;
+        obj_Apertura.UsuarioModificacion = Kruma.Core.Security.SecurityManager.Usuario.IdUsuario;
+
+        return Kruma.KantaPe.Negocio.Apertura.Cerrar(obj_Apertura);
+    }
+
+    #endregion
+}

@@ -1,0 +1,215 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+    /// <summary>Producto</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+
+    public class Producto
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Producto</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdProducto">IdProducto</param>
+        /// <param name="str_pNombre">Nombre</param>
+        /// <param name="int_pIdTipoProducto">IdTipoProducto</param>
+        /// <param name="dec_pCosto">Costo</param>
+        /// <param name="dec_pPrecio">Precio</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Producto</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Producto> Listar(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pIdProducto,
+            string str_pNombre,
+            int? int_pIdProductoTipo,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Producto> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Producto>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarProducto");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdProducto", int_pIdProducto.HasValue ? int_pIdProducto.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNombre", !string.IsNullOrEmpty(str_pNombre) ? str_pNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdProductoTipo", int_pIdProductoTipo.HasValue ? int_pIdProductoTipo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Producto> lst_Producto = new List<Kruma.KantaPe.Entidad.Producto>();
+            Kruma.KantaPe.Entidad.Producto obj_Producto = new Kruma.KantaPe.Entidad.Producto();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Producto.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Producto = new Kruma.KantaPe.Entidad.Producto();
+                obj_Producto.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_Producto.IdProducto = obj_Row["IdProducto"] is DBNull ? null : (int?)obj_Row["IdProducto"];
+                obj_Producto.Nombre = obj_Row["Nombre"] is DBNull ? null : obj_Row["Nombre"].ToString();
+                obj_Producto.IdProductoTipo = obj_Row["IdProductoTipo"] is DBNull ? null : (int?)obj_Row["IdProductoTipo"];
+                obj_Producto.Costo = obj_Row["Costo"] is DBNull ? null : (decimal?)obj_Row["Costo"];
+                obj_Producto.Precio = obj_Row["Precio"] is DBNull ? null : (decimal?)obj_Row["Precio"];
+                obj_Producto.IdImagen = obj_Row["IdImagen"] is DBNull ? null : (int?)obj_Row["IdImagen"];
+                obj_Producto.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Producto.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_Producto.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Producto.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Producto.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                obj_Producto.ProductoTipo = new Kruma.KantaPe.Entidad.ProductoTipo();
+                obj_Producto.ProductoTipo.IdProductoTipo = obj_Row["ProductoTipo_IdProductoTipo"] is DBNull ? null : (int?)obj_Row["ProductoTipo_IdProductoTipo"];
+                obj_Producto.ProductoTipo.Descripcion = obj_Row["ProductoTipo_Descripcion"] is DBNull ? null : obj_Row["ProductoTipo_Descripcion"].ToString();
+
+                obj_Producto.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Producto.Local.IdLocal = obj_Row["Local_IdLocal"] is DBNull ? null : (int?)obj_Row["Local_IdLocal"];
+                obj_Producto.Local.IdEmpresa = obj_Row["Local_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Local_IdEmpresa"];
+                obj_Producto.Local.IdDireccion = obj_Row["Local_IdDireccion"] is DBNull ? null : (int?)obj_Row["Local_IdDireccion"];
+                obj_Producto.Local.Nombre = obj_Row["CorePersonaDireccion_Nombre"] is DBNull ? null : obj_Row["CorePersonaDireccion_Nombre"].ToString();
+                obj_Producto.Local.Direccion = obj_Row["CorePersonaDireccion_Direccion"] is DBNull ? null : obj_Row["CorePersonaDireccion_Direccion"].ToString();
+
+                obj_Producto.Local.Empresa = new Kruma.KantaPe.Entidad.Empresa();
+                obj_Producto.Local.Empresa.IdEmpresa = obj_Row["Empresa_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Empresa_IdEmpresa"];
+                obj_Producto.Local.Empresa.IdPersona = obj_Row["CorePersona_IdPersona"] is DBNull ? null : (int?)obj_Row["CorePersona_IdPersona"];
+                obj_Producto.Local.Empresa.RazonSocial = obj_Row["CorePersona_RazonSocial"] is DBNull ? null : obj_Row["CorePersona_RazonSocial"].ToString();
+                obj_Producto.Local.Empresa.NombreComercial = obj_Row["CorePersona_NombreComercial"] is DBNull ? null : obj_Row["CorePersona_NombreComercial"].ToString();
+                obj_Producto.Local.Empresa.IdTipoDocumento = obj_Row["CorePersona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["CorePersona_IdTipoDocumento"];
+                obj_Producto.Local.Empresa.NumeroDocumento = obj_Row["CorePersona_NumeroDocumento"] is DBNull ? null : obj_Row["CorePersona_NumeroDocumento"].ToString();
+
+                obj_Producto.Local.Empresa.TipoDocumento = new Kruma.Core.Business.Entity.TipoDocumento();
+                obj_Producto.Local.Empresa.TipoDocumento.IdTipoDocumento = obj_Row["TipoDocumento_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["TipoDocumento_IdTipoDocumento"];
+                obj_Producto.Local.Empresa.TipoDocumento.Descripcion = obj_Row["TipoDocumento_Descripcion"] is DBNull ? null : obj_Row["TipoDocumento_Descripcion"].ToString();
+
+                lst_Producto.Add(obj_Producto);
+            }
+
+            obj_Lista.Result = lst_Producto;
+            return obj_Lista;
+        }
+
+        /// <summary>Obtener Producto</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdProducto">IdProducto</param>
+        /// <returns>Objeto Producto</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Producto Obtener(
+            int int_pIdLocal,
+            int int_pIdProducto)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Producto> lst_Producto = Listar(null, int_pIdLocal, int_pIdProducto, null, null, null, null, null);
+            return lst_Producto.Result.Count > 0 ? lst_Producto.Result[0] : null;
+        }
+
+        /// <summary>Insertar Producto</summary>
+        /// <param name="obj_pProducto">Producto</param>
+        /// <returns>Id de Producto</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static int Insertar(Kruma.KantaPe.Entidad.Producto obj_pProducto)
+        {
+            DataOperation dop_Operacion = new DataOperation("InsertarProducto");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pProducto.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pNombre", obj_pProducto.Nombre));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdProductoTipo", obj_pProducto.IdProductoTipo));
+
+            //Parameter obj_Costo = new Parameter("@pCosto", DbType.Decimal);
+            //obj_Costo.Direction = ParameterDirection.Input;
+            //obj_Costo.Value = obj_pProducto.Costo;
+            //dop_Operacion.Parameters.Add(obj_Costo);
+            dop_Operacion.Parameters.Add(new Parameter("@pCosto", obj_pProducto.Costo));
+
+            //Parameter obj_Precio = new Parameter("@pPrecio", DbType.Decimal);
+            //obj_Precio.Direction = ParameterDirection.Input;
+            //obj_Precio.Value = obj_pProducto.Precio;
+            //dop_Operacion.Parameters.Add(obj_Precio);
+            dop_Operacion.Parameters.Add(new Parameter("@pPrecio", obj_pProducto.Precio));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdImagen", obj_pProducto.IdImagen));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pProducto.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioCreacion", obj_pProducto.UsuarioCreacion));
+
+            Parameter obj_IdProducto = new Parameter("@pIdProducto", DbType.Int32);
+            obj_IdProducto.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdProducto);
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdProducto = (int)obj_IdProducto.Value;
+            return int_IdProducto;
+        }
+
+        /// <summary>Modificar Producto</summary>
+        /// <param name="obj_pProducto">Producto</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static void Modificar(Kruma.KantaPe.Entidad.Producto obj_pProducto)
+        {
+            DataOperation dop_Operacion = new DataOperation("ActualizarProducto");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pProducto.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdProducto", obj_pProducto.IdProducto));
+            dop_Operacion.Parameters.Add(new Parameter("@pNombre", obj_pProducto.Nombre));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdProductoTipo", obj_pProducto.IdProductoTipo));
+            dop_Operacion.Parameters.Add(new Parameter("@pCosto", obj_pProducto.Costo));
+            dop_Operacion.Parameters.Add(new Parameter("@pPrecio", obj_pProducto.Precio));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdImagen", obj_pProducto.IdImagen));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pProducto.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioModificacion", obj_pProducto.UsuarioModificacion));
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+
+
+        public static int SolicitarPedido(Kruma.KantaPe.Entidad.Alerta obj_pAlerta)
+        {
+            DataOperation dop_Operacion = new DataOperation("SolicitarPedidoCarta");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pAlerta.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUbicacion", obj_pAlerta.IdUbicacion));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAlertaTipo", obj_pAlerta.IdAlertaTipo));
+
+            Parameter obj_FechaAlerta = new Parameter("@pFechaAlerta", DbType.DateTime);
+            obj_FechaAlerta.Direction = ParameterDirection.Input;
+            obj_FechaAlerta.Value = obj_pAlerta.FechaAlerta;
+            dop_Operacion.Parameters.Add(obj_FechaAlerta);
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUsuario", obj_pAlerta.IdUsuario));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pAlerta.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioCreacion", obj_pAlerta.UsuarioCreacion));
+
+            Parameter obj_IdAlerta = new Parameter("@pIdAlerta", DbType.Int32);
+            obj_IdAlerta.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdAlerta);
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdAlerta = (int)obj_IdAlerta.Value;
+            return int_IdAlerta;
+        }
+        #endregion
+    }
+}

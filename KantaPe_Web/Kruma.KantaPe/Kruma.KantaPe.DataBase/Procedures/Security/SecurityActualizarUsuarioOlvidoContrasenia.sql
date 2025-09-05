@@ -1,0 +1,26 @@
+﻿create Procedure [dbo].[SecurityActualizarUsuarioOlvidoContrasenia]
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de actualización de la fecha de olvido de contraseña
+	para el usuario
+'*	Input			: 	@pIdUsuario - Codigo del usuario
+						@pUsuarioModificacion - Usuario de modificacion
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación		: 15/12/2014
+'**********************************************************************************
+*/
+(
+	@pIdUsuario varchar(20),
+	@pUsuarioModificacion varchar(20)
+)
+As
+Begin
+	update SecurityUsuario
+	set
+	FechaOlvidoClave = GETDATE(), 
+	UsuarioModificacion = @pUsuarioModificacion,
+	FechaModificacion = GETDATE()
+	where
+	IdUsuario = @pIdUsuario
+End

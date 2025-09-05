@@ -1,0 +1,17 @@
+
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    Estimado Sr(a) <%USUARIO%>.<br /><br />
+    Se le indica que la cancion con Titulo: <b><%TITULO%></b>, Artista: <b><%ARTISTA%></b>, Album: <b><%ALBUM%></b>, Genero: <b><%GENERO%></b>, Idioma: <b><%IDIOMA%></b> fue <b><%ESTADO%></b><b><%MOTIVO%></b>
+
+    <br /><br /><%FIRMA%><br /><br />
+</body>
+</html>

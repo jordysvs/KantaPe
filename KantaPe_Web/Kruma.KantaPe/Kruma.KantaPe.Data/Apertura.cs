@@ -1,0 +1,886 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+    /// <summary>Apertura</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+
+    public class Apertura
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Apertura</summary>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pIdCurso">IdCurso</param>
+        /// <param name="dt_pFechaInicio">FechaInicio</param>
+        /// <param name="dt_pFechaFin">FechaFin</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pIdMozo">IdMozo</param>
+        /// <param name="dt_pFechaApertura">FechaApertura</param>
+        /// <param name="dt_pFechaFinal">FechaFinal</param>
+        /// <param name="dec_pTotal">Total</param>
+        /// <param name="int_pIdAlerta">IdAlerta</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> Listar(
+            int? int_pIdLocal,
+            int? int_pIdApertura,
+            int? int_pIdMozo,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdAlerta,
+            int? int_pIdUbicacion,
+            bool? bln_Actual,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarApertura");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", int_pIdApertura.HasValue ? int_pIdApertura.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdMozo", int_pIdMozo.HasValue ? int_pIdMozo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pFechaInicio", dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pFechaFin", dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAlerta", int_pIdAlerta.HasValue ? int_pIdAlerta.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUbicacion", int_pIdUbicacion.HasValue ? int_pIdUbicacion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pActual", bln_Actual.HasValue ? bln_Actual.Value.GetHashCode() : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Apertura.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_Apertura.IdApertura = obj_Row["IdApertura"] is DBNull ? null : (int?)obj_Row["IdApertura"];
+                obj_Apertura.IdMozo = obj_Row["IdMozo"] is DBNull ? null : (int?)obj_Row["IdMozo"];
+                obj_Apertura.FechaApertura = obj_Row["FechaApertura"] is DBNull ? null : (DateTime?)obj_Row["FechaApertura"];
+                obj_Apertura.FechaFinal = obj_Row["FechaFinal"] is DBNull ? null : (DateTime?)obj_Row["FechaFinal"];
+                obj_Apertura.Total = obj_Row["Total"] is DBNull ? null : (decimal?)obj_Row["Total"];
+                obj_Apertura.IdAlerta = obj_Row["IdAlerta"] is DBNull ? null : (int?)obj_Row["IdAlerta"];
+                obj_Apertura.Ronda = obj_Row["Ronda"] is DBNull ? null : (int?)obj_Row["Ronda"];
+                obj_Apertura.FlagTurno = obj_Row["FlagTurno"] is DBNull ? null : obj_Row["FlagTurno"].ToString();
+                obj_Apertura.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Apertura.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_Apertura.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Apertura.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Apertura.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                obj_Apertura.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Apertura.Local.IdLocal = obj_Row["Local_IdLocal"] is DBNull ? null : (int?)obj_Row["Local_IdLocal"];
+                obj_Apertura.Local.IdEmpresa = obj_Row["Local_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Local_IdEmpresa"];
+                obj_Apertura.Local.IdDireccion = obj_Row["Local_IdDireccion"] is DBNull ? null : (int?)obj_Row["Local_IdDireccion"];
+
+                //obj_Alerta.Local.Empresa = new Rrh.Entidad.Empresa();
+                //obj_Alerta.Local.Empresa.IdPersona = obj_Row["Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Persona_IdPersona"];
+                //obj_Alerta.Local.Empresa.IdTipoDocumento = obj_Row["Persona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["Persona_IdTipoDocumento"];
+                //obj_Alerta.Local.Empresa.NumeroDocumento = obj_Row["Persona_NumeroDocumento"] is DBNull ? null : obj_Row["Persona_NumeroDocumento"].ToString();
+                //obj_Alerta.Local.Empresa.RazonSocial = obj_Row["Persona_RazonSocial"] is DBNull ? null : obj_Row["Persona_RazonSocial"].ToString();
+                //obj_Alerta.Local.Empresa.NombreComercial = obj_Row["Persona_NombreComercial"] is DBNull ? null : obj_Row["Persona_NombreComercial"].ToString();
+
+                obj_Apertura.Empleado = new KantaPe.Entidad.Empleado();
+                obj_Apertura.Empleado.IdEmpleado = obj_Row["Empleado_IdEmpleado"] is DBNull ? null : (int?)obj_Row["Empleado_IdEmpleado"];
+                obj_Apertura.Empleado.IdPersona = obj_Row["Empleado_IdPersona"] is DBNull ? null : (int?)obj_Row["Empleado_IdPersona"];
+
+                obj_Apertura.Empleado.Persona = new Core.Business.Entity.Persona();
+                obj_Apertura.Empleado.Persona.IdPersona = obj_Row["Empleado_Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Empleado_Persona_IdPersona"];
+                obj_Apertura.Empleado.Persona.IdTipoDocumento = obj_Row["Empleado_Persona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["Empleado_Persona_IdTipoDocumento"];
+                obj_Apertura.Empleado.Persona.NumeroDocumento = obj_Row["Empleado_Persona_NumeroDocumento"] is DBNull ? null : obj_Row["Empleado_Persona_NumeroDocumento"].ToString();
+                obj_Apertura.Empleado.Persona.Nombres = obj_Row["Empleado_Persona_Nombres"] is DBNull ? null : obj_Row["Empleado_Persona_Nombres"].ToString();
+                obj_Apertura.Empleado.Persona.ApellidoPaterno = obj_Row["Empleado_Persona_ApellidoPaterno"] is DBNull ? null : obj_Row["Empleado_Persona_ApellidoPaterno"].ToString();
+                obj_Apertura.Empleado.Persona.ApellidoMaterno = obj_Row["Empleado_Persona_ApellidoMaterno"] is DBNull ? null : obj_Row["Empleado_Persona_ApellidoMaterno"].ToString();
+
+                if (!(obj_Row["Apertura_Usuario_IdUsuario"] is DBNull))
+                {
+                    obj_Apertura.Usuario = new Core.Security.Entity.Usuario();
+                    obj_Apertura.Usuario.IdUsuario = obj_Row["Apertura_Usuario_IdUsuario"] is DBNull ? null : obj_Row["Apertura_Usuario_IdUsuario"].ToString();
+                    obj_Apertura.Usuario.IdPersona = obj_Row["Apertura_Usuario_IdPersona"] is DBNull ? null : (int?)obj_Row["Apertura_Usuario_IdPersona"];
+                    obj_Apertura.Usuario.Persona = new Core.Business.Entity.Persona();
+                    obj_Apertura.Usuario.Persona.IdPersona = obj_Row["Apertura_Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Apertura_Persona_IdPersona"];
+                    obj_Apertura.Usuario.Persona.Nombres = obj_Row["Apertura_Persona_Nombres"] is DBNull ? null : obj_Row["Apertura_Persona_Nombres"].ToString();
+                    obj_Apertura.Usuario.Persona.ApellidoPaterno = obj_Row["Apertura_Persona_ApellidoPaterno"] is DBNull ? null : obj_Row["Apertura_Persona_ApellidoPaterno"].ToString();
+                    obj_Apertura.Usuario.Persona.ApellidoMaterno = obj_Row["Apertura_Persona_ApellidoMaterno"] is DBNull ? null : obj_Row["Apertura_Persona_ApellidoMaterno"].ToString();
+                }
+
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+
+        /// <summary>Obtener Apertura</summary>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <returns>Objeto Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Apertura Obtener(int int_pIdLocal, int int_pIdApertura)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura =
+                Listar(int_pIdLocal, int_pIdApertura, null, null, null, null, null, null, null, null, null);
+            return lst_Apertura.Result.Count > 0 ? lst_Apertura.Result[0] : null;
+        }
+
+        /// <summary>Obtener Apertura</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdAlerta">IdApertura</param>
+        /// <returns>Objeto Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Apertura ObtenerPorAlerta(int int_pIdLocal, int int_pIdAlerta)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura =
+                Listar(int_pIdLocal, null, null, null, null, int_pIdAlerta, null, null, null, null, null);
+            return lst_Apertura.Result.Count > 0 ? lst_Apertura.Result[0] : null;
+        }
+
+        /// <summary>Obtener Apertura</summary>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <returns>Objeto Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Apertura ObtenerActual(int int_pIdLocal, int int_pIdUbicacion)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura =
+                Listar(int_pIdLocal, null, null, null, null, null, int_pIdUbicacion, true, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null);
+            return lst_Apertura.Result.Count > 0 ? lst_Apertura.Result[0] : null;
+        }
+
+        /// <summary>Insertar Apertura</summary>
+        /// <param name="obj_pApertura">Apertura</param>
+        /// <returns>Id de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static int Insertar(Kruma.KantaPe.Entidad.Apertura obj_pApertura)
+        {
+            DataOperation dop_Operacion = new DataOperation("InsertarApertura");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pApertura.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdMozo", obj_pApertura.IdMozo));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAlerta", obj_pApertura.IdAlerta));
+
+            Parameter obj_FechaApertura = new Parameter("@pFechaApertura", DbType.DateTime);
+            obj_FechaApertura.Value = obj_pApertura.FechaApertura;
+            obj_FechaApertura.Direction = ParameterDirection.Input;
+            dop_Operacion.Parameters.Add(obj_FechaApertura);
+            
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pApertura.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioCreacion", obj_pApertura.UsuarioCreacion));
+
+            Parameter obj_IdApertura = new Parameter("@pIdApertura", DbType.Int32);
+            obj_IdApertura.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdApertura);
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdApertura = (int)obj_IdApertura.Value;
+            return int_IdApertura;
+        }
+
+        /// <summary>Actualizar Apertura</summary>
+        /// <param name="obj_pApertura">Apertura</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static void Modificar(Kruma.KantaPe.Entidad.Apertura obj_pApertura)
+        {
+            DataOperation dop_Operacion = new DataOperation("ActualizarApertura");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pApertura.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", obj_pApertura.IdApertura));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdMozo", obj_pApertura.IdMozo));
+
+            Parameter obj_FechaApertura = new Parameter("@pFechaApertura", DbType.DateTime);
+            obj_FechaApertura.Value = obj_pApertura.FechaApertura;
+            obj_FechaApertura.Direction = ParameterDirection.Input;
+            dop_Operacion.Parameters.Add(obj_FechaApertura);
+
+            Parameter obj_FechaFinal = new Parameter("@pFechaFinal", DbType.DateTime);
+            obj_FechaFinal.Value = obj_pApertura.FechaFinal;
+            obj_FechaFinal.Direction = ParameterDirection.Input;
+            dop_Operacion.Parameters.Add(obj_FechaFinal);
+
+            Parameter dec_Total = new Parameter("@pTotal", DbType.Decimal);
+            dec_Total.Direction = ParameterDirection.Input;
+            dec_Total.Value = obj_pApertura.Total.HasValue ? obj_pApertura.Total.Value : 0;
+            dop_Operacion.Parameters.Add(dec_Total);
+            //dop_Operacion.Parameters.Add(new Parameter("@pTotal", obj_pApertura.Total));
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAlerta", obj_pApertura.IdAlerta));
+            dop_Operacion.Parameters.Add(new Parameter("@pRonda", obj_pApertura.Ronda));
+            dop_Operacion.Parameters.Add(new Parameter("@pFlagTurno", obj_pApertura.FlagTurno));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pApertura.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioModificacion", obj_pApertura.UsuarioModificacion));
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+        /// <summary>Cerrar Apertura</summary>
+        /// <param name="obj_pApertura">Apertura</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static void Cerrar(Kruma.KantaPe.Entidad.Apertura obj_pApertura)
+        {
+            DataOperation dop_Operacion = new DataOperation("CerrarApertura");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pApertura.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", obj_pApertura.IdApertura));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioModificacion", obj_pApertura.UsuarioModificacion));
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+        /// <summary>Listado del dashboard de apertura</summary>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdApertura">Id de la apertura</param>
+        /// <param name="int_pIdMozo">Id del mozo</param>
+        /// <param name="int_pIdUbicacionTipo">Id del tipo de ubicacion</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Ubicacion> ListarDashBoard(
+            int? int_pIdLocal,
+            int? int_pIdApertura,
+            int? int_pIdMozo,
+            int? int_pIdUbicacionTipo,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Ubicacion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Ubicacion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaDashBoard");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", int_pIdApertura.HasValue ? int_pIdApertura.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdMozo", int_pIdMozo.HasValue ? int_pIdMozo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUbicacionTipo", int_pIdUbicacionTipo.HasValue ? int_pIdUbicacionTipo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Ubicacion> lst_Ubicacion = new List<Kruma.KantaPe.Entidad.Ubicacion>();
+            Kruma.KantaPe.Entidad.Ubicacion obj_Ubicacion = null;
+            Kruma.KantaPe.Entidad.AperturaUsuario obj_AperturaUsuario = null;
+
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Ubicacion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+
+                obj_Ubicacion = new Kruma.KantaPe.Entidad.Ubicacion();
+                obj_Ubicacion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_Ubicacion.IdUbicacion = obj_Row["IdUbicacion"] is DBNull ? null : (int?)obj_Row["IdUbicacion"];
+                obj_Ubicacion.IdUbicacionTipo = obj_Row["IdUbicacionTipo"] is DBNull ? null : (int?)obj_Row["IdUbicacionTipo"];
+                obj_Ubicacion.Numero = obj_Row["Numero"] is DBNull ? null : (int?)obj_Row["Numero"];
+                obj_Ubicacion.Capacidad = obj_Row["Capacidad"] is DBNull ? null : (int?)obj_Row["Capacidad"];
+                obj_Ubicacion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+
+                obj_Ubicacion.UbicacionTipo = new Kruma.KantaPe.Entidad.UbicacionTipo();
+                obj_Ubicacion.UbicacionTipo.IdUbicacionTipo = obj_Row["UbicacionTipo_IdUbicacionTipo"] is DBNull ? null : (int?)obj_Row["UbicacionTipo_IdUbicacionTipo"];
+                obj_Ubicacion.UbicacionTipo.Descripcion = obj_Row["UbicacionTipo_Descripcion"] is DBNull ? null : obj_Row["UbicacionTipo_Descripcion"].ToString();
+
+                obj_Ubicacion.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Ubicacion.Local.IdLocal = obj_Row["Local_IdLocal"] is DBNull ? null : (int?)obj_Row["Local_IdLocal"];
+                obj_Ubicacion.Local.IdEmpresa = obj_Row["Local_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Local_IdEmpresa"];
+                obj_Ubicacion.Local.IdDireccion = obj_Row["Local_IdDireccion"] is DBNull ? null : (int?)obj_Row["Local_IdDireccion"];
+
+                obj_Ubicacion.Local.Empresa = new KantaPe.Entidad.Empresa();
+                obj_Ubicacion.Local.Empresa.IdPersona = obj_Row["Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Persona_IdPersona"];
+                obj_Ubicacion.Local.Empresa.IdTipoDocumento = obj_Row["Persona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["Persona_IdTipoDocumento"];
+                obj_Ubicacion.Local.Empresa.NumeroDocumento = obj_Row["Persona_NumeroDocumento"] is DBNull ? null : obj_Row["Persona_NumeroDocumento"].ToString();
+                obj_Ubicacion.Local.Empresa.RazonSocial = obj_Row["Persona_RazonSocial"] is DBNull ? null : obj_Row["Persona_RazonSocial"].ToString();
+                obj_Ubicacion.Local.Empresa.NombreComercial = obj_Row["Persona_NombreComercial"] is DBNull ? null : obj_Row["Persona_NombreComercial"].ToString();
+
+                if (!(obj_Row["Apertura_IdApertura"] is DBNull))
+                {
+                    obj_Ubicacion.Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                    obj_Ubicacion.Apertura.IdLocal = obj_Row["Apertura_IdLocal"] is DBNull ? null : (int?)obj_Row["Apertura_IdLocal"];
+                    obj_Ubicacion.Apertura.IdApertura = obj_Row["Apertura_IdApertura"] is DBNull ? null : (int?)obj_Row["Apertura_IdApertura"];
+                    obj_Ubicacion.Apertura.IdMozo = obj_Row["Apertura_IdMozo"] is DBNull ? null : (int?)obj_Row["Apertura_IdMozo"];
+                    obj_Ubicacion.Apertura.FechaApertura = obj_Row["Apertura_FechaApertura"] is DBNull ? null : (DateTime?)obj_Row["Apertura_FechaApertura"];
+                    obj_Ubicacion.Apertura.FechaFinal = obj_Row["Apertura_FechaFinal"] is DBNull ? null : (DateTime?)obj_Row["Apertura_FechaFinal"];
+                    obj_Ubicacion.Apertura.Total = obj_Row["Apertura_Total"] is DBNull ? null : (decimal?)obj_Row["Apertura_Total"];
+                    obj_Ubicacion.Apertura.IdAlerta = obj_Row["Apertura_IdAlerta"] is DBNull ? null : (int?)obj_Row["Apertura_IdAlerta"];
+
+                    //Mozo
+                    obj_Ubicacion.Apertura.Empleado = new KantaPe.Entidad.Empleado();
+                    obj_Ubicacion.Apertura.Empleado.IdEmpleado = obj_Row["Empleado_IdEmpleado"] is DBNull ? null : (int?)obj_Row["Empleado_IdEmpleado"];
+                    obj_Ubicacion.Apertura.Empleado.IdPersona = obj_Row["Empleado_IdPersona"] is DBNull ? null : (int?)obj_Row["Empleado_IdPersona"];
+
+                    obj_Ubicacion.Apertura.Empleado.Persona = new Core.Business.Entity.Persona();
+                    obj_Ubicacion.Apertura.Empleado.Persona.IdPersona = obj_Row["Empleado_Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Empleado_Persona_IdPersona"];
+                    obj_Ubicacion.Apertura.Empleado.Persona.IdTipoDocumento = obj_Row["Empleado_Persona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["Empleado_Persona_IdTipoDocumento"];
+                    obj_Ubicacion.Apertura.Empleado.Persona.NumeroDocumento = obj_Row["Empleado_Persona_NumeroDocumento"] is DBNull ? null : obj_Row["Empleado_Persona_NumeroDocumento"].ToString();
+                    obj_Ubicacion.Apertura.Empleado.Persona.Nombres = obj_Row["Empleado_Persona_Nombres"] is DBNull ? null : obj_Row["Empleado_Persona_Nombres"].ToString();
+                    obj_Ubicacion.Apertura.Empleado.Persona.ApellidoPaterno = obj_Row["Empleado_Persona_ApellidoPaterno"] is DBNull ? null : obj_Row["Empleado_Persona_ApellidoPaterno"].ToString();
+                    obj_Ubicacion.Apertura.Empleado.Persona.ApellidoMaterno = obj_Row["Empleado_Persona_ApellidoMaterno"] is DBNull ? null : obj_Row["Empleado_Persona_ApellidoMaterno"].ToString();
+
+                    obj_AperturaUsuario = new Entidad.AperturaUsuario();
+                    obj_AperturaUsuario.IdUsuario = obj_Row["Usuario_IdUsuario"] is DBNull ? null : obj_Row["Usuario_IdUsuario"].ToString();
+
+                    obj_AperturaUsuario.Usuario = new Core.Security.Entity.Usuario();
+                    obj_AperturaUsuario.Usuario.Persona = new Core.Business.Entity.Persona();
+                    obj_AperturaUsuario.Usuario.Persona.IdPersona = obj_Row["Usuario_Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Usuario_Persona_IdPersona"];
+                    obj_AperturaUsuario.Usuario.Persona.Nombres = obj_Row["Usuario_Persona_Nombres"] is DBNull ? null : obj_Row["Usuario_Persona_Nombres"].ToString();
+                    obj_AperturaUsuario.Usuario.Persona.ApellidoPaterno = obj_Row["Usuario_Persona_ApellidoPaterno"] is DBNull ? null : obj_Row["Usuario_Persona_ApellidoPaterno"].ToString();
+                    obj_AperturaUsuario.Usuario.Persona.ApellidoMaterno = obj_Row["Usuario_Persona_ApellidoMaterno"] is DBNull ? null : obj_Row["Usuario_Persona_ApellidoMaterno"].ToString();
+
+                    obj_Ubicacion.Apertura.Usuarios.Add(obj_AperturaUsuario);
+                }
+
+                if (!(obj_Row["Alerta_IdAlerta"] is DBNull))
+                {
+                    obj_Ubicacion.Alerta = new Kruma.KantaPe.Entidad.Alerta();
+                    obj_Ubicacion.Alerta.IdLocal = obj_Row["Alerta_IdLocal"] is DBNull ? null : (int?)obj_Row["Alerta_IdLocal"];
+                    obj_Ubicacion.Alerta.IdUbicacion = obj_Row["Alerta_IdUbicacion"] is DBNull ? null : (int?)obj_Row["Alerta_IdUbicacion"];
+                    obj_Ubicacion.Alerta.IdAlerta = obj_Row["Alerta_IdAlerta"] is DBNull ? null : (int?)obj_Row["Alerta_IdAlerta"];
+                    obj_Ubicacion.Alerta.IdAlertaTipo = obj_Row["Alerta_IdAlertaTipo"] is DBNull ? null : (int?)obj_Row["Alerta_IdAlertaTipo"];
+                    obj_Ubicacion.Alerta.FechaAlerta = obj_Row["Alerta_FechaAlerta"] is DBNull ? null : (DateTime?)obj_Row["Alerta_FechaAlerta"];
+                    obj_Ubicacion.Alerta.FechaAtencion = obj_Row["Alerta_FechaAtencion"] is DBNull ? null : (DateTime?)obj_Row["Alerta_FechaAtencion"];
+                    obj_Ubicacion.Alerta.IdUsuario = obj_Row["Alerta_IdUsuario"] is DBNull ? null : obj_Row["Alerta_IdUsuario"].ToString();
+
+                    obj_Ubicacion.Alerta.AlertaTipo = new Kruma.KantaPe.Entidad.AlertaTipo();
+                    obj_Ubicacion.Alerta.AlertaTipo.IdAlertaTipo = obj_Row["AlertaTipo_IdAlertaTipo"] is DBNull ? null : (int?)obj_Row["AlertaTipo_IdAlertaTipo"];
+                    obj_Ubicacion.Alerta.AlertaTipo.Descripcion = obj_Row["AlertaTipo_Descripcion"] is DBNull ? null : obj_Row["AlertaTipo_Descripcion"].ToString();
+
+                    obj_Ubicacion.Alerta.Usuario = new Core.Security.Entity.Usuario();
+                    obj_Ubicacion.Alerta.Usuario.IdUsuario = obj_Row["Alerta_Usuario_IdUsuario"] is DBNull ? null : obj_Row["Alerta_Usuario_IdUsuario"].ToString();
+                    obj_Ubicacion.Alerta.Usuario.IdPersona = obj_Row["Alerta_Usuario_IdPersona"] is DBNull ? null : (int?)obj_Row["Alerta_Usuario_IdPersona"];
+                    obj_Ubicacion.Alerta.Usuario.Persona = new Core.Business.Entity.Persona();
+                    obj_Ubicacion.Alerta.Usuario.Persona.IdPersona = obj_Row["Alerta_Usuario_Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Alerta_Usuario_Persona_IdPersona"];
+                    obj_Ubicacion.Alerta.Usuario.Persona.Nombres = obj_Row["Alerta_Usuario_Persona_Nombres"] is DBNull ? null : obj_Row["Alerta_Usuario_Persona_Nombres"].ToString();
+                    obj_Ubicacion.Alerta.Usuario.Persona.ApellidoPaterno = obj_Row["Alerta_Usuario_Persona_ApellidoPaterno"] is DBNull ? null : obj_Row["Alerta_Usuario_Persona_ApellidoPaterno"].ToString();
+                    obj_Ubicacion.Alerta.Usuario.Persona.ApellidoMaterno = obj_Row["Alerta_Usuario_Persona_ApellidoMaterno"] is DBNull ? null : obj_Row["Alerta_Usuario_Persona_ApellidoMaterno"].ToString();
+                }
+                lst_Ubicacion.Add(obj_Ubicacion);
+            }
+
+            obj_Lista.Result = lst_Ubicacion;
+            return obj_Lista;
+        }
+
+
+        /// <summary>Reporte de Apertura de Mesa</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> ReporteAperturaMesa(
+            string str_pNombreCompleto,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdUbicacionTipo,
+            int? int_pNroUbicacion,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ReporteAperturaMesa");
+            dop_Operacion.Parameters.Add(new Parameter("@pNombreCompleto", !string.IsNullOrEmpty(str_pNombreCompleto) ? str_pNombreCompleto : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUbicacionTipo", int_pIdUbicacionTipo.HasValue ? int_pIdUbicacionTipo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNroUbicacion", int_pNroUbicacion.HasValue ? int_pNroUbicacion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Apertura.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.FechaApertura = obj_Row["FechaApertura"] is DBNull ? null : (DateTime?)obj_Row["FechaApertura"];
+                obj_Apertura.NombreCompleto = obj_Row["Mozo_NombreCompleto"] is DBNull ? null : obj_Row["Mozo_NombreCompleto"].ToString();
+                obj_Apertura.DiferenciaFechas = obj_Row["DiferenciaFechas"] is DBNull ? null : (int?)obj_Row["DiferenciaFechas"];
+
+                obj_Apertura.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Apertura.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+
+                obj_Apertura.Local.Empresa = new Kruma.KantaPe.Entidad.Empresa();
+                obj_Apertura.Local.Empresa.NombreComercial = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+
+                //obj_Apertura.Empleado.Persona = new Core.Business.Entity.Persona();
+                //obj_Apertura.Empleado.Persona.Nombres = obj_Row["Mozo_Nombres"] is DBNull ? null : obj_Row["Mozo_Nombres"].ToString();
+                //obj_Apertura.Empleado.Persona.ApellidoPaterno = obj_Row["Mozo_ApellidoPaterno"] is DBNull ? null : obj_Row["Mozo_ApellidoPaterno"].ToString();
+                //obj_Apertura.Empleado.Persona.ApellidoMaterno = obj_Row["Mozo_ApellidoMaterno"] is DBNull ? null : obj_Row["Mozo_ApellidoMaterno"].ToString();
+
+                obj_Apertura.Alerta = new Kruma.KantaPe.Entidad.Alerta();
+                obj_Apertura.Alerta.IdAlerta = obj_Row["Alerta_IdAlerta"] is DBNull ? null : (int?)obj_Row["Alerta_IdAlerta"];
+                obj_Apertura.Alerta.FechaAlerta = obj_Row["Alerta_FechaAlerta"] is DBNull ? null : (DateTime?)obj_Row["Alerta_FechaAlerta"];
+                obj_Apertura.Alerta.FechaAtencion = obj_Row["Alerta_FechaAtencion"] is DBNull ? null : (DateTime?)obj_Row["Alerta_FechaAtencion"];
+
+                obj_Apertura.Alerta.Ubicacion = new Kruma.KantaPe.Entidad.Ubicacion();
+                obj_Apertura.Alerta.Ubicacion.Numero = obj_Row["Ubicacion_Numero"] is DBNull ? null : (int?)obj_Row["Ubicacion_Numero"];
+
+                obj_Apertura.Alerta.Ubicacion.UbicacionTipo = new Kruma.KantaPe.Entidad.UbicacionTipo();
+                obj_Apertura.Alerta.Ubicacion.UbicacionTipo.Descripcion = obj_Row["UbicacionTipo_Descripcion"] is DBNull ? null : obj_Row["UbicacionTipo_Descripcion"].ToString();
+
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+
+        
+
+
+        /// <summary>Reporte de tiempo de atención</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> ReporteTiempoAtencion(
+            string str_pNombreCompleto,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdUbicacionTipo,
+            int? int_pNroUbicacion,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ReporteTiempoAtencion");
+            dop_Operacion.Parameters.Add(new Parameter("@pNombreCompleto", !string.IsNullOrEmpty(str_pNombreCompleto) ? str_pNombreCompleto : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUbicacionTipo", int_pIdUbicacionTipo.HasValue ? int_pIdUbicacionTipo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNroUbicacion", int_pNroUbicacion.HasValue ? int_pNroUbicacion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Apertura.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.FechaApertura = obj_Row["FechaApertura"] is DBNull ? null : (DateTime?)obj_Row["FechaApertura"];
+                obj_Apertura.NombreCompleto = obj_Row["Mozo_NombreCompleto"] is DBNull ? null : obj_Row["Mozo_NombreCompleto"].ToString();
+                obj_Apertura.DiferenciaFechas = obj_Row["DiferenciaFechas"] is DBNull ? null : (int?)obj_Row["DiferenciaFechas"];
+
+                obj_Apertura.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Apertura.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+
+                obj_Apertura.Local.Empresa = new Kruma.KantaPe.Entidad.Empresa();
+                obj_Apertura.Local.Empresa.NombreComercial = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+           
+                obj_Apertura.Alerta = new Kruma.KantaPe.Entidad.Alerta();
+                obj_Apertura.Alerta.IdAlerta = obj_Row["Alerta_IdAlerta"] is DBNull ? null : (int?)obj_Row["Alerta_IdAlerta"];
+                obj_Apertura.Alerta.IdAlertaTipo = obj_Row["Alerta_IdAlerta"] is DBNull ? null : (int?)obj_Row["Alerta_IdAlerta"];
+                obj_Apertura.Alerta.FechaAlerta = obj_Row["Alerta_FechaAlerta"] is DBNull ? null : (DateTime?)obj_Row["Alerta_FechaAlerta"];
+                obj_Apertura.Alerta.FechaAtencion = obj_Row["Alerta_FechaAtencion"] is DBNull ? null : (DateTime?)obj_Row["Alerta_FechaAtencion"];
+
+                obj_Apertura.Alerta.AlertaTipo = new Kruma.KantaPe.Entidad.AlertaTipo();
+                obj_Apertura.Alerta.AlertaTipo.Descripcion = obj_Row["AlertaTipo_Descripcion"] is DBNull ? null : obj_Row["AlertaTipo_Descripcion"].ToString();
+
+                obj_Apertura.Alerta.Ubicacion = new Kruma.KantaPe.Entidad.Ubicacion();
+                obj_Apertura.Alerta.Ubicacion.Numero = obj_Row["Ubicacion_Numero"] is DBNull ? null : (int?)obj_Row["Ubicacion_Numero"];
+
+                obj_Apertura.Alerta.Ubicacion.UbicacionTipo = new Kruma.KantaPe.Entidad.UbicacionTipo();
+                obj_Apertura.Alerta.Ubicacion.UbicacionTipo.Descripcion = obj_Row["UbicacionTipo_Descripcion"] is DBNull ? null : obj_Row["UbicacionTipo_Descripcion"].ToString();
+
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+
+        /// <summary>TOP 5 PARA Reporte de Apertura de Mesa</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> ListarAperturaMesaTop(
+            string str_pNombreCompleto,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdUbicacionTipo,
+            int? int_pNroUbicacion)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaMesaTop");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pNombreCompleto", !string.IsNullOrEmpty(str_pNombreCompleto) ? str_pNombreCompleto : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUbicacionTipo", int_pIdUbicacionTipo.HasValue ? int_pIdUbicacionTipo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNroUbicacion", int_pNroUbicacion.HasValue ? int_pNroUbicacion.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                    obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.Cantidad = obj_Row["Cantidad"] is DBNull ? null : (int?)obj_Row["Cantidad"];
+
+                obj_Apertura.Ubicacion = new Kruma.KantaPe.Entidad.Ubicacion();
+                obj_Apertura.Ubicacion.Numero = obj_Row["Ubicacion_Numero"] is DBNull ? null : (int?)obj_Row["Ubicacion_Numero"];
+
+                obj_Apertura.Ubicacion.UbicacionTipo = new Kruma.KantaPe.Entidad.UbicacionTipo();
+                obj_Apertura.Ubicacion.UbicacionTipo.Descripcion = obj_Row["UbicacionTipo_Descripcion"] is DBNull ? null : obj_Row["UbicacionTipo_Descripcion"].ToString();
+
+
+                obj_Apertura.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Apertura.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+        /// <summary>LISTAR APERTURA DE MESA MOZO TOP</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> ListarAperturaMesaMozoTop(
+            string str_pNombreCompleto,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin
+            )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaMesaMozoTop");
+            dop_Operacion.Parameters.Add(new Parameter("@pNombreCompleto", !string.IsNullOrEmpty(str_pNombreCompleto) ? str_pNombreCompleto : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.NombreCompleto = obj_Row["Mozo_NombreCompleto"] is DBNull ? null : obj_Row["Mozo_NombreCompleto"].ToString();
+                obj_Apertura.Cantidad = obj_Row["cantidad"] is DBNull ? null : (int?)obj_Row["cantidad"];
+
+                obj_Apertura.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Apertura.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+
+        /// <param name="int_pIdLocal">IdApertura</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+        /// <item><FecCrea>11-05-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> ListarAperturaTurno(
+            //int? int_pIdTurno,
+            int? int_pIdLocal,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaTurno");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+
+            int int_CantidadCanciones = int.Parse(Kruma.Core.Business.Data.Parametro.Obtener(Entidad.Constante.Parametro.Modulo, Entidad.Constante.Parametro.CantidadCancionesPorTurno).Valor);
+
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Apertura.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_Apertura.IdApertura = obj_Row["IdApertura"] is DBNull ? null : (int?)obj_Row["IdApertura"];
+                obj_Apertura.FechaApertura = obj_Row["FechaApertura"] is DBNull ? null : (DateTime?)obj_Row["FechaApertura"];
+                obj_Apertura.Ronda = obj_Row["Ronda"] is DBNull ? null : (int?)obj_Row["Ronda"];
+                obj_Apertura.FlagTurno = obj_Row["FlagTurno"] is DBNull ? null : obj_Row["FlagTurno"].ToString();
+                obj_Apertura.Total = obj_Row["Total"] is DBNull ? null : (decimal?)obj_Row["Total"];
+                obj_Apertura.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Apertura.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_Apertura.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Apertura.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Apertura.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                Kruma.KantaPe.Entidad.AperturaUbicacion obj_AperturaUbicacion = new Kruma.KantaPe.Entidad.AperturaUbicacion();
+                obj_AperturaUbicacion.IdUbicacion = obj_Row["AperturaUbicacion_IdUbicacion"] is DBNull ? null : (int?)obj_Row["AperturaUbicacion_IdUbicacion"];
+                obj_AperturaUbicacion.IdApertura = obj_Row["AperturaUbicacion_IdApertura"] is DBNull ? null : (int?)obj_Row["AperturaUbicacion_IdUbicacion"];
+                obj_AperturaUbicacion.IdLocal = obj_Row["AperturaUbicacion_IdLocal"] is DBNull ? null : (int?)obj_Row["AperturaUbicacion_IdLocal"];
+
+                obj_AperturaUbicacion.Ubicacion = new Entidad.Ubicacion();
+                obj_AperturaUbicacion.Ubicacion.IdUbicacion = obj_Row["Ubicacion_IdUbicacion"] is DBNull ? null : (int?)obj_Row["Ubicacion_IdUbicacion"];
+                obj_AperturaUbicacion.Ubicacion.Numero = obj_Row["Ubicacion_Numero"] is DBNull ? null : (int?)obj_Row["Ubicacion_Numero"];
+                obj_AperturaUbicacion.Ubicacion.IdUbicacionTipo = obj_Row["Ubicacion_IdUbicacionTipo"] is DBNull ? null : (int?)obj_Row["Ubicacion_IdUbicacionTipo"];
+
+                obj_AperturaUbicacion.Ubicacion.UbicacionTipo = new Entidad.UbicacionTipo();
+                obj_AperturaUbicacion.Ubicacion.UbicacionTipo.IdUbicacionTipo = obj_Row["UbicacionTipo_IdUbicacionTipo"] is DBNull ? null : (int?)obj_Row["UbicacionTipo_IdUbicacionTipo"];
+                obj_AperturaUbicacion.Ubicacion.UbicacionTipo.Descripcion = obj_Row["UbicacionTipo_Descripcion"] is DBNull ? null : obj_Row["UbicacionTipo_Descripcion"].ToString();
+
+                obj_Apertura.Ubicaciones.Add(obj_AperturaUbicacion);
+
+                if(obj_Apertura.FlagTurno.Equals(Kruma.KantaPe.Entidad.Constante.Condicion_Negativo))//Si la apertura no es la de turno
+                    obj_Apertura.Canciones = KantaPe.Data.AperturaCancion.ListarAperturaTurno(int_pIdLocal, obj_Apertura.IdApertura, 1, int_CantidadCanciones).Result;
+                else
+                {
+                    int? int_IdTurno = Kruma.KantaPe.Data.Turno.ObtenerUltimoTurno(obj_Apertura.IdLocal, obj_Apertura.IdApertura);
+                    obj_Apertura.Canciones = KantaPe.Data.AperturaCancion.ListarAperturaTurnoActual(int_IdTurno, int_pIdLocal, obj_Apertura.IdApertura, 1, int_CantidadCanciones).Result;
+                }
+
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+
+        /// <summary>LISTAR APERTURA DE MESA MOZO MAS RAPIDO Y LENTO</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> ListarTiempoAtencionMozoTop(
+            string str_pNombreCompleto,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin
+            )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarTiempoAtencionMozoTop");
+            dop_Operacion.Parameters.Add(new Parameter("@pNombreCompleto", !string.IsNullOrEmpty(str_pNombreCompleto) ? str_pNombreCompleto : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.NombreCompleto = obj_Row["Mozo_NombreCompleto"] is DBNull ? null : obj_Row["Mozo_NombreCompleto"].ToString();
+                obj_Apertura.Cantidad = obj_Row["Cantidad"] is DBNull ? null : (int?)obj_Row["Cantidad"];
+                obj_Apertura.DiferenciaFechas = obj_Row["DiferenciaFecha"] is DBNull ? null : (int?)obj_Row["DiferenciaFecha"];
+
+                obj_Apertura.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Apertura.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+
+        /// <summary>LISTAR APERTURA DE MESA MOZO MAS RAPIDO Y LENTO</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> ListarAperturaMesaInicio(
+            int? int_pIdUbicacionTipo,
+            int? int_pIdLocal
+            )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaMesaInicio");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUbicacionTipo", int_pIdUbicacionTipo.HasValue ? int_pIdUbicacionTipo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+         
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.Cantidad = obj_Row["Aperturado"] is DBNull ? null : (int?)obj_Row["Aperturado"];
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+
+        /// <summary>LISTAR APERTURA DE MESA CERRADO MOZO MAS RAPIDO Y LENTO</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> ListarAperturaMesaCerradoInicio(
+            int? int_pIdUbicacionTipo,
+            int? int_pIdLocal
+            )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Apertura>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaMesaCerradoInicio");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUbicacionTipo", int_pIdUbicacionTipo.HasValue ? int_pIdUbicacionTipo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Apertura> lst_Apertura = new List<Kruma.KantaPe.Entidad.Apertura>();
+            Kruma.KantaPe.Entidad.Apertura obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                obj_Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                obj_Apertura.Cantidad = obj_Row["Alerta_Cantidad"] is DBNull ? null : (int?)obj_Row["Alerta_Cantidad"];
+                lst_Apertura.Add(obj_Apertura);
+            }
+
+            obj_Lista.Result = lst_Apertura;
+            return obj_Lista;
+        }
+        #endregion
+    }
+}

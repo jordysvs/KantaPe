@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_menu_inicio"
+        android:icon="@drawable/iconoinicio"
+        android:title="INICIO" />
+
+    <item
+        android:id="@+id/nav_menu_canciones"
+        android:icon="@drawable/iconocanciones"
+        android:title="CANCIONERO" />
+
+    <item
+        android:id="@+id/nav_menu_nueva_cancion"
+        android:icon="@drawable/iconoflecha"
+        android:title="NUEVA CANCION" />
+
+    <item
+        android:id="@+id/nav_menu_carta"
+        android:icon="@drawable/iconocarta"
+        android:title="CARTA" />
+
+    <item
+        android:id="@+id/nav_menu_turnos"
+        android:icon="@drawable/iconoturnos"
+        android:title="TURNOS" />
+
+    <item
+        android:id="@+id/nav_menu_mi_mesa"
+        android:icon="@drawable/iconomimesa"
+        android:title="MI MESA" />
+
+    <item
+        android:id="@+id/nav_menu_karaokes"
+        android:icon="@drawable/iconoturnos"
+        android:title="KARAOKES" />
+
+    <item
+        android:id="@+id/nav_menu_buscar_cancion"
+        android:icon="@drawable/iconocanciones"
+        android:title="CANCIONERO" />
+
+    <item
+        android:id="@+id/nav_menu_mi_perfil"
+        android:icon="@drawable/iconomiperfil"
+        android:title="MI PERFIL" />
+
+    <item
+        android:id="@+id/nav_menu_tutorial"
+        android:icon="@drawable/icono_question"
+        android:title="TUTORIAL" />
+
+    <item
+        android:id="@+id/nav_menu_cerrar_session"
+        android:icon="@drawable/iconosalir"
+        android:title="CERRAR SESION" />
+
+</menu>

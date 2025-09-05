@@ -1,0 +1,36 @@
+﻿CREATE PROCEDURE [SecurityActualizarPerfil]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de modificación de perfil
+'* Input :
+		@pIdModulo - IdModulo del perfil
+		@pIdPerfil - IdPerfil del perfil
+		@pDescripcion - Descripcion del perfil
+		@pEstado - Estado del SecurityPerfil
+		@pUsuarioModificacion - UsuarioModificacion del perfil
+'* Output : Ninguno
+'* Creado Por : John Castillo
+'* Fecha Creación : 23-07-2015
+'**********************************************************************************
+*/
+(
+	@pIdModulo char(8) = null,
+	@pIdPerfil varchar(20) = null, 
+	@pDescripcion varchar(50) = null, 
+	@pEstado char(1) = null, 
+	@pUsuarioModificacion varchar(20) = null
+)
+AS
+BEGIN
+		Update SecurityPerfil
+		Set 
+			Descripcion = @pDescripcion, 
+			Estado = @pEstado, 
+			UsuarioModificacion = @pUsuarioModificacion,
+			FechaModificacion = getdate()
+		Where
+			IdModulo = @pIdModulo AND
+			IdPerfil= @pIdPerfil
+END
+
+

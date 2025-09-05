@@ -1,0 +1,168 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+	/// <summary>Usuario</summary>
+	/// <remarks><list type="bullet">
+	/// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+	/// <item><FecCrea>06-03-2017</FecCrea></item></list></remarks>
+
+	public class Usuario
+	{
+		#region Metodos Públicos
+
+		/// <summary>Listado de Usuario</summary>
+		/// <param name="str_pIdUsuario">IdUsuario</param>
+		/// <param name="str_pClave">Clave</param>
+		/// <param name="str_pUsuarioRed">UsuarioRed</param>
+		/// <param name="int_pIdPersona">IdPersona</param>
+		/// <param name="str_pFlagExpiracion">FlagExpiracion</param>
+		/// <param name="dt_pFechaExpiracion">FechaExpiracion</param>
+		/// <param name="dt_pFechaCambioClave">FechaCambioClave</param>
+		/// <param name="dt_pFechaOlvidoClave">FechaOlvidoClave</param>
+		/// <param name="dt_pFechaUltimoLogin">FechaUltimoLogin</param>
+		/// <param name="dt_pFechaLogin">FechaLogin</param>
+		/// <param name="str_pSistema">Sistema</param>
+		/// <param name="str_pEstado">Estado</param>
+		/// <param name="int_pNumPagina" >Numero de pagina</param>
+		/// <param name="int_pTamPagina" >Tamaño de pagina</param>
+		/// <returns>Lista de Usuario</returns>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+		/// <item><FecCrea>06-03-2017</FecCrea></item></list></remarks>
+		public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Usuario> Listar
+            (
+            string str_pIdUsuario, string str_pUsuarioRed, int? int_pIdPersona,
+            string str_pNombreCompleto, string str_pCodigo, string str_pPerfil,
+            string str_pSistema, string str_pEstado,int? int_pIdEmpresa,
+            int? int_pIdLocal, int? int_pNumPagina, int? int_pTamPagina
+            )
+		{
+			Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Usuario> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Usuario>();
+			obj_Lista.PageNumber = int_pNumPagina;
+			obj_Lista.Total = 0;
+
+			DataOperation dop_Operacion = new DataOperation("ListarUsuario");
+			dop_Operacion.Parameters.Add(new Parameter("@pIdUsuario", !string.IsNullOrEmpty(str_pIdUsuario) ? str_pIdUsuario : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioRed", !string.IsNullOrEmpty(str_pUsuarioRed) ? str_pUsuarioRed : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdPersona", int_pIdPersona.HasValue ? int_pIdPersona.Value : (object)DBNull.Value));
+			dop_Operacion.Parameters.Add(new Parameter("@pSistema", !string.IsNullOrEmpty(str_pSistema) ? str_pSistema : (object)DBNull.Value));
+			dop_Operacion.Parameters.Add(new Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pCodigo", !string.IsNullOrEmpty(str_pCodigo) ? str_pCodigo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdPerfil", !string.IsNullOrEmpty(str_pPerfil) ? str_pPerfil : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNombreCompleto", !string.IsNullOrEmpty(str_pNombreCompleto) ? str_pNombreCompleto : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+			dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+			DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+			List<Kruma.KantaPe.Entidad.Usuario> lst_Usuario= new List<Kruma.KantaPe.Entidad.Usuario>();
+			Kruma.KantaPe.Entidad.Usuario obj_Usuario= new Kruma.KantaPe.Entidad.Usuario();
+			foreach (DataRow obj_Row in dt_Resultado.Rows)
+			{
+				if (lst_Usuario.Count == 0)
+					obj_Lista.Total = (int)obj_Row["Total_Filas"];
+				obj_Usuario = new Kruma.KantaPe.Entidad.Usuario();
+			obj_Usuario.IdUsuario = obj_Row["IdUsuario"] is DBNull ? null : obj_Row["IdUsuario"].ToString();
+            obj_Usuario.IdPersona = obj_Row["IdPersona"] is DBNull ? null : (int?)obj_Row["IdPersona"];
+            obj_Usuario.Clave = obj_Row["Clave"] is DBNull ? null : obj_Row["Clave"].ToString();
+			obj_Usuario.UsuarioRed = obj_Row["UsuarioRed"] is DBNull ? null : obj_Row["UsuarioRed"].ToString();
+			obj_Usuario.FlagExpiracion = obj_Row["FlagExpiracion"] is DBNull ? null : obj_Row["FlagExpiracion"].ToString();
+			obj_Usuario.FechaExpiracion = obj_Row["FechaExpiracion"] is DBNull ? null : (DateTime?)obj_Row["FechaExpiracion"];
+			obj_Usuario.FechaCambioClave = obj_Row["FechaCambioClave"] is DBNull ? null : (DateTime?)obj_Row["FechaCambioClave"];
+			obj_Usuario.FechaOlvidoClave = obj_Row["FechaOlvidoClave"] is DBNull ? null : (DateTime?)obj_Row["FechaOlvidoClave"];
+			obj_Usuario.FechaUltimoLogin = obj_Row["FechaUltimoLogin"] is DBNull ? null : (DateTime?)obj_Row["FechaUltimoLogin"];
+			//obj_Usuario.FechaLogin = obj_Row["FechaLogin"] is DBNull ? null : (DateTime?)obj_Row["FechaLogin"];
+			obj_Usuario.Sistema = obj_Row["Sistema"] is DBNull ? null : obj_Row["Sistema"].ToString();
+			obj_Usuario.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+			obj_Usuario.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+			obj_Usuario.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+			obj_Usuario.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+			obj_Usuario.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+                obj_Usuario.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Usuario.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                //CorePersona - Usuario
+                obj_Usuario.Persona = new Kruma.Core.Business.Entity.Persona();
+                obj_Usuario.Persona.IdPersona = obj_Row["CorePersona_IdPersona"] is DBNull ? null : (int?)obj_Row["CorePersona_IdPersona"];
+                obj_Usuario.Persona.Nombres = obj_Row["CorePersona_Nombres"] is DBNull ? null : obj_Row["CorePersona_Nombres"].ToString();
+                obj_Usuario.Persona.ApellidoPaterno = obj_Row["CorePersona_ApellidoPaterno"] is DBNull ? null : obj_Row["CorePersona_ApellidoPaterno"].ToString();
+                obj_Usuario.Persona.ApellidoMaterno = obj_Row["CorePersona_ApellidoMaterno"] is DBNull ? null : obj_Row["CorePersona_ApellidoMaterno"].ToString();
+                obj_Usuario.Persona.IdTipoDocumento = obj_Row["CorePersona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["CorePersona_IdTipoDocumento"];
+                obj_Usuario.Persona.NumeroDocumento = obj_Row["CorePersona_NumeroDocumento"] is DBNull ? null : obj_Row["CorePersona_NumeroDocumento"].ToString();
+                obj_Usuario.Persona.RazonSocial = obj_Row["CorePersona_RazonSocial"] is DBNull ? null : obj_Row["CorePersona_RazonSocial"].ToString();
+                obj_Usuario.Persona.NombreComercial = obj_Row["CorePersona_NombreComercial"] is DBNull ? null : obj_Row["CorePersona_NombreComercial"].ToString();
+                obj_Usuario.Persona.Estado = obj_Row["CorePersona_Estado"] is DBNull ? null : obj_Row["CorePersona_Estado"].ToString();
+                obj_Usuario.Persona.Mail = obj_Row["CorePersona_Mail"] is DBNull ? null : obj_Row["CorePersona_Mail"].ToString();
+
+
+                ////CorePersonaMail 
+                //if (!(obj_Row["CorePersona_Mail"] is DBNull))
+                //{
+                //    Kruma.Core.Business.Entity.PersonaMail obj_PersonaMail = new Kruma.Core.Business.Entity.PersonaMail();
+                //    obj_PersonaMail.Mail = obj_Row["CorePersona_Mail"] is DBNull ? null : obj_Row["CorePersona_Mail"].ToString();
+                //    obj_Usuario.Persona.Mails.Add(obj_PersonaMail);
+                //}
+
+                obj_Usuario.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_Usuario.DesLocal = obj_Row["Local_Nombre"] is DBNull ? null : obj_Row["Local_Nombre"].ToString();
+
+
+
+                lst_Usuario.Add(obj_Usuario);
+			}
+
+			obj_Lista.Result = lst_Usuario;
+			return obj_Lista;
+		}
+
+		/// <summary>Obtener Usuario</summary>
+		/// <param name="str_pIdUsuario">IdUsuario</param>
+		/// <returns>Objeto Usuario</returns>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+		/// <item><FecCrea>06-03-2017</FecCrea></item></list></remarks>
+		public static Kruma.KantaPe.Entidad.Usuario Obtener(string str_pIdUsuario)
+		{
+			Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Usuario> lst_Usuario = Listar(str_pIdUsuario,null, null, null, null, null, null, null,null,null,null,null);
+			return lst_Usuario.Result.Count > 0 ? lst_Usuario.Result[0] : null;
+		}
+
+		/// <summary>Actualizar Usuario</summary>
+		/// <param name="obj_pUsuario">Usuario</param>
+		/// <remarks><list type="bullet">
+		/// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+		/// <item><FecCrea>06-03-2017</FecCrea></item></list></remarks>
+		public static void Modificar(Kruma.KantaPe.Entidad.Usuario obj_pUsuario)
+		{
+			DataOperation dop_Operacion = new DataOperation("ActualizarUsuario");
+
+			dop_Operacion.Parameters.Add(new Parameter("@pIdUsuario", obj_pUsuario.IdUsuario));
+			dop_Operacion.Parameters.Add(new Parameter("@pClave", obj_pUsuario.Clave));
+			dop_Operacion.Parameters.Add(new Parameter("@pUsuarioRed", obj_pUsuario.UsuarioRed));
+			dop_Operacion.Parameters.Add(new Parameter("@pIdPersona", obj_pUsuario.IdPersona));
+			dop_Operacion.Parameters.Add(new Parameter("@pFlagExpiracion", obj_pUsuario.FlagExpiracion));
+			dop_Operacion.Parameters.Add(new Parameter("@pFechaExpiracion", obj_pUsuario.FechaExpiracion));
+			dop_Operacion.Parameters.Add(new Parameter("@pFechaCambioClave", obj_pUsuario.FechaCambioClave));
+			dop_Operacion.Parameters.Add(new Parameter("@pFechaOlvidoClave", obj_pUsuario.FechaOlvidoClave));
+			dop_Operacion.Parameters.Add(new Parameter("@pFechaUltimoLogin", obj_pUsuario.FechaUltimoLogin));
+			//dop_Operacion.Parameters.Add(new Parameter("@pFechaLogin", obj_pUsuario.FechaLogin));
+			dop_Operacion.Parameters.Add(new Parameter("@pSistema", obj_pUsuario.Sistema));
+			dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pUsuario.Estado));
+			
+
+			DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+		}
+
+		#endregion
+	}
+}

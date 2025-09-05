@@ -1,0 +1,2 @@
+﻿INSERT [CoreModulo] ([IdModulo], [Descripcion], [IdImagen], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (N'CORE    ', N'General', 1, N'A', N'ADMIN', NULL, N'ADMIN', CAST(0x0000A5E801698770 AS DateTime))
+GO

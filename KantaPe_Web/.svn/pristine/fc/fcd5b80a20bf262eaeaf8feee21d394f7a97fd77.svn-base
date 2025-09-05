@@ -1,0 +1,31 @@
+﻿using System;
+using Kruma.KantaPe.Service.Interface;
+using System.ServiceModel.Activation;
+
+namespace Kruma.KantaPe.Service.Logical
+{
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
+    public class Idioma : IIdioma
+    {
+        public Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Entidad.Idioma>> Listar()
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma>> obj_Resultado = null;
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma>>
+                   (Kruma.KantaPe.Negocio.Idioma.Listar(null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null));
+            }
+
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma>>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Idioma/Listar", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+    }
+}

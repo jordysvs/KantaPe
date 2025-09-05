@@ -1,0 +1,265 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Portal.master.cs" Inherits="Menu" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+<!DOCTYPE html>
+<html>
+<head runat="server">
+    <meta charset="UTF-8">
+    <title id="Title" runat="server"></title>
+    <link rel="shortcut icon" href="<%= Page.ResolveClientUrl("~/Content/favicon.ico") %>" />
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <cc:CssCombine ID="CSSCombiner" runat="server" CSSHandler="~/Ashx/Combine/CSSHandler.ashx">
+        <CSSReferences>
+            <cc:CssReference Path="~/Style/Base/bootstrap/bootstrap.css" />
+            <cc:CssReference Path="~/Style/Base/default.css" />
+            <cc:CssReference Path="~/Style/Base/extension.css" />
+            <cc:CssReference Path="~/Style/Forms/loading.css" />
+        </CSSReferences>
+    </cc:CssCombine>
+    <script>var UrlPath = '<%= Page.ResolveClientUrl("~") %>';</script>
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Base/jquery/jquery.min.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap/bootstrap.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.app/bootstrap.app.js" />
+            <cc:ScriptReference Path="~/Script/Base/fastclick/fastclick.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.slimscroll/jquery.slimscroll.min.js" />
+            <cc:ScriptReference Path="~/Script/Forms/Default.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+    <asp:ContentPlaceHolder ID="cphHeader" runat="server">
+    </asp:ContentPlaceHolder>
+    <style>
+        .menu {
+            top: 40%;
+            border-right-color: blue;
+            border-right-style: solid;
+            border-right-width: thin;
+            cursor: pointer;
+        }
+
+            .menu a {
+                color: blue;
+                font-size: 15px;
+            }
+
+                .menu a:hover {
+                    color: #A5CA40;
+                }
+
+        .mail {
+            font-size: 16px;
+            color: white;
+            float: right;
+        }
+
+        @media (min-width: 0px) and (max-width: 767px) {
+
+            .celdaTelefono {
+                float: right;
+            }
+        }
+    </style>
+</head>
+<body class="skin-red sidebar-collapse">
+    <form id="frmContent" runat="server">
+        <div id='divLoading' class="modal-backdrop fade in" style="display: none;">
+        </div>
+        <div id="imgLoading" tabindex="-1" style="display: none;" class="ui-front ui-dialog">
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <div class="wrapper">
+            <div class="content-wrapper">
+                <section id="contentBody" class="content" style="padding-bottom: 0px!important">
+                    <div class="row">
+                        <div class="col-xl-1 col-lg-1 col-md-1">
+                        </div>
+                        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-12">
+                            <div class="row">
+                                <div class="col-xl-1 col-lg-2 col-md-3 col-sm-4 col-xs-7" style="float: right;">
+                                    <div class="row" style="height: 20px; text-align: center; text-transform: uppercase; vertical-align: middle;">
+                                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">
+                                            <img class="imgHome" src="./Images/Iconos/Icono-Verde.png" style="padding-top: 5px; float: right;" />
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3" style="text-align: right;">
+                                            <a href="Home.aspx">
+                                                <img src="./Images/Textos/Home-Footer.png" style="height: 20px; float: right;" /></a>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">
+                                            <img class="imgAfiliate" src="./Images/Iconos/Icono-Blanco.png" style="padding-top: 5px; float: right;" />
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4" style="text-align: right;">
+                                            <a href="Afiliate.aspx">
+                                                <img src="./Images/Textos/Afiliate-Footer.png" style="height: 20px; float: right;" /></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <img alt="Kanta-Logo" src="./Images/Textos/Logo.png" style="height: 80px;" />
+                                    <br />
+                                    <br />
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-10 col-lg-1 col-md-1">
+                        </div>
+                    </div>
+                    <asp:ContentPlaceHolder ID="cphBody" runat="server">
+                    </asp:ContentPlaceHolder>
+
+                    <div class="row">
+                        <br />
+                        <br />
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <div class="row" style="background: rgba(0, 0, 0, 0.2); padding-top: 10px; padding-bottom: 10px;">
+                                <div class="col-xl-1 col-lg-1 col-md-1">
+                                </div>
+                                <div class="col-xl-5 col-lg-5 col-md-5 col-sm-6 col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-5">
+                                            <img src="./Images/Textos/Contacto.png" />
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-7">
+                                            <br />
+                                            <a href="tel:+51935828534" style="color: #FFF; margin: 0; font-size: 15px;" class="celdaTelefono">
+                                                <img src="./Images/Iconos/Icono-Telefono.png" style="padding-right: 10px; height: 20px;" />
+                                                <img src="./Images/Iconos/Icono-Whatsap.png" style="padding-right: 10px; height: 20px;" />(+51) 935 828 534
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-5 col-lg-5 col-md-5 col-sm-6 col-xs-12">
+                                    <div class="row">
+                                        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-xs-8">
+                                            <br />
+                                            <a href="mailto:ventas@kanta.pe" style="color: #FFF; margin-left: 0; font-size: 15px;">
+                                                <img src="./Images/Iconos/Icono-Correo.png" style="padding-right: 10px;" />ventas@kanta.pe</a>
+
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-4">
+                                            <br />
+                                            <div class="row" style="float: right;">
+                                                <div class="col-xl-6 col-lg-6 col-md-4 col-sm-4 col-xs-5">
+                                                </div>
+                                                <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-xs-2">
+                                                    <a href="https://www.facebook.com/KantaPe-1086989618047922/" target="_blank">
+                                                        <img src="./Images/Iconos/Icono-Facebook.png" style="height: 20px; float: right;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-xs-2">
+                                                    <a href="https://www.youtube.com/channel/UCCrJzKWIdf2wunqFSu5lfPQ" target="_blank">
+                                                        <img src="./Images/Iconos/Icono-Youtube.png" style="height: 20px; float: right;" />
+                                                    </a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-1 col-lg-1 col-md-1">
+                                </div>
+                            </div>
+                            <div class="row" style="background: rgba(0, 0, 0, 0.4); padding-bottom: 5px;">
+                                <div class="col-xl-1 col-lg-1 col-md-1">
+                                </div>
+                                <div class="col-xl-5 col-lg-5 col-md-5 col-sm-6 col-xs-6">
+                                    <div class="row">
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                                            <br />
+                                            <div class="row">
+                                                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-3">
+                                                    <a href="https://play.google.com/store/apps/details?id=com.kruma.kantape" target="_blank">
+                                                        <img src="./Images/Iconos/Icono-Android.png" style="height: 20px;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-3">
+                                                    <img src="./Images/Iconos/Icono-IOS.png" style="height: 20px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-5 col-lg-5 col-md-5 col-sm-6 col-xs-6">
+                                    <div class="row">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                            <br />
+                                            <div class="row" style="float: right;">
+                                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                                    <a href="Home.aspx">
+                                                        <img src="./Images/Textos/Home-Footer.png" style="height: 20px; float: right;" />
+                                                    </a>
+                                                </div>
+                                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                                    <a href="Afiliate.aspx">
+                                                        <img src="./Images/Textos/Afiliate-Footer.png" style="height: 20px; float: right;" />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-1 col-lg-1 col-md-1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </form>
+    <!--modal-->
+    <div class="modal fade full-color" id="md-template" tabindex="-1" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3></h3>
+                    <button type="button" class="close btn-cerrar" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="i-circle success" style="display: none;"><i class="fa fa-check"></i></div>
+                        <div class="i-circle info" style="display: none;"><i class="fa fa-info"></i></div>
+                        <div class="i-circle warning" style="display: none;"><i class="fa fa-warning"></i></div>
+                        <div class="i-circle danger" style="display: none;"><i class="fa fa-times"></i></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-flat btn-mono3 btn-aceptar" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--confirm-->
+    <div class="modal fade full-color warning" id="md-confirm-template" tabindex="-1" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="i-circle warning"><i class="fa fa-warning"></i></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning btn-mono3 btn-flat btn-aceptar" data-dismiss="modal">Aceptar</button>
+                    <button type="button" class="btn btn-warning btn-mono3 btn-flat btn-cancelar" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

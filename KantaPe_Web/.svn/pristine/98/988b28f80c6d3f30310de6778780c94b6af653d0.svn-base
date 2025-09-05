@@ -1,0 +1,14 @@
+﻿body {
+    background-image: url("../../Images/Forms/AfiliateFondo.png") !important;
+    /*background-color: #5EA41C !important;*/
+    background-color: white !important;
+    background-size: 100%;
+}
+
+.skin-red .wrapper, .skin-red .main-sidebar, .skin-red .left-side {
+    background-color: transparent !important;
+}
+
+.content-wrapper, .right-side {
+    background-color: transparent !important;
+}

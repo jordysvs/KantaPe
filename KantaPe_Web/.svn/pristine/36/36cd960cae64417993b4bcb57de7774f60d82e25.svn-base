@@ -1,0 +1,953 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+using System.Transactions;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Cancion</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+
+    public class LocalCancion
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de albumes</summary>
+        /// <param name="str_pTitulo">Título del canción</param>
+        /// <param name="int_pIdArtista">Id de artista</param>
+        /// <param name="int_pIdAlbum">Id de álbum</param>
+        /// <param name="int_pIdGenero">Id de género</param>
+        /// <param name="int_pIdIdioma">Id de idioma</param>
+        /// <param name="str_pDecada">Década de la canción</param>
+        /// <param name="int_pAnio">Año de la canción</param>
+        /// <param name="str_pYoutube">Link de Youtube de la canción</param>
+        /// <param name="int_pIdCancionSolicitud">Id de canción solicitud</param>
+        /// <param name="str_pEstado">Estado del álbum</param>
+        /// <param name="int_pNumPagina" >Número de página</param>
+        /// <param name="int_pTamPagina" >Tamaño de página</param>
+        /// <returns>Lista de albumes</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> Listar(
+            int? int_pIdLocalCancion,
+            int? int_pIdCancion,
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave,
+            string str_pEstado,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.LocalCancion.Listar(
+                int_pIdLocalCancion,
+                int_pIdCancion,
+                str_pTitulo,
+                int_pIdArtista,
+                str_pArtistaNombre,
+                int_pIdAlbum,
+                str_pAlbumTitulo,
+                int_pIdGenero,
+                int_pIdIdioma,
+                str_pDecada,
+                null,
+                str_pAnioFiltro,
+                str_pYoutube,
+                int_pIdCancionSolicitud,
+                str_pPalabraClave,
+                str_pEstado,
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /*
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarRanking(
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave,
+            string str_pEstado,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Lista = Kruma.KantaPe.Data.LocalCancion.ListarRanking(
+                  null,
+                  str_pTitulo,
+                  int_pIdArtista,
+                  str_pArtistaNombre,
+                  int_pIdAlbum,
+                  str_pAlbumTitulo,
+                  int_pIdGenero,
+                  int_pIdIdioma,
+                  str_pDecada,
+                  null,
+                  str_pAnioFiltro,
+                  str_pYoutube,
+                  int_pIdCancionSolicitud,
+                  str_pPalabraClave,
+                  str_pEstado,
+                  int_pIdEmpresa,
+                  int_pIdLocal,
+                  int_pNumPagina,
+                  int_pTamPagina);
+
+            foreach (Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion in lst_Lista.Result)
+                if (obj_LocalCancion.IdAlbum != null)
+                    obj_LocalCancion.Album.ImagenURL = ObtenerAlbumImagenURL(obj_LocalCancion.IdAlbum);
+
+            return lst_Lista;
+        }
+
+    */
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarNovedades(
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave,
+            string str_pEstado,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Lista = Kruma.KantaPe.Data.LocalCancion.ListarNovedades(
+                  null,
+                  str_pTitulo,
+                  int_pIdArtista,
+                  str_pArtistaNombre,
+                  int_pIdAlbum,
+                  str_pAlbumTitulo,
+                  int_pIdGenero,
+                  int_pIdIdioma,
+                  str_pDecada,
+                  null,
+                  str_pAnioFiltro,
+                  str_pYoutube,
+                  int_pIdCancionSolicitud,
+                  str_pPalabraClave,
+                  str_pEstado,
+                  int_pIdEmpresa,
+                  int_pIdLocal,
+                  int_pNumPagina,
+                  int_pTamPagina
+                  );
+
+            foreach (Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion in lst_Lista.Result)
+            {
+                if (obj_LocalCancion.IdAlbum != null)
+                    obj_LocalCancion.Album.ImagenURL = ObtenerAlbumImagenURL(obj_LocalCancion.IdAlbum);
+                if (obj_LocalCancion.IdArtista != null)
+                    obj_LocalCancion.Artista.ImagenURL = ObtenerArtistaImagenURL(obj_LocalCancion.IdArtista);
+            }
+
+            return lst_Lista;
+        }
+
+        /// <summary>Obtener Canción</summary>
+        /// <param name="int_pIdCancion">Id de la Canción</param>
+        /// <returns>Objeto Canción</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.LocalCancion Obtener(int? int_pIdCancion)
+        {
+            return Kruma.KantaPe.Data.LocalCancion.Obtener(int_pIdCancion);
+        }
+
+        /// <summary>Insertar canción/summary>
+        /// <param name="obj_pCancion">Canción</param>
+        /// <returns>Id de Canción</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult Insertar(Kruma.KantaPe.Entidad.LocalCancion obj_pCancion)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Inserción del album
+                    int int_IdCancion = Kruma.KantaPe.Data.LocalCancion.Insertar(obj_pCancion);
+
+                    //Actualización de la imagen
+                    if (obj_pCancion.Foto != null)
+                    {
+                        if (obj_pCancion.Foto.IdDocumento.HasValue)
+                        {
+                            int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Album).Valor);
+
+                            new Kruma.Core.FileServer.FileServerManager().copyFile(
+                                obj_pCancion.Foto.IdAlmacen.Value,
+                                obj_pCancion.Foto.IdRegistro.Value,
+                                obj_pCancion.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_pCancion.IdAlbum.Value,
+                                obj_pCancion.UsuarioCreacion);
+                        }
+                    }
+                    obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(int_IdCancion);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar canción</summary>
+        /// <param name="obj_pCancion">Canción</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult Modificar(Kruma.KantaPe.Entidad.LocalCancion obj_pCancion)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Actualización del localcancion
+                    Kruma.KantaPe.Data.LocalCancion.Modificar(obj_pCancion);
+
+                    //Actualización de la imagen
+                    if (obj_pCancion.Foto != null)
+                    {
+                        int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Album).Valor);
+
+                        Kruma.Core.FileServer.FileServerManager obj_FileServerManager = new Kruma.Core.FileServer.FileServerManager();
+                        System.Collections.Generic.List<Kruma.Core.FileServer.Entity.FileUpload> lstFotos = obj_FileServerManager.getFiles(int_IdAlmacenDestino, obj_pCancion.IdAlbum.Value);
+                        foreach (Kruma.Core.FileServer.Entity.FileUpload obj_Foto in lstFotos)
+                            obj_FileServerManager.deleteFile(
+                                obj_Foto.IdDocumento.Value, obj_Foto.IdAlmacen.Value, obj_Foto.IdRegistro.Value, obj_pCancion.UsuarioModificacion);
+
+                        if (obj_pCancion.Foto.IdDocumento.HasValue)
+                            obj_FileServerManager.copyFile(
+                                obj_pCancion.Foto.IdAlmacen.Value,
+                                obj_pCancion.Foto.IdRegistro.Value,
+                                obj_pCancion.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_pCancion.IdAlbum.Value,
+                                obj_pCancion.UsuarioModificacion);
+                    }
+
+                    obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pCancion.Cancion);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado Canción</summary>
+        /// <param name="obj_pCancion">Canción</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.LocalCancion obj_pCancion)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = Kruma.KantaPe.Data.LocalCancion.Obtener(obj_pCancion.IdCancion.Value);
+                if (obj_Cancion.Estado == obj_pCancion.Estado)
+                {
+                    string str_Mensaje = obj_pCancion.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "La canción ya se encuentra activa." :
+                        "La Canción ya se encuentra inactiva.";
+                    return new Kruma.Core.Util.Common.ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_Cancion.Estado = obj_pCancion.Estado;
+                obj_Cancion.UsuarioModificacion = obj_pCancion.UsuarioModificacion;
+                Kruma.KantaPe.Data.LocalCancion.Modificar(obj_Cancion);
+
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pCancion.IdCancion);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+
+            return obj_Resultado;
+        }
+
+        /// <summary>Actualizar Solicitud</summary>
+        /// <param name="obj_pSolicitud">Solicitud</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>17-01-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult AprobarSolicitud(Kruma.KantaPe.Entidad.LocalCancion obj_pCancion, int? int_pIdSolicitudCancion)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+
+                    //REGISTRAR CANCION
+                    int int_IdCancion = Kruma.KantaPe.Data.LocalCancion.Insertar(obj_pCancion);
+
+                    //Actualización de la imagen
+                    if (obj_pCancion.Foto != null)
+                    {
+                        if (obj_pCancion.Foto.IdDocumento.HasValue)
+                        {
+                            int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Album).Valor);
+
+                            new Kruma.Core.FileServer.FileServerManager().copyFile(
+                                obj_pCancion.Foto.IdAlmacen.Value,
+                                obj_pCancion.Foto.IdRegistro.Value,
+                                obj_pCancion.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_pCancion.IdAlbum.Value,
+                                obj_pCancion.UsuarioCreacion);
+                        }
+                    }
+
+                    //CAMBIAR ESTADO A APROBADO 
+                    //System.Collections.Generic.List<Entidad.SolicitudCancion> lstSolicitudCancion = Kruma.KantaPe.Negocio.SolicitudCancion.Listar(int_pIdSolicitudCancion, null, null, null, null, null, null, null, null, null).Result;
+                    //foreach (Entidad.SolicitudCancion obj_SolicitudCancion in lstSolicitudCancion)
+                    //{
+                    Kruma.KantaPe.Entidad.SolicitudCancion obj_SolicitudCancion = Kruma.KantaPe.Negocio.SolicitudCancion.Obtener(int_pIdSolicitudCancion);
+                    if (obj_SolicitudCancion != null)
+                    {
+                        obj_SolicitudCancion.Estado = "A";
+                        Kruma.KantaPe.Data.SolicitudCancion.Modificar(obj_SolicitudCancion);
+                    }
+
+                    //ENVIAR CORREO
+                    string UsuarioCreacionSolicitudCancion = "";
+                    UsuarioCreacionSolicitudCancion = obj_SolicitudCancion.UsuarioCreacion.ToString();
+                    EnviarCorreo(int_pIdSolicitudCancion, null, obj_SolicitudCancion);
+
+                    obj_Resultado = new ProcessResult(int_IdCancion);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Actualizar Solicitud</summary>
+        /// <param name="obj_pSolicitud">Solicitud</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>17-01-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult RechazarSolicitud(int? int_pIdSolicitudCancion, string str_pMotivo)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+
+                    //CAMBIAR ESTADO A APROBADO 
+                    //System.Collections.Generic.List<Entidad.SolicitudCancion> lstSolicitudCancion = Kruma.KantaPe.Negocio.SolicitudCancion.Listar(int_pIdSolicitudCancion, null, null, null, null, null, null, null, null, null).Result;
+                    //foreach (Entidad.SolicitudCancion obj_SolicitudCancion in lstSolicitudCancion)
+                    //{
+                    Kruma.KantaPe.Entidad.SolicitudCancion obj_SolicitudCancion = Kruma.KantaPe.Negocio.SolicitudCancion.Obtener(int_pIdSolicitudCancion);
+                    if (obj_SolicitudCancion != null)
+                    {
+                        obj_SolicitudCancion.Motivo = str_pMotivo;
+                        obj_SolicitudCancion.Estado = "R";
+                        Kruma.KantaPe.Data.SolicitudCancion.Modificar(obj_SolicitudCancion);
+                    }
+
+                    EnviarCorreo(int_pIdSolicitudCancion, str_pMotivo, obj_SolicitudCancion);
+
+                    obj_Resultado = new ProcessResult(int_pIdSolicitudCancion);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Enviar Correo</summary>
+        /// <param name="obj_pPago">Pago</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Vicente Gonzales Osorio Vicente</CreadoPor></item>
+        /// <item><FecCrea>26-02-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult EnviarCorreo(int? int_pIdSolicitudCancion, string str_pMotivo, Entidad.SolicitudCancion obj_SolicitudCancion)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                string str_Mensaje = string.Empty;
+                //Kruma.KantaPe.Entidad.SolicitudCancion obj_SolicitudCancion = Kruma.KantaPe.Negocio.SolicitudCancion.Obtener(int_pIdSolicitudCancion);
+                if (obj_SolicitudCancion != null)
+                {
+                    string str_Titulo = "Enviar correo";
+                    string str_Estado = "";
+                    Kruma.Core.Notification.Entity.MailEntry obj_MailEntry = new Kruma.Core.Notification.Entity.MailEntry();
+                    //obj_MailEntry.To = obj_Solicitud.Contrato.Cliente.Mail;
+                    obj_MailEntry.Subject = str_Titulo;
+                    obj_MailEntry.IdTipoCorreo = Kruma.Core.Notification.Enum.MailType.Template;
+                    obj_MailEntry.BodyFileName = string.Format("{0}{1}",
+                        System.Web.HttpContext.Current.Server.MapPath("~"),
+                        "\\Plantillas\\Kanta\\EnviarCorreo.htm");
+                    obj_MailEntry.isHTML = true;
+
+                    Kruma.Core.Security.Entity.Usuario obj_Usuario = Kruma.Core.Security.Data.Usuario.Obtener(obj_SolicitudCancion.UsuarioCreacion.ToString(), null);
+                    Kruma.Core.Business.Entity.Persona obj_Persona = Kruma.Core.Business.Data.Persona.Obtener(obj_Usuario.IdPersona.Value);
+
+                    if (obj_SolicitudCancion.Estado == "A")
+                    {
+                        str_Estado = "Aprobado";
+                    }
+                    if (obj_SolicitudCancion.Estado == "R")
+                    {
+                        str_Estado = "Rechazado";
+                    }
+
+                    if (str_pMotivo == null)
+                    {
+                        str_pMotivo = ".";
+                    }
+                    else
+                    {
+                        str_pMotivo = " por los siguientes motivos : " + str_pMotivo + ".";
+                    }
+
+                    obj_MailEntry.Replacements.Add("<%USUARIO%>", obj_Persona.NombreCompleto.ToString());
+                    obj_MailEntry.Replacements.Add("<%TITULO%>", obj_SolicitudCancion.Cancion);
+                    obj_MailEntry.Replacements.Add("<%ARTISTA%>", obj_SolicitudCancion.Artista);
+                    obj_MailEntry.Replacements.Add("<%ALBUM%>", obj_SolicitudCancion.Album);
+                    obj_MailEntry.Replacements.Add("<%GENERO%>", obj_SolicitudCancion.Genero);
+                    obj_MailEntry.Replacements.Add("<%IDIOMA%>", obj_SolicitudCancion.Idioma);
+                    obj_MailEntry.Replacements.Add("<%ESTADO%>", str_Estado);
+                    obj_MailEntry.Replacements.Add("<%MOTIVO%>", str_pMotivo);
+
+                    //Mensaje del correo
+                    Kruma.Core.Business.Entity.Parametro obj_ParametroSistemaNombre = Kruma.Core.Business.Logical.Parametro.Obtener("CORE", "SISTEMANOMBRE");
+                    StringBuilder stbMensaje = new StringBuilder();
+                    stbMensaje.Append(str_Mensaje);
+                    stbMensaje.Append(string.Format("<br><br>Atentamente<br><br>{0}", obj_ParametroSistemaNombre.Valor));
+                    obj_MailEntry.Replacements.Add("<%FIRMA%>", stbMensaje.ToString());
+
+                    Kruma.Core.Notification.NotificationManager obj_NotificationManager = new Kruma.Core.Notification.NotificationManager("Default");
+                    obj_NotificationManager.Send(obj_MailEntry);
+                    obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(int_pIdSolicitudCancion);
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarLista(
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave,
+            string str_pEstado,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Lista = Kruma.KantaPe.Data.LocalCancion.ListarLista(
+                           null,
+                           str_pTitulo,
+                           int_pIdArtista,
+                           str_pArtistaNombre,
+                           int_pIdAlbum,
+                           str_pAlbumTitulo,
+                           int_pIdGenero,
+                           int_pIdIdioma,
+                           str_pDecada,
+                           null,
+                           str_pAnioFiltro,
+                           str_pYoutube,
+                           int_pIdCancionSolicitud,
+                           str_pPalabraClave,
+                           str_pEstado,
+                           int_pIdEmpresa,
+                           int_pIdLocal,
+                           int_pNumPagina,
+                           int_pTamPagina);
+
+            foreach (Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion in lst_Lista.Result)
+            {
+                if (obj_LocalCancion.IdAlbum != null)
+                    obj_LocalCancion.Album.ImagenURL = ObtenerAlbumImagenURL(obj_LocalCancion.IdAlbum);
+                if (obj_LocalCancion.IdArtista != null)
+                    obj_LocalCancion.Artista.ImagenURL = ObtenerArtistaImagenURL(obj_LocalCancion.IdArtista);
+            }
+
+            return lst_Lista;
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarCancionesUsuarioLogeado(
+        int? int_pIdLocal,
+        int? int_pIdCancion,
+        int? int_pIdEmpresa,
+        string str_pUsuarioLogeado,
+        string str_pTitulo,
+        string str_pArtista,
+        string str_pAlbum,
+        int? int_pIdGenero,
+        int? int_pIdIdioma,
+        string str_pEstado,
+        int? int_pNumPagina,
+        int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.LocalCancion.ListarCancionesUsuarioLogeado(
+                    int_pIdLocal,
+                    null,
+                    int_pIdEmpresa,
+                    str_pUsuarioLogeado,
+                    str_pTitulo,
+                    str_pArtista,
+                    str_pAlbum,
+                    int_pIdGenero,
+                    int_pIdIdioma,
+                    str_pEstado,
+                    int_pNumPagina,
+                    int_pTamPagina);
+        }
+
+        //ListadoDoble
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarDoble(
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave1,
+            string str_pPalabraClave2,
+            string str_pEstado,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Lista = Kruma.KantaPe.Data.LocalCancion.ListarDoble(
+                null,
+                str_pTitulo,
+                int_pIdArtista,
+                str_pArtistaNombre,
+                int_pIdAlbum,
+                str_pAlbumTitulo,
+                int_pIdGenero,
+                int_pIdIdioma,
+                str_pDecada,
+                null,
+                str_pAnioFiltro,
+                str_pYoutube,
+                int_pIdCancionSolicitud,
+                str_pPalabraClave1,
+                str_pPalabraClave2,
+                str_pEstado,
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pNumPagina,
+                int_pTamPagina);
+
+            foreach (Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion in lst_Lista.Result)
+            {
+                if (obj_LocalCancion.IdAlbum != null)
+                    obj_LocalCancion.Album.ImagenURL = ObtenerAlbumImagenURL(obj_LocalCancion.IdAlbum);
+                if (obj_LocalCancion.IdArtista != null)
+                    obj_LocalCancion.Artista.ImagenURL = ObtenerArtistaImagenURL(obj_LocalCancion.IdArtista);
+            }
+
+            return lst_Lista;
+        }
+
+        //ListadoDoble
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarNovedadesDoble(
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave1,
+            string str_pPalabraClave2,
+            string str_pEstado,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Lista = Kruma.KantaPe.Data.LocalCancion.ListarNovedadesDoble(
+                null,
+                str_pTitulo,
+                int_pIdArtista,
+                str_pArtistaNombre,
+                int_pIdAlbum,
+                str_pAlbumTitulo,
+                int_pIdGenero,
+                int_pIdIdioma,
+                str_pDecada,
+                null,
+                str_pAnioFiltro,
+                str_pYoutube,
+                int_pIdCancionSolicitud,
+                str_pPalabraClave1,
+                str_pPalabraClave2,
+                str_pEstado,
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pNumPagina,
+                int_pTamPagina
+                );
+
+            foreach (Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion in lst_Lista.Result)
+            {
+                if (obj_LocalCancion.IdAlbum != null)
+                    obj_LocalCancion.Album.ImagenURL = ObtenerAlbumImagenURL(obj_LocalCancion.IdAlbum);
+                if (obj_LocalCancion.IdArtista != null)
+                    obj_LocalCancion.Artista.ImagenURL = ObtenerArtistaImagenURL(obj_LocalCancion.IdArtista);
+            }
+
+            return lst_Lista;
+        }
+
+        //ListadoDoble
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarRankingDoble(
+          string str_pTitulo,
+          int? int_pIdArtista,
+          string str_pArtistaNombre,
+          int? int_pIdAlbum,
+          string str_pAlbumTitulo,
+          int? int_pIdGenero,
+          int? int_pIdIdioma,
+          string str_pDecada,
+          string str_pAnioFiltro,
+          string str_pYoutube,
+          int? int_pIdCancionSolicitud,
+          string str_pPalabraClave1,
+          string str_pPalabraClave2,
+          string str_pEstado,
+          int? int_pIdEmpresa,
+          int? int_pIdLocal,
+          int? int_pNumPagina,
+          int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Lista = Kruma.KantaPe.Data.LocalCancion.ListarRankingDoble(
+                null,
+                str_pTitulo,
+                int_pIdArtista,
+                str_pArtistaNombre,
+                int_pIdAlbum,
+                str_pAlbumTitulo,
+                int_pIdGenero,
+                int_pIdIdioma,
+                str_pDecada,
+                null,
+                str_pAnioFiltro,
+                str_pYoutube,
+                int_pIdCancionSolicitud,
+                str_pPalabraClave1,
+                str_pPalabraClave2,
+                str_pEstado,
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pNumPagina,
+                int_pTamPagina);
+
+            foreach (Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion in lst_Lista.Result)
+            {
+                if (obj_LocalCancion.IdAlbum != null)
+                    obj_LocalCancion.Album.ImagenURL = ObtenerAlbumImagenURL(obj_LocalCancion.IdAlbum);
+                if (obj_LocalCancion.IdArtista != null)
+                    obj_LocalCancion.Artista.ImagenURL = ObtenerArtistaImagenURL(obj_LocalCancion.IdArtista);
+            }
+
+            return lst_Lista;
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarRanking(
+            int? int_pIdLocal,
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave
+         )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Lista = Kruma.KantaPe.Data.LocalCancion.ListarRanking(
+                  int_pIdLocal,
+                  null,
+                  str_pTitulo,
+                  int_pIdArtista,
+                  str_pArtistaNombre,
+                  int_pIdAlbum,
+                  str_pAlbumTitulo,
+                  int_pIdGenero,
+                  int_pIdIdioma,
+                  str_pDecada,
+                  null,
+                  str_pAnioFiltro,
+                  str_pYoutube,
+                  int_pIdCancionSolicitud,
+                  str_pPalabraClave,
+                  Kruma.KantaPe.Entidad.Constante.Estado_Activo
+                  );
+
+            foreach (Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion in lst_Lista.Result)
+            {
+                if (obj_LocalCancion.Album.IdAlbum != null)
+                    obj_LocalCancion.Album.ImagenURL = ObtenerAlbumImagenURL(obj_LocalCancion.IdAlbum);
+                if (obj_LocalCancion.IdArtista != null)
+                    obj_LocalCancion.Artista.ImagenURL = ObtenerArtistaImagenURL(obj_LocalCancion.IdArtista);
+            }
+
+            return lst_Lista;
+        }
+
+        /// <summary>
+        /// Listar todas las canciones de todos los locales
+        /// </summary>
+        /// <param name="str_pPalabraClave">palabra de busqueda de canción</param>
+        /// <param name="int_pIdGenero">Género de la canción</param>
+        /// <param name="int_pIdIdioma">Idioma de la canción</param>
+        /// <param name="int_pNumPagina">Número de página</param>
+        /// <param name="int_pTamPagina">Tamaño de página</param>
+        /// <returns>Lista de canciones</returns>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarTodos(
+           string str_pPalabraClave,
+           int? int_pIdGenero,
+           int? int_pIdIdioma,
+           int? int_pNumPagina,
+           int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Lista =
+                Kruma.KantaPe.Data.LocalCancion.ListarTodos(
+                str_pPalabraClave,
+                int_pIdGenero,
+                int_pIdIdioma,
+                int_pNumPagina,
+                int_pTamPagina);
+
+            foreach (Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion in lst_Lista.Result)
+            {
+                if (obj_LocalCancion.IdAlbum != null)
+                    obj_LocalCancion.Album.ImagenURL = ObtenerAlbumImagenURL(obj_LocalCancion.IdAlbum);
+                if (obj_LocalCancion.IdArtista != null)
+                    obj_LocalCancion.Artista.ImagenURL = ObtenerArtistaImagenURL(obj_LocalCancion.IdArtista);
+            }
+
+            return lst_Lista;
+        }
+
+        #endregion
+
+        #region Metodos Privados
+
+        /// <summary>
+        /// Permite obtener la URL de la imagen
+        /// </summary>
+        /// <param name="int_pIdRegistro">Id del registro</param>
+        /// <returns>URL de la imagen</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>John Castillo</CreadoPor></item>
+        /// <item><FecCrea>19/10/2016</FecCrea></item></list></remarks>
+        public static string ObtenerAlbumImagenURL(int? int_pIdRegistro)
+        {
+            string str_UrlImagen = string.Empty;
+            int? int_IdAlmacenAlbum = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+              Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+              Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Album).Valor);
+
+            if (int_IdAlmacenAlbum.HasValue && int_pIdRegistro.HasValue)
+            {
+                string str_WebSiteUrl = string.Empty;
+                Kruma.Core.Business.Entity.Modulo obj_Modulo = Kruma.Core.Business.Logical.Modulo.Obtener(Kruma.KantaPe.Entidad.Constante.Parametro.Modulo);
+                if (!string.IsNullOrEmpty(obj_Modulo.SitioWeb))
+                    str_WebSiteUrl = string.Format("{0}/", obj_Modulo.SitioWeb);
+                else
+                    str_WebSiteUrl = ((System.Web.UI.Page)System.Web.HttpContext.Current.Handler).ResolveUrl("~");
+
+                Kruma.Core.FileServer.FileServerManager obj_FileServerManager = new Kruma.Core.FileServer.FileServerManager();
+                System.Collections.Generic.List<Kruma.Core.FileServer.Entity.FileUpload> lst_Fotos = obj_FileServerManager.getFiles(int_IdAlmacenAlbum.Value, int_pIdRegistro.Value);
+                if (lst_Fotos.Count > 0)
+                {
+                    str_UrlImagen = string.Format("{0}Ashx/FileServerViewHandler.ashx?ref={1}",
+                        str_WebSiteUrl,
+                        System.Web.HttpUtility.UrlEncode(
+                        new Kruma.Core.Criptography.CriptographyManager().Encrypt(
+                        string.Format("{0}|{1}|{2}", lst_Fotos[0].IdAlmacen, lst_Fotos[0].IdRegistro, lst_Fotos[0].IdDocumento)
+                        )));
+                }
+            }
+            return str_UrlImagen;
+        }
+
+
+        /// <summary>
+        /// Permite obtener la URL de la imagen
+        /// </summary>
+        /// <param name="int_pIdRegistro">Id del registro</param>
+        /// <returns>URL de la imagen</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>John Castillo</CreadoPor></item>
+        /// <item><FecCrea>19/10/2016</FecCrea></item></list></remarks>
+        public static string ObtenerArtistaImagenURL(int? int_pIdRegistro)
+        {
+            string str_UrlImagen = string.Empty;
+            int? int_IdAlmacenArtista = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+              Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+              Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Artista).Valor);
+
+            if (int_IdAlmacenArtista.HasValue && int_pIdRegistro.HasValue)
+            {
+                string str_WebSiteUrl = string.Empty;
+                Kruma.Core.Business.Entity.Modulo obj_Modulo = Kruma.Core.Business.Logical.Modulo.Obtener(Kruma.KantaPe.Entidad.Constante.Parametro.Modulo);
+                if (!string.IsNullOrEmpty(obj_Modulo.SitioWeb))
+                    str_WebSiteUrl = string.Format("{0}/", obj_Modulo.SitioWeb);
+                else
+                    str_WebSiteUrl = ((System.Web.UI.Page)System.Web.HttpContext.Current.Handler).ResolveUrl("~");
+
+                Kruma.Core.FileServer.FileServerManager obj_FileServerManager = new Kruma.Core.FileServer.FileServerManager();
+                System.Collections.Generic.List<Kruma.Core.FileServer.Entity.FileUpload> lst_Fotos = obj_FileServerManager.getFiles(int_IdAlmacenArtista.Value, int_pIdRegistro.Value);
+                if (lst_Fotos.Count > 0)
+                {
+                    str_UrlImagen = string.Format("{0}Ashx/FileServerViewHandler.ashx?ref={1}",
+                        str_WebSiteUrl,
+                        System.Web.HttpUtility.UrlEncode(
+                        new Kruma.Core.Criptography.CriptographyManager().Encrypt(
+                        string.Format("{0}|{1}|{2}", lst_Fotos[0].IdAlmacen, lst_Fotos[0].IdRegistro, lst_Fotos[0].IdDocumento)
+                        )));
+                }
+            }
+            return str_UrlImagen;
+        }
+
+        /// <summary>GUARDAR CARGA MASIVA/summary>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>28-04-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult GuardarCargaMasiva(System.Collections.Generic.List<Kruma.KantaPe.Entidad.LocalCancion> lst_pLocalCancion)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    int int_IdLocalCancion = -1;
+                    //AQUI SE INSERTA EL LocalCancion
+                    foreach (Entidad.LocalCancion obj_LocalCancion in lst_pLocalCancion)
+                    {
+                        obj_LocalCancion.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+                        obj_LocalCancion.UsuarioCreacion = Kruma.Core.Security.SecurityManager.Usuario.IdUsuario;
+                        obj_LocalCancion.UsuarioModificacion = obj_LocalCancion.UsuarioCreacion;
+
+                        Kruma.Core.Util.Common.List<Entidad.LocalCancion> lst_ValidacionLocalCancion =
+                        LocalCancion.Listar(null, obj_LocalCancion.IdCancion, null, obj_LocalCancion.IdArtista, null, null, null, obj_LocalCancion.IdGenero, obj_LocalCancion.IdIdioma, null, null, null, null, null, null, null, null, null, null);
+                        //VALIDAR SI EXISTE CANCION, ARTISTA, GENERO, IDIOMA SE ACTUALIZA
+                        if (lst_ValidacionLocalCancion.Result.Count > 0)
+                        {
+                            obj_LocalCancion.IdLocalCancion = lst_ValidacionLocalCancion.Result[0].IdLocalCancion;
+                            Kruma.KantaPe.Data.LocalCancion.Modificar(obj_LocalCancion);
+                        }
+                        else
+                        {
+                            //VALIDAR SI NO EXISTE SE INSERTA
+                            int_IdLocalCancion = Kruma.KantaPe.Data.LocalCancion.Insertar(obj_LocalCancion);
+
+
+                            Kruma.KantaPe.Data.LocalCancionTemporal.Modificar(obj_LocalCancion.LocalCancionTemporal);
+                        }
+
+                    }
+                    obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(int_IdLocalCancion);
+                    obj_Transaction.Complete();
+                }
+            }
+
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+
+        #endregion
+    }
+}

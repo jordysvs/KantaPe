@@ -1,0 +1,116 @@
+﻿.mesa {
+    height: 100px;
+    width: 100%;
+    margin-bottom: 10px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+}
+
+    .mesa .imagen {
+        text-align: right;
+        vertical-align: bottom;
+        font-size: 40px;
+        font-weight: bold;
+        color: black;
+        height: 100px;
+        width: 100px;
+        background-size: cover;
+        cursor:pointer;
+    }
+
+    .mesa .ubicacion {
+        text-align: center;
+        border-width: 1px;
+        border-style: solid;
+        font-weight: bold;
+        height: 10px;
+        text-transform: uppercase;
+        cursor:pointer;
+    }
+
+    .mesa .mensaje {
+        padding: 10px 10px 10px 10px;
+        text-align: center;
+        font-weight: bold;
+        cursor:pointer;
+    }
+
+    .mesa .apertura {
+        padding: 10px 10px 10px 10px;
+        cursor:pointer;
+    }
+
+        .mesa .apertura .titulo {
+            color: black;
+            font-weight: bold;
+            vertical-align: top;
+        }
+
+        .mesa .apertura .descripcion {
+            vertical-align: top;
+        }
+
+.alerta {
+    background-color: #FFFF00;
+    animation: alerta_parpadeo 1s;
+    -webkit-animation: alerta_parpadeo 1s;
+    -moz-animation: alerta_parpadeo 1s;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+}
+
+.pedido {
+    background-color: #6D8EFB;
+    animation: pedido_parpadeo 1s;
+    -webkit-animation: pedido_parpadeo 1s;
+    -moz-animation: pedido_parpadeo 1s;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+}
+
+.disponible {
+    background-color: #C2F08E;
+}
+
+@keyframes alerta_parpadeo {
+    0% {
+        background-color: white;
+    }
+
+    100% {
+        background-color: #FFFF00;
+    }
+}
+
+@-webkit-keyframes alerta_parpadeo {
+    0% {
+        background-color: white;
+    }
+
+    100% {
+        background-color: #FFFF00;
+    }
+}
+
+@keyframes pedido_parpadeo {
+    0% {
+        background-color: white;
+    }
+
+    100% {
+        background-color: #6D8EFB;
+    }
+}
+
+@-webkit-keyframes pedido_parpadeo {
+    0% {
+        background-color: white;
+    }
+
+    100% {
+        background-color: #6D8EFB;
+    }
+}

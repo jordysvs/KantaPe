@@ -1,0 +1,284 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+using System.Transactions;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Local</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+
+    public class Local
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Local</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdEmpresa">IdEmpresa</param>
+        /// <param name="int_pIdDireccion">IdDireccion</param>
+        /// <param name="str_pNombre">Nombre</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Local</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local> Listar(
+            int? int_pIdLocal,
+            int? int_pIdEmpresa,
+            int? int_pIdDireccion,
+            string str_pNombre,
+            string str_pDireccion,
+            int? int_pIdPais,
+            int? int_pIdDepartamento,
+            int? int_pIdProvincia,
+            int? int_pIdDistrito,
+            string str_pEstado,
+            int? int_pHoraInicio,
+            int? int_pHoraFin,
+            string str_pFlagLocalizacion,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Local.Listar(
+                int_pIdLocal,
+                int_pIdEmpresa,
+                int_pIdDireccion,
+                str_pNombre,
+                str_pDireccion,
+                int_pIdPais,
+                int_pIdDepartamento,
+                int_pIdProvincia,
+                int_pIdDistrito,
+                str_pEstado,
+                int_pHoraInicio,
+                int_pHoraFin,
+                str_pFlagLocalizacion,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /// <summary>Obtener Local</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <returns>Objeto Local</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Local Obtener(int int_pIdLocal)
+        {
+            return Kruma.KantaPe.Data.Local.Obtener(int_pIdLocal);
+        }
+
+        /// <summary>Insertar Local</summary>
+        /// <param name="obj_pLocal">Local</param>
+        /// <returns>Id de Local</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Insertar(Kruma.KantaPe.Entidad.Local obj_pLocal)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+
+                //Validación de existencia del local
+                if (Kruma.KantaPe.Negocio.Local.Listar(null, obj_pLocal.IdEmpresa, null, obj_pLocal.Nombre, null, null, null, null, null, null, null, null, null, null, null).Result.Count > 0)
+                {
+                    string str_Mensaje = "El local ya existe.";
+                    return new ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Se obtiene el ubigeo
+                    System.Collections.Generic.List<Kruma.Core.Business.Entity.Ubigeo> lst_Ubigeo =
+                        Kruma.Core.Business.Logical.Ubigeo.Listar(
+                        null,
+                        obj_pLocal.Ubigeo.IdPais,
+                        obj_pLocal.Ubigeo.IdDepartamento,
+                        obj_pLocal.Ubigeo.IdProvincia,
+                        obj_pLocal.Ubigeo.IdDistrito,
+                        Kruma.Core.Business.Entity.Constante.Estado_Activo,
+                        null,
+                        null).Result;
+
+                    if (lst_Ubigeo.Count > 0)
+                        obj_pLocal.IdUbigeo = lst_Ubigeo[0].IdUbigeo;
+
+                    //Se indica que la direccion es secundaria
+                    obj_pLocal.Principal = Kruma.Core.Business.Entity.Constante.Condicion_Negativo;
+                    //Inserción de la direccion de la persona
+                    obj_pLocal.IdDireccion = Kruma.Core.Business.Data.PersonaDireccion.Insertar(obj_pLocal);
+
+                    //Inserción del local
+                    obj_pLocal.IdLocal = Kruma.KantaPe.Data.Local.Insertar(obj_pLocal);
+
+                    //Actualización de la imagen
+                    if (obj_pLocal.Foto != null)
+                    {
+                        if (obj_pLocal.Foto.IdDocumento.HasValue)
+                        {
+                            int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Local).Valor);
+
+                            new Kruma.Core.FileServer.FileServerManager().copyFile(
+                                obj_pLocal.Foto.IdAlmacen.Value,
+                                obj_pLocal.Foto.IdRegistro.Value,
+                                obj_pLocal.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_pLocal.IdLocal.Value,
+                                obj_pLocal.UsuarioCreacion);
+                        }
+                    }
+                    obj_Resultado = new ProcessResult(obj_pLocal.IdLocal);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Local</summary>
+        /// <param name="obj_pLocal">Local</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Modificar(Kruma.KantaPe.Entidad.Local obj_pLocal)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                //Validación de existencia del local
+                string str_Mensaje = string.Empty;
+                //System.Collections.Generic.List<Kruma.KantaPe.Entidad.Local> lst_Local =
+                //    Kruma.KantaPe.Negocio.Local.Listar(null, obj_pLocal.IdEmpresa, null, obj_pLocal.Nombre,null, null, null, null, null, null, null, null, null, null).Result;
+                //if (lst_Local.Count > 0)
+                //    foreach (Kruma.KantaPe.Entidad.Local obj_Local in lst_Local)
+                //        if (obj_Local.IdLocal != obj_pLocal.IdLocal)
+                //        {
+                //            str_Mensaje = "El local ya existe.";
+                //            return new ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                //        }
+
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Se establece los valores del local
+                    Kruma.KantaPe.Entidad.Local obj_LocalAModificar = Kruma.KantaPe.Negocio.Local.Obtener(obj_pLocal.IdLocal.Value);
+                    obj_LocalAModificar.Nombre = obj_pLocal.Nombre;
+                    obj_LocalAModificar.Direccion = obj_pLocal.Direccion;
+                    obj_LocalAModificar.Latitud = obj_pLocal.Latitud;
+                    obj_LocalAModificar.Longitud = obj_pLocal.Longitud;
+                    obj_LocalAModificar.Foto = obj_pLocal.Foto;
+                    obj_LocalAModificar.Estado = obj_pLocal.Estado;
+                    obj_LocalAModificar.FlagLocalizacion = obj_pLocal.FlagLocalizacion;
+                    obj_LocalAModificar.UsuarioModificacion = obj_pLocal.UsuarioModificacion;
+
+                    //Se obtiene el ubigeo
+                    System.Collections.Generic.List<Kruma.Core.Business.Entity.Ubigeo> lst_Ubigeo =
+                        Kruma.Core.Business.Logical.Ubigeo.Listar(
+                        null,
+                        obj_pLocal.Ubigeo.IdPais,
+                        obj_pLocal.Ubigeo.IdDepartamento,
+                        obj_pLocal.Ubigeo.IdProvincia,
+                        obj_pLocal.Ubigeo.IdDistrito,
+                        Kruma.Core.Business.Entity.Constante.Estado_Activo,
+                        null,
+                        null).Result;
+
+                    obj_LocalAModificar.IdUbigeo = null;
+                    if (lst_Ubigeo.Count > 0)
+                        obj_LocalAModificar.IdUbigeo = lst_Ubigeo[0].IdUbigeo;
+
+                    //Actualización de la direccion de la persona
+                    Kruma.Core.Business.Data.PersonaDireccion.Modificar(obj_LocalAModificar);
+
+                    //Actualización del local
+                    obj_LocalAModificar.HoraInicio = obj_pLocal.HoraInicio;
+                    obj_LocalAModificar.HoraFin = obj_pLocal.HoraFin;
+                    obj_LocalAModificar.Radio = obj_pLocal.Radio;
+                    Kruma.KantaPe.Data.Local.Modificar(obj_LocalAModificar);
+
+                    //Actualización de la imagen
+                    if (obj_pLocal.Foto != null)
+                    {
+                        int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Local).Valor);
+
+                        Kruma.Core.FileServer.FileServerManager obj_FileServerManager = new Kruma.Core.FileServer.FileServerManager();
+                        System.Collections.Generic.List<Kruma.Core.FileServer.Entity.FileUpload> lstFotos = obj_FileServerManager.getFiles(int_IdAlmacenDestino, obj_LocalAModificar.IdLocal.Value);
+                        foreach (Kruma.Core.FileServer.Entity.FileUpload obj_Foto in lstFotos)
+                            obj_FileServerManager.deleteFile(
+                                obj_Foto.IdDocumento.Value, obj_Foto.IdAlmacen.Value, obj_Foto.IdRegistro.Value, obj_LocalAModificar.UsuarioModificacion);
+
+                        if (obj_LocalAModificar.Foto.IdDocumento.HasValue)
+                            obj_FileServerManager.copyFile(
+                                obj_LocalAModificar.Foto.IdAlmacen.Value,
+                                obj_LocalAModificar.Foto.IdRegistro.Value,
+                                obj_LocalAModificar.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_LocalAModificar.IdLocal.Value,
+                                obj_LocalAModificar.UsuarioModificacion);
+                    }
+
+                    obj_Resultado = new ProcessResult(obj_pLocal.IdLocal);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado Local</summary>
+        /// <param name="obj_pLocal">Local</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.Local obj_pLocal)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.Local obj_Local = Kruma.KantaPe.Data.Local.Obtener(
+                    obj_pLocal.IdLocal.Value);
+
+                if (obj_Local.Estado == obj_pLocal.Estado)
+                {
+                    string str_Mensaje = obj_pLocal.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "El local ya se encuentra activo." :
+                        "El local ya se encuentra inactivo.";
+                    return new Kruma.Core.Util.Common.ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_Local.Estado = obj_pLocal.Estado;
+                obj_Local.UsuarioModificacion = obj_pLocal.UsuarioModificacion;
+
+                //Actualización del estado del local
+                Kruma.KantaPe.Data.Local.Modificar(obj_Local);
+
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pLocal.IdLocal);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+
+            return obj_Resultado;
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,216 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+    /// <summary>Local</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo </CreadoPor></item>
+    /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+
+    public class Local
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Local</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdEmpresa">IdEmpresa</param>
+        /// <param name="int_pIdDireccion">IdDireccion</param>
+        /// <param name="str_pNombre">Nombre</param>
+        /// <param name="int_pIdImagen">IdImagen</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Local</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local> Listar(
+            int? int_pIdLocal,
+            int? int_pIdEmpresa,
+            int? int_pIdDireccion,
+            string str_pNombre,
+            string str_pDireccion,
+            int? int_pIdPais,
+            int? int_pIdDepartamento,
+            int? int_pIdProvincia,
+            int? int_pIdDistrito,
+            string str_pEstado,
+            int? int_pHoraInicio,
+            int? int_pHoraFin,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarLocal");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdDireccion", int_pIdDireccion.HasValue ? int_pIdDireccion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNombre", !string.IsNullOrEmpty(str_pNombre) ? str_pNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pDireccion", !string.IsNullOrEmpty(str_pDireccion) ? str_pDireccion : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdPais", int_pIdPais.HasValue ? int_pIdPais.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdDepartamento", int_pIdDepartamento.HasValue ? int_pIdDepartamento.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdProvincia", int_pIdProvincia.HasValue ? int_pIdProvincia.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdDistrito", int_pIdDistrito.HasValue ? int_pIdDistrito.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pHoraInicio", int_pHoraInicio.HasValue ? int_pHoraInicio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pHoraFin", int_pHoraFin.HasValue ? int_pHoraFin.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Local> lst_Local = new List<Kruma.KantaPe.Entidad.Local>();
+            Kruma.KantaPe.Entidad.Local obj_Local = new Kruma.KantaPe.Entidad.Local();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Local.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+
+                //Local
+                obj_Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Local.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_Local.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Local.IdDireccion = obj_Row["IdDireccion"] is DBNull ? null : (int?)obj_Row["IdDireccion"];
+                obj_Local.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Local.HoraInicio = obj_Row["HoraInicio"] is DBNull ? null : (int?)obj_Row["HoraInicio"];
+                obj_Local.HoraFin = obj_Row["HoraFin"] is DBNull ? null : (int?)obj_Row["HoraFin"];
+                obj_Local.Radio = obj_Row["Radio"] is DBNull ? null : (decimal?)obj_Row["Radio"];
+                obj_Local.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_Local.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Local.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Local.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                obj_Local.Telefono = obj_Row["CorePersonaTelefono_Numero"] is DBNull ? null : obj_Row["CorePersonaTelefono_Numero"].ToString();
+                obj_Local.Mail = obj_Row["CorePersonaMail_Mail"] is DBNull ? null : obj_Row["CorePersonaMail_Mail"].ToString();
+
+                //CorePersonaDireccion
+                obj_Local.IdPersona = obj_Row["CorePersonaDireccion_IdPersona"] is DBNull ? null : (int?)obj_Row["CorePersonaDireccion_IdPersona"];
+                obj_Local.IdUbigeo = obj_Row["CorePersonaDireccion_IdUbigeo"] is DBNull ? null : (int?)obj_Row["CorePersonaDireccion_IdUbigeo"];
+                obj_Local.Nombre = obj_Row["CorePersonaDireccion_Nombre"] is DBNull ? null : obj_Row["CorePersonaDireccion_Nombre"].ToString();
+                obj_Local.Direccion = obj_Row["CorePersonaDireccion_Direccion"] is DBNull ? null : obj_Row["CorePersonaDireccion_Direccion"].ToString();
+                obj_Local.Latitud = obj_Row["CorePersonaDireccion_Latitud"] is DBNull ? null : obj_Row["CorePersonaDireccion_Latitud"].ToString();
+                obj_Local.Longitud = obj_Row["CorePersonaDireccion_Longitud"] is DBNull ? null : obj_Row["CorePersonaDireccion_Longitud"].ToString();
+                obj_Local.Principal = obj_Row["CorePersonaDireccion_Principal"] is DBNull ? null : obj_Row["CorePersonaDireccion_Principal"].ToString();
+
+                //Ubigeo
+                if (!(obj_Row["Ubigeo_IdUbigeo"] is DBNull))
+                {
+                    obj_Local.Ubigeo = new Core.Business.Entity.Ubigeo();
+                    obj_Local.Ubigeo.IdUbigeo = obj_Row["Ubigeo_IdUbigeo"] is DBNull ? null : (int?)obj_Row["Ubigeo_IdUbigeo"];
+                    obj_Local.Ubigeo.IdPais = obj_Row["Ubigeo_IdPais"] is DBNull ? null : (int?)obj_Row["Ubigeo_IdPais"];
+                    obj_Local.Ubigeo.IdDepartamento = obj_Row["Ubigeo_IdDepartamento"] is DBNull ? null : (int?)obj_Row["Ubigeo_IdDepartamento"];
+                    obj_Local.Ubigeo.IdProvincia = obj_Row["Ubigeo_IdProvincia"] is DBNull ? null : (int?)obj_Row["Ubigeo_IdProvincia"];
+                    obj_Local.Ubigeo.IdDistrito = obj_Row["Ubigeo_IdDistrito"] is DBNull ? null : (int?)obj_Row["Ubigeo_IdDistrito"];
+                }
+                if (!(obj_Row["Pais_IdPais"] is DBNull))
+                {
+                    obj_Local.Ubigeo.Pais = new Core.Business.Entity.Pais();
+                    obj_Local.Ubigeo.Pais.IdPais = obj_Row["Pais_IdPais"] is DBNull ? null : (int?)obj_Row["Pais_IdPais"];
+                    obj_Local.Ubigeo.Pais.Descripcion = obj_Row["Pais_Descripcion"] is DBNull ? null : obj_Row["Pais_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Departamento_IdDepartamento"] is DBNull))
+                {
+                    obj_Local.Ubigeo.Departamento = new Core.Business.Entity.Departamento();
+                    obj_Local.Ubigeo.Departamento.IdDepartamento = obj_Row["Departamento_IdDepartamento"] is DBNull ? null : (int?)obj_Row["Departamento_IdDepartamento"];
+                    obj_Local.Ubigeo.Departamento.Descripcion = obj_Row["Departamento_Descripcion"] is DBNull ? null : obj_Row["Departamento_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Provincia_IdProvincia"] is DBNull))
+                {
+                    obj_Local.Ubigeo.Provincia = new Core.Business.Entity.Provincia();
+                    obj_Local.Ubigeo.Provincia.IdProvincia = obj_Row["Provincia_IdProvincia"] is DBNull ? null : (int?)obj_Row["Provincia_IdProvincia"];
+                    obj_Local.Ubigeo.Provincia.Descripcion = obj_Row["Provincia_Descripcion"] is DBNull ? null : obj_Row["Provincia_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Distrito_IdDistrito"] is DBNull))
+                {
+                    obj_Local.Ubigeo.Distrito = new Core.Business.Entity.Distrito();
+                    obj_Local.Ubigeo.Distrito.IdDistrito = obj_Row["Distrito_IdDistrito"] is DBNull ? null : (int?)obj_Row["Distrito_IdDistrito"];
+                    obj_Local.Ubigeo.Distrito.Descripcion = obj_Row["Distrito_Descripcion"] is DBNull ? null : obj_Row["Distrito_Descripcion"].ToString();
+                }
+                //Empresa
+                obj_Local.Empresa = new Kruma.KantaPe.Entidad.Empresa();
+                obj_Local.Empresa.IdEmpresa = obj_Row["Empresa_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Empresa_IdEmpresa"];
+                obj_Local.Empresa.IdPersona = obj_Row["CorePersona_IdPersona"] is DBNull ? null : (int?)obj_Row["CorePersona_IdPersona"];
+                obj_Local.Empresa.RazonSocial = obj_Row["CorePersona_RazonSocial"] is DBNull ? null : obj_Row["CorePersona_RazonSocial"].ToString();
+                obj_Local.Empresa.NombreComercial = obj_Row["CorePersona_NombreComercial"] is DBNull ? null : obj_Row["CorePersona_NombreComercial"].ToString();
+                obj_Local.Empresa.IdTipoDocumento = obj_Row["CorePersona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["CorePersona_IdTipoDocumento"];
+                obj_Local.Empresa.NumeroDocumento = obj_Row["CorePersona_NumeroDocumento"] is DBNull ? null : obj_Row["CorePersona_NumeroDocumento"].ToString();
+
+                lst_Local.Add(obj_Local);
+            }
+
+            obj_Lista.Result = lst_Local;
+            return obj_Lista;
+        }
+
+        /// <summary>Obtener Local</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <returns>Objeto Local</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Local Obtener(int int_pIdLocal)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local> lst_Local = Listar(int_pIdLocal, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            return lst_Local.Result.Count > 0 ? lst_Local.Result[0] : null;
+        }
+
+        /// <summary>Insertar Local</summary>
+        /// <param name="obj_pLocal">Local</param>
+        /// <returns>Id de Local</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static int Insertar(Kruma.KantaPe.Entidad.Local obj_pLocal)
+        {
+            DataOperation dop_Operacion = new DataOperation("InsertarLocal");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", obj_pLocal.IdEmpresa));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdDireccion", obj_pLocal.IdDireccion));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pLocal.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pHoraInicio", obj_pLocal.HoraInicio));
+            dop_Operacion.Parameters.Add(new Parameter("@pHoraFin", obj_pLocal.HoraFin));
+            dop_Operacion.Parameters.Add(new Parameter("@pRadio", obj_pLocal.Radio));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioCreacion", obj_pLocal.UsuarioCreacion));
+
+            Parameter obj_IdLocal = new Parameter("@pIdLocal", DbType.Int32);
+            obj_IdLocal.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdLocal);
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdLocal = (int)obj_IdLocal.Value;
+
+            return int_IdLocal;
+        }
+
+        /// <summary>Modificar Local</summary>
+        /// <param name="obj_pLocal">Local</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static void Modificar(Kruma.KantaPe.Entidad.Local obj_pLocal)
+        {
+            DataOperation dop_Operacion = new DataOperation("ActualizarLocal");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pLocal.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pLocal.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pHoraInicio", obj_pLocal.HoraInicio));
+            dop_Operacion.Parameters.Add(new Parameter("@pHoraFin", obj_pLocal.HoraFin));
+            dop_Operacion.Parameters.Add(new Parameter("@pRadio", obj_pLocal.Radio));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioModificacion", obj_pLocal.UsuarioModificacion));
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+        #endregion
+    }
+}

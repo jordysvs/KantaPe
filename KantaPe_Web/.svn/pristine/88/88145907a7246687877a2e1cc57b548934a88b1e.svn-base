@@ -1,0 +1,20 @@
+﻿CREATE TABLE [dbo].[SecurityGrupoDetalle]
+(
+	[IdModulo] [char](8) NOT NULL,
+	[IdGrupo] [char](8) NOT NULL,
+	[IdDetalle] [char](8) NOT NULL,
+	[Descripcion] [varchar](50) NULL,
+	[IdDetallePadre] [char](8) NULL,
+	[Orden] [int] NULL,
+	[URL] [varchar](500) NULL,
+	[FlagVisible] [char](1) NULL,
+	[IdImagen] [int] NULL,
+	[Estado] [char](1) NULL,
+	[UsuarioCreacion] [varchar](20) NULL,
+	[FechaCreacion] [datetime] NULL,
+	[UsuarioModificacion] [varchar](20) NULL,
+	[FechaModificacion] [datetime] NULL,
+	CONSTRAINT [PK_SecurityGrupoDetalle] PRIMARY KEY ([IdModulo],[IdGrupo],[IdDetalle]), 
+    CONSTRAINT [FK_SecurityGrupoDetalle_SecurityGrupo] FOREIGN KEY ([IdModulo],[IdGrupo]) REFERENCES [SecurityGrupo]([IdModulo],[IdGrupo]),
+	CONSTRAINT [FK_SecurityGrupoDetalle_CoreModulo] FOREIGN KEY ([IdModulo]) REFERENCES [CoreModulo]([IdModulo])
+)

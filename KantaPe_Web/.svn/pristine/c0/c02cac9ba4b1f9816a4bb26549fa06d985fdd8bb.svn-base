@@ -1,0 +1,256 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Menu.master" AutoEventWireup="true" CodeFile="Karaoke.aspx.cs" Inherits="Forms_Portal_Karaoke" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx" Combine="false" Compress="false">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Base/jquery.validate/jquery.validate.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.validate/additional-methods.js" />
+            <cc:ScriptReference Path="~/Script/Forms/FileServer/FileServer.js" />
+            <cc:ScriptReference Path="~/Script/Forms/Portal/Karaoke.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+     <style type="text/css">
+        body {
+            background-image: url("../../Images/Forms/Fondo.png") !important;
+            background-color: transparent !important;
+            background-size: 100%;
+        }
+
+        .skin-red .wrapper, .skin-red .main-sidebar, .skin-red .left-side {
+            background-color: transparent !important;
+        }
+
+        .content-wrapper, .right-side {
+            background-color: transparent !important;
+        }
+
+        /*.box {
+            background: none !important;
+        }*/
+    </style>
+    <style>
+        .btn {
+            margin-bottom: 0px !important;
+            margin-left: 0px !important;
+        }
+
+        .btn-info:hover {
+            background-color: #4E74D4;
+        }
+    </style>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+    <div class="col-xs-12">
+            <div class="box box-warning">
+                <div id="divBotones"></div>
+            </div>
+        <br><br>
+        </div>
+    
+    <div class="row">
+        <div class="col-lg-1">
+            
+        </div>
+    <div class="col-lg-11">
+            <div class="form-group">
+                <div class="user-header" style="text-align: left;">
+                    <asp:Image CssClass="user-image"  Style="width: 500px" alt="" ImageUrl="~/Images/Textos/Karaokes-Texto.PNG" runat="server" ClientIDMode="Static" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br><br><br>
+    <div class="row">
+        <div class="col-xs-12">
+                <div id="divKaraokes" class="box-body">
+                    <div id="listarKaraokes">
+                    </div>
+                </div>
+          
+        </div>
+    </div>
+    <br><br><br><br>
+    <div class="row">
+    <div class="col-lg-12">
+            <div class="form-group">
+                <div class="user-header" style="text-align: center;">
+                    <asp:Image CssClass="user-image"  Style="width: 1100px" alt="" ImageUrl="~/Images/Forms/Linea.PNG" runat="server" ClientIDMode="Static" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-1">
+           
+        </div>
+        <div class="col-lg-8">
+            <div class="form-group">
+                <br><br>
+                <div class="user-header" style="text-align: left;">
+                    <asp:Image CssClass="user-image" Style="height:25px" alt="" ImageUrl="~/Images/Textos/DescargarLaApp.PNG" ID="Image3" runat="server" ClientIDMode="Static" />
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="form-group">
+                <br><br>
+                <div class="user-header" style="text-align: left;">
+                    <asp:Image CssClass="user-image" Style="height:25px" alt="" ImageUrl="~/Images/Textos/Contactanos.PNG" ID="Image9" runat="server" ClientIDMode="Static" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-1">
+           
+        </div>
+        <div class="col-lg-1">
+            <div class="form-group">
+                
+                <div class="user-header" style="text-align: left;">
+                    <A href="https://www.facebook.com/KrumaNet/">
+                    <asp:Image CssClass="user-image"  Style="height: 40px" alt="" ImageUrl="~/Images/Iconos/Icono-Android.PNG" ID="Image4" runat="server" ClientIDMode="Static" />
+                </A>
+                        </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+                <div class="user-header" style="text-align: left;">
+                    <A href="https://www.facebook.com/KrumaNet/">
+                    <asp:Image CssClass="user-image" Style="height: 40px;" alt="" ImageUrl="~/Images/Iconos/Icono-iOS.PNG" ID="Image5" runat="server" ClientIDMode="Static" />
+                </A>
+                        </div>
+            </div>
+        </div>
+        <div class="col-lg-1">
+            <div class="form-group">
+                <div class="user-header" style="text-align: left;">
+
+                    <asp:Image CssClass="user-image" Style="height: 30px;" alt="" ImageUrl="~/Images/Iconos/Icono-Correo.PNG"  runat="server" ClientIDMode="Static" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-1">
+           
+        </div>
+        <div class="col-lg-7">
+            <div class="form-group">
+                <div class="user-header" style="text-align: left;">
+                    <asp:Image CssClass="user-image"  Style="height: 25px" alt="" ImageUrl="~/Images/Textos/Siguenos.PNG" ID="Image6" runat="server" ClientIDMode="Static" />
+                </div>
+            </div>
+        </div>
+       <div class="col-lg-1">
+            <div class="form-group">
+                <div class="user-header" style="text-align: left;">
+                    <asp:Image CssClass="user-image" Style="height: 40px;" alt="" ImageUrl="~/Images/Iconos/Icono-Telefono.PNG"  runat="server" ClientIDMode="Static" />
+                </div>
+            </div>
+        </div>
+    
+        
+    </div>
+    <div class="row">
+        <div class="col-lg-1">
+        </div>
+        <div class="col-lg-1">
+            <div class="form-group">
+                <div class="user-header" style="text-align: left;">
+                    <a href="https://www.facebook.com/KrumaNet/">
+                        <asp:Image CssClass="user-image" Style="height: 40px" alt="" ImageUrl="~/Images/Iconos/Icono-Facebook.PNG" ID="Image7" runat="server" ClientIDMode="Static" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="form-group">
+                <div class="user-header" style="text-align: left;">
+                    <a href="https://www.facebook.com/KrumaNet/">
+                        <asp:Image CssClass="user-image" Style="height: 40px" alt="" ImageUrl="~/Images/Iconos/Icono-Youtube.PNG" runat="server" ClientIDMode="Static" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <br><br><br><br>
+    <div class="modal fade colored-header danger" id="mdBuscador" tabindex="-1" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <%--<h3>Motivo de Rechazo</h3>--%>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box box-warning">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="fileUpload">Foto:</label>
+                                                <div class="user-header" style="text-align: center;">
+                                                    <asp:Image CssClass="user-image" Style="max-height: 350px;" alt="" ID="imgLocalImagen" runat="server" ClientIDMode="Static" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="row">
+                                    <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="txtDireccion">Direccion:</label>
+                                                <br><br>
+                                                <label id="txtDireccion" for="txtDireccion"></label>
+                                                <br><br><br>
+                                                <label for="txtContacto">Contacto:</label>
+                                                <br><br>
+                                                <label id="txtContacto" for="txtContacto"></label>
+                                                <br>
+                                            </div>
+                                        </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <h3>Ofertas</h3>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box box-warning">
+                                <div id="divOfertas" class="box-body">
+                                    <div id="listarOfertas">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <h3>Eventos</h3>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box box-warning">
+                                <div id="divEventos" class="box-body">
+                                    <div id="listarEventos">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-flat btn-cancelar">Regresar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <asp:HiddenField ID="hdIdLocal" runat="server" ClientIDMode="Static" />
+
+</asp:Content>

@@ -1,0 +1,131 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Genero</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+
+    public class Genero
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de genero</summary>
+        /// <param name="int_pIdGenero">Id del genero</param>
+        /// <param name="str_pDescripcion">Descripción del genero</param>
+        /// <param name="str_pEstado">Estado del genero</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de genero</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Genero> Listar(
+            string str_pDescripcion,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Genero.Listar(
+                null,
+                str_pDescripcion,
+                str_pEstado,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /// <summary>Obtener Genero</summary>
+        /// <param name="int_pIdGenero">Id del genero</param>
+        /// <returns>Objeto Genero</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Genero Obtener(int int_pIdGenero)
+        {
+            return Kruma.KantaPe.Data.Genero.Obtener(int_pIdGenero);
+        }
+
+        /// <summary>Insertar genero</summary>
+        /// <param name="obj_pGenero">Genero</param>
+        /// <returns>Id de Genero</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Insertar(Kruma.KantaPe.Entidad.Genero obj_pGenero)
+        {
+            ProcessResult obj_Resultado = null;
+
+            try
+            {
+                int int_IdGenero = Kruma.KantaPe.Data.Genero.Insertar(obj_pGenero);
+
+                obj_Resultado = new ProcessResult(int_IdGenero);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Genero</summary>
+        /// <param name="obj_pGenero">Genero</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Modificar(Kruma.KantaPe.Entidad.Genero obj_pGenero)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Data.Genero.Modificar(obj_pGenero);
+                obj_Resultado = new ProcessResult(obj_pGenero.IdGenero);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado Genero</summary>
+        /// <param name="obj_pGenero">Genero</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>29-06-2016</FecCrea></item></list></remarks>
+        public static ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.Genero obj_pGenero)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.Genero obj_Genero = Kruma.KantaPe.Data.Genero.Obtener(obj_pGenero.IdGenero.Value);
+                if (obj_Genero.Estado == obj_pGenero.Estado)
+                {
+                    string str_Mensaje = obj_pGenero.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "El género ya se encuentra activa." :
+                        "El género ya se encuentra inactiva.";
+                    return new ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_Genero.Estado = obj_pGenero.Estado;
+                obj_Genero.UsuarioModificacion = obj_pGenero.UsuarioModificacion;
+                Kruma.KantaPe.Data.Genero.Modificar(obj_Genero);
+
+                obj_Resultado = new ProcessResult(obj_pGenero.IdGenero);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+
+            return obj_Resultado;
+        }
+        #endregion
+    }
+}

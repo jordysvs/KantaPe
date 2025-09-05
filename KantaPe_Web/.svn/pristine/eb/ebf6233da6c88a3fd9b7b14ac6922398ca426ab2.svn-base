@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Menu : System.Web.UI.MasterPage
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+            CargaInicial();
+    }
+    private void CargaInicial()
+    {
+        string str_Titulo = string.Empty;
+        Kruma.Core.Business.Entity.Parametro obj_Parametro =
+            Kruma.Core.Business.Logical.Parametro.Obtener(
+            Kruma.Core.Business.Entity.Constante.Parametro.Modulo,
+            Kruma.Core.Business.Entity.Constante.Parametro.Sistema_Nombre);
+
+        if (obj_Parametro != null)
+            str_Titulo = obj_Parametro.Valor;
+
+        Title.Text = string.Format("{0}", str_Titulo);
+    }
+    protected void lbLogOut_Click(object sender, EventArgs e)
+    {
+        Kruma.Core.Security.SecurityManager.SignOut();
+    }
+}

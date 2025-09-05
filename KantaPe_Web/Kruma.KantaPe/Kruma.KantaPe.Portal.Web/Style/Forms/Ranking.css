@@ -1,0 +1,32 @@
+﻿body {
+    background-image: url("../../Images/Forms/Fondo.png") !important;
+    background-color: transparent !important;
+    background-size: 100%;
+}
+
+.skin-red .wrapper, .skin-red .main-sidebar, .skin-red .left-side {
+    background-color: transparent !important;
+}
+
+.content-wrapper, .right-side {
+    background-color: transparent !important;
+}
+
+.btn {
+    margin-bottom: 0px !important;
+    margin-left: 0px !important;
+}
+
+.btn-info:hover {
+    background-color: #4E74D4;
+}
+
+.celdaRanking {
+    height: 150px;
+    width: 100%;
+    margin-top: 10px;
+}
+    .celdaRanking img {
+        max-height: 150px;
+        max-width: 100%;
+    }

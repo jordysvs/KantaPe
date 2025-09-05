@@ -1,0 +1,138 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Forms_Maestro_Cancion : System.Web.UI.Page
+{
+    #region Eventos
+
+    /// <summary>
+    /// Carga inicial de la pagina
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+            CargaInicial();
+    }
+
+    #endregion
+
+    #region Metodos Privados
+
+    /// <summary>
+    /// Carga inicial del formulario
+    /// </summary>
+    private void CargaInicial()
+    {
+        Master_Default obj_MasterPage = (Master_Default)this.Master;
+        obj_MasterPage.TituloPagina = "Canción";
+
+        //Género
+        ddlGenero.DataSource = Kruma.KantaPe.Negocio.Genero.Listar(null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        ddlGenero.DataValueField = "IdGenero";
+        ddlGenero.DataTextField = "Descripcion";
+        ddlGenero.DataBind();
+        ddlGenero.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //Idioma
+        ddlIdioma.DataSource = Kruma.KantaPe.Negocio.Idioma.Listar(null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        ddlIdioma.DataValueField = "IdIdioma";
+        ddlIdioma.DataTextField = "Descripcion";
+        ddlIdioma.DataBind();
+        ddlIdioma.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //Idioma
+        ddlCancionSolicitud.DataSource = Kruma.KantaPe.Negocio.CancionSolicitud.Listar(null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        ddlCancionSolicitud.DataValueField = "IdCancionSolicitud";
+        ddlCancionSolicitud.DataTextField = "Descripcion";
+        ddlCancionSolicitud.DataBind();
+        ddlCancionSolicitud.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //Estado
+        ddlEstado.DataSource = Kruma.Core.Util.CommonUtil.ListarEstado();
+        ddlEstado.DataValueField = "Code";
+        ddlEstado.DataTextField = "Description";
+        ddlEstado.DataBind();
+        ddlEstado.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //Empresa
+        ddlEmpresa.DataSource = Kruma.Core.Business.Logical.Persona.Listar(null, 2, null, null, null, null, null, null).Result;
+        ddlEmpresa.DataValueField = "IdPersona";
+        ddlEmpresa.DataTextField = "NombreComercial";
+        ddlEmpresa.DataBind();
+        ddlEmpresa.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        ddlLocal.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+    }
+
+    #endregion
+
+    #region Metodos Publicos
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarCancion(
+        string str_pTitulo,
+        string str_pArtista,
+        string str_pAlbum,
+        string str_pDecada,
+        int? int_pIdGenero,
+        int? int_pIdIdioma,
+        string str_pAnio,
+        int? int_pIdCancionSolicitud,
+        string str_pEstado,
+        int? int_pIdEmpresa,
+        int? int_pIdLocal,
+        int? int_pNumPagina,
+        int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.LocalCancion.Listar(
+            null,null,
+            str_pTitulo,
+            null,
+            str_pArtista,
+            null,
+            str_pAlbum,
+            int_pIdGenero,
+            int_pIdIdioma,
+            str_pDecada,
+            str_pAnio,
+            null,
+            int_pIdCancionSolicitud,
+            null,
+            str_pEstado,
+            int_pIdEmpresa,
+            int_pIdLocal,
+            int_pNumPagina,
+            int_pTamPagina);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(
+        int int_pIdCancion, string str_pEstado)
+    {
+        Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+        obj_Cancion.IdCancion = int_pIdCancion;
+        obj_Cancion.Estado = str_pEstado;
+        return Kruma.KantaPe.Negocio.LocalCancion.ModificarEstado(obj_Cancion);
+    }
+    /// <summary>
+    /// Reiniciar contransenia
+    /// </summary>
+    /// <param name="str_pIdUsuario">Id del usuario</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/08/2015</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static object ListarLocal(int? int_pIdPersona)
+    {
+        return Kruma.Core.Business.Data.PersonaDireccion.Listar(int_pIdPersona, null, null, null, null, null, null, null, null, null, null);
+    }
+    #endregion
+}

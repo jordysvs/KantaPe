@@ -1,0 +1,20 @@
+﻿CREATE PROCEDURE [FileServerObtenerAlmacen]
+@pIdAlmacen INT
+AS
+BEGIN
+    SELECT A.IdAlmacen,
+           A.Descripcion,
+           A.Ruta,
+		   A.TipoAlmacen,
+		   A.Usuario,
+		   A.Clave,
+		   A.Dominio,
+           A.Estado,
+           A.UsuarioCreacion,
+           A.FechaCreacion,
+           A.UsuarioModificacion,
+           A.FechaModificacion
+    FROM   FileServerAlmacen AS A
+    WHERE  A.IdAlmacen = @pIdAlmacen;
+END
+

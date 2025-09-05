@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+using Kruma.KantaPe.Service.Interface;
+using System.ServiceModel.Activation;
+using Kruma.Core.Util.Common;
+using Kruma.KantaPe.Entidad;
+using Kruma.KantaPe.Service.Entity;
+using Kruma.Core.Business.Entity;
+
+namespace Kruma.KantaPe.Service.Logical
+{
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
+    public class Local : ILocal
+    {
+        public ServiceResult<Core.Util.Common.List<Entidad.Local>> Listar(
+            string IdLocalCancion,
+            string IdPais,
+            string PalabraClave,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local>> obj_Resultado = null;
+
+            int? int_IdLocalCancion = IdLocalCancion == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocalCancion);
+            int? int_IdPais = IdPais == Constante.NULLTYPE ? null : (int?)int.Parse(IdPais);
+            string str_PalabraClave = PalabraClave == Constante.NULLTYPE ? null : PalabraClave;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local>>(
+                    Kruma.KantaPe.Negocio.Local.Listar(null, null, null, str_PalabraClave, null, int_IdPais, null, null, null, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null, null, int_IdLocalCancion, int_NumPagina, int_TamPagina));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Local>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Local/Listar", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public ServiceResult<Core.Util.Common.List<Pais>> ListarPais()
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+               Kruma.Core.Util.Common.List<Kruma.Core.Business.Entity.Pais>> obj_Resultado = null;
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.Core.Business.Entity.Pais>>(
+                    Kruma.Core.Business.Logical.Pais.Listar(null, null, Kruma.Core.Business.Entity.Constante.Estado_Activo, null, null));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.Core.Business.Entity.Pais>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Local/Listar", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public ServiceResult<Entidad.Local> Obtener(string IdLocal)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Local> obj_Resultado = null;
+
+            int int_IdLocal = int.Parse(IdLocal);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Local>
+                    (Kruma.KantaPe.Negocio.Local.Obtener(int_IdLocal));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Local>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Usuario/Obtener", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+    }
+}

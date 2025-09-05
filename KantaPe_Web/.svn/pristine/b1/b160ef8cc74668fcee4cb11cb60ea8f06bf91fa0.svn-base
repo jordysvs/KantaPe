@@ -1,0 +1,78 @@
+﻿//Atributos
+var urlPrincipal = 'Idioma.aspx';
+var urlEdicion = 'RegistroIdioma.aspx';
+
+$(function () {
+    cargarInicial();
+    cargarControles();
+    obtenerIdioma();
+});
+
+function cargarInicial() {
+
+    jQuery.validator.addMethod('selectEstado', function (value) {
+        return (value != '');
+    }, "Seleccione el estado");
+
+    $('#frmContent').validate({
+        rules: {
+            ctl00$cphBody$txtDescripcion: { required: true, },
+            ctl00$cphBody$ddlEstado: { selectEstado: true }
+        },
+        messages: {
+            ctl00$cphBody$txtDescripcion: { required: 'Ingrese la descripción' },
+        },
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+}
+
+function cargarControles() {
+
+    $(".btnGrabar").click(function () {
+        return guardarIdioma();
+    });
+
+    $(".btnCancelar").click(function () {
+        ConfirmJQ('¿Está seguro de regresar a la ventana anterior?', function () { document.location.href = urlPrincipal });
+        return false;
+    });
+
+    $("#txtDescripcion").focus();
+}
+
+function guardarIdioma() {
+
+    if ($('#frmContent').valid()) {
+
+        obj_Idioma = new Object();
+        obj_Idioma.IdIdioma = $("#hdIdIdioma").val();
+        obj_Idioma.Descripcion = $("#txtDescripcion").val();
+        obj_Idioma.Estado = $("#ddlEstado").val();
+
+        Accion('RegistroIdioma.aspx/GuardarIdioma', { "str_pIdioma": JSON.stringify(obj_Idioma) },
+            function () { document.location.href = urlPrincipal; });
+    }
+    return false;
+}
+
+function obtenerIdioma() {
+    var int_IdIdioma = $("#hdIdIdioma").val();
+    if (int_IdIdioma != '') {
+        var obj_Idioma = ObtenerData("RegistroIdioma.aspx/ObtenerIdioma", { "int_pIdIdioma": int_IdIdioma });
+        if (obj_Idioma != null) {
+            $("#txtDescripcion").val(obj_Idioma.Descripcion);
+            $("#ddlEstado").val(obj_Idioma.Estado);
+
+            //Auditoria
+            $("#ddUsuarioCreacion").html(obj_Idioma.UsuarioCreacion);
+            $("#ddUsuarioModificacion").html(obj_Idioma.UsuarioModificacion);
+            $("#ddFechaCreacion").html(ToDateTimeString(obj_Idioma.FechaCreacion));
+            $("#ddFechaModificacion").html(ToDateTimeString(obj_Idioma.FechaModificacion));
+        }
+    }
+}

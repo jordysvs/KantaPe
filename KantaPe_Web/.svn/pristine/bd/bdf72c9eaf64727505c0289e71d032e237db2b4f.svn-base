@@ -1,0 +1,193 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Serialization;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Kruma.Core.Security;
+
+public partial class Forms_Gestion_RegistroLocalCancion : System.Web.UI.Page
+{
+    #region Eventos
+
+    /// <summary>
+    /// Evento de carga de la pagina
+    /// </summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>12/07/2016</FecCrea></item></list></remarks>
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        CargaInicial();
+    }
+
+    #endregion
+
+    #region Metodos Privados
+
+    /// <summary>
+    /// Carga inicial del formulario
+    /// </summary>
+    private void CargaInicial()
+    {
+        Master_Default obj_MasterPage = (Master_Default)this.Master;
+        obj_MasterPage.TituloPagina = "Carga Masiva de Canciones";
+
+        //Empresa
+        ddlEmpresa.DataSource = Kruma.Core.Business.Logical.Persona.Listar(null, 2, null, null, null, null, null, null).Result;
+        ddlEmpresa.DataValueField = "IdPersona";
+        ddlEmpresa.DataTextField = "NombreComercial";
+        ddlEmpresa.DataBind();
+        ddlEmpresa.Items.Insert(0, new ListItem("--Seleccione--", string.Empty));
+
+        ddlLocal.Items.Insert(0, new ListItem("--Seleccione--", string.Empty));
+
+    }
+
+    #endregion
+    #region Inicializar - Agregar
+
+    //-----------------LISTAR---------------
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Cancion> ListarCancion(string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Cancion.Listar(str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Genero> ListarGenero(string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Genero.Listar(str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma> ListarIdioma(string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Idioma.Listar(str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Artista> ListarArtista(string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Artista.Listar(str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Album> ListarAlbum(int? int_IdArtista, string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Album.Listar(int_IdArtista, null, str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+
+
+    //-------------------------------------------------AGREGAR-----------------------------------------------
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarCancion(string str_pDescripcion)
+    {
+        Kruma.KantaPe.Entidad.Cancion obj_Cancion = new Kruma.KantaPe.Entidad.Cancion();
+        obj_Cancion.Descripcion = str_pDescripcion;
+        obj_Cancion.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Cancion.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Cancion.UsuarioModificacion = obj_Cancion.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Cancion.Insertar(obj_Cancion);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarGenero(string str_pDescripcion)
+    {
+        Kruma.KantaPe.Entidad.Genero obj_Genero = new Kruma.KantaPe.Entidad.Genero();
+        obj_Genero.Descripcion = str_pDescripcion;
+        obj_Genero.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Genero.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Genero.UsuarioModificacion = obj_Genero.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Genero.Insertar(obj_Genero);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarIdioma(string str_pDescripcion)
+    {
+        Kruma.KantaPe.Entidad.Idioma obj_Idioma = new Kruma.KantaPe.Entidad.Idioma();
+        obj_Idioma.Descripcion = str_pDescripcion;
+        obj_Idioma.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Idioma.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Idioma.UsuarioModificacion = obj_Idioma.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Idioma.Insertar(obj_Idioma);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarArtista(string str_pDescripcion)
+    {
+        Kruma.KantaPe.Entidad.Artista obj_Artista = new Kruma.KantaPe.Entidad.Artista();
+        obj_Artista.Nombre = str_pDescripcion;
+        obj_Artista.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Artista.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Artista.UsuarioModificacion = obj_Artista.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Artista.Insertar(obj_Artista);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarAlbum(string str_pDescripcion, int? int_pIdArtista)
+    {
+        Kruma.KantaPe.Entidad.Album obj_Album = new Kruma.KantaPe.Entidad.Album();
+        obj_Album.IdArtista = int_pIdArtista;
+        obj_Album.Titulo = str_pDescripcion;
+        obj_Album.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Album.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Album.UsuarioModificacion = obj_Album.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Album.Insertar(obj_Album);
+    }
+    #endregion
+
+
+    #region Metodos Publicos
+
+    [WebMethod]
+    public static object ListarLocal(int? int_pIdPersona)
+    {
+        return Kruma.Core.Business.Data.PersonaDireccion.Listar(int_pIdPersona, null, null, null, null, null, null, null, null, null, null);
+    }
+    /// <summary>
+    /// Obtiene los datos de canción
+    /// </summary>
+    /// <param name="int_pIdCancion">Id de canción</param>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>12/07/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.KantaPe.Entidad.Cancion ObtenerCancion(int int_pIdCancion)
+    {
+        return Kruma.KantaPe.Negocio.Cancion.Obtener(int_pIdCancion);
+    }
+
+    /// <summary>
+    /// Guarda la informacion de canción
+    /// </summary>
+    /// <param name="str_pCancion">Json Cancion</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>12/07/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult GuardarCargaMasiva(string str_pLocalCacion)
+    {
+
+        JavaScriptSerializer obj_JsSerializer = new JavaScriptSerializer();
+
+
+        System.Collections.Generic.List<Kruma.KantaPe.Entidad.LocalCancion> lst_LocalCancion = obj_JsSerializer.Deserialize<System.Collections.Generic.List<Kruma.KantaPe.Entidad.LocalCancion>>(str_pLocalCacion);
+        return Kruma.KantaPe.Negocio.LocalCancion.GuardarCargaMasiva(lst_LocalCancion);
+    }
+
+    [WebMethod]
+    public static string[] ListarMusicas(string str_Directorio)
+    {
+
+        string directorio = "C:\\Users\\usuario\\Desktop\\Musica";
+
+        string[] ficheros = Directory.GetFiles(directorio);
+        return ficheros;
+    }
+
+    #endregion
+
+}

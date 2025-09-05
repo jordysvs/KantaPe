@@ -1,0 +1,105 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+
+namespace Kruma.KantaPe.Service.Interface
+{
+    [ServiceContract]
+    public interface IApertura
+    {
+        [OperationContract]
+        [WebInvoke(
+        Method = "POST",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "Notificar")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+            Notificar(Kruma.KantaPe.Entidad.Alerta Alerta);
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "GET",
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "ObtenerNotificacion/{IdLocal}/{IdUbicacion}/{IdAlerta}")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Alerta>
+            ObtenerNotificacion(string IdLocal, string IdUbicacion, string IdAlerta);
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "POST",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "CancelarNotificacion")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+            CancelarNotificacion(Kruma.KantaPe.Entidad.Alerta Alerta);
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "POST",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "Insertar")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+            Insertar(Kruma.KantaPe.Entidad.Apertura Apertura);
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "POST",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "Cerrar")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+            Cerrar(Kruma.KantaPe.Entidad.Apertura Apertura);
+
+
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "GET",
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "ObtenerActual/{IdLocal}/{IdUbicacion}")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Apertura> ObtenerActual(string IdLocal, string IdUbicacion);
+        // ----- LISTAR CANCION  ----- //
+        [OperationContract]
+        [WebInvoke(
+        Method = "GET",
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "ListarCancion/{IdLocal}/{IdApertura}/{IdUsuario}/{IdAperturaCancionTipo}")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>> ListarCancion(string IdLocal, string IdApertura, string IdUsuario, string IdAperturaCancionTipo);
+       
+        // ----- SOLICITAR CANCION ----- //
+        [OperationContract]
+        [WebInvoke(
+        Method = "POST",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "SolicitarCancion")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+            SolicitarCancion(Kruma.KantaPe.Entidad.AperturaCancion AperturaCancion);
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "POST",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "CancelarCancion")]
+        Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+            CancelarCancion(Kruma.KantaPe.Entidad.AperturaCancion AperturaCancion);
+
+
+    }
+}

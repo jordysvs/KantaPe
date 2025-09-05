@@ -1,0 +1,209 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/cantando"
+    tools:context=".view.fragments.NuevaCancionFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="32dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/iconomicro" />
+
+            <EditText
+                android:id="@+id/txtCancion"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:hint="Ingrese título"
+                android:inputType="text"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/edittextstyle"
+                android:paddingLeft="10dp"
+                android:textColorHint="@color/cardview_light_background" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/iconopersona" />
+
+            <EditText
+                android:id="@+id/txtArtista"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:hint="Ingrese artista"
+                android:inputType="text"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edittextstyle"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="10dp"
+                android:textColorHint="@color/cardview_light_background" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/iconodisco" />
+
+            <EditText
+                android:id="@+id/txtAlbum"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:inputType="text"
+                android:hint="Ingrese álbum"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edittextstyle"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="10dp"
+                android:textColorHint="@color/cardview_light_background" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/iconoidioma" />
+
+            <EditText
+                android:id="@+id/txtIdioma"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:hint="Ingrese idioma"
+                android:inputType="text"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edittextstyle"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="10dp"
+                android:textColorHint="@color/cardview_light_background" />
+
+            <!--
+            <Spinner
+                android:id="@+id/spnIdioma"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edittextstyle"
+                android:spinnerMode="dialog" />
+                -->
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/iconogenero" />
+
+            <EditText
+                android:id="@+id/txtGenero"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:hint="Ingrese género"
+                android:layout_marginBottom="10dp"
+                android:inputType="text"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edittextstyle"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="10dp"
+                android:textColorHint="@color/cardview_light_background" />
+
+            <!--
+            <Spinner
+                android:id="@+id/spnGenero"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edittextstyle"
+                android:spinnerMode="dialog" />
+                -->
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/iconoyoutube2" />
+
+            <EditText
+                android:id="@+id/txtYoutube"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:inputType="textAutoComplete"
+                android:hint="Ingrese enlace"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/edittextstyle"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="10dp"
+                android:textColorHint="@color/cardview_light_background" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnEnviar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/mybuttonregister"
+        android:text="ENVIAR"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#76FF03"
+        android:textStyle="bold" />
+
+</RelativeLayout>

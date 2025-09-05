@@ -1,0 +1,136 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Kruma.Core.Security;
+
+public partial class Forms_Reporte_ReporteUbicacionAperturaHora : System.Web.UI.Page
+{
+    #region Eventos
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+            CargaInicial();
+    }
+
+    #endregion
+
+    #region Metodos Privados
+
+    private void CargaInicial()
+    {
+        Master_Default obj_MasterPage = (Master_Default)this.Master;
+        obj_MasterPage.TituloPagina = "Reporte - Ubicaciones aperturadas por hora";
+
+        //Empresa
+        ddlEmpresa.DataSource = Kruma.Core.Business.Logical.Persona.Listar(null, 2, null, null, null, null, null, null).Result;
+        ddlEmpresa.DataValueField = "IdPersona";
+        ddlEmpresa.DataTextField = "NombreComercial";
+        ddlEmpresa.DataBind();
+        ddlEmpresa.Items.Insert(0, new ListItem("--Seleccione--", string.Empty));
+
+        ddlLocal.Items.Insert(0, new ListItem("--Seleccione--", string.Empty));
+
+        ddlUbicacionTipo.DataSource = Kruma.KantaPe.Negocio.UbicacionTipo.Listar(null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        ddlUbicacionTipo.DataValueField = "IdUbicacionTipo";
+        ddlUbicacionTipo.DataTextField = "Descripcion";
+        ddlUbicacionTipo.DataBind();
+        ddlUbicacionTipo.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //int int_pIdPersona = SecurityManager.Usuario.IdPersona.Value;
+        //Kruma.KantaPe.Entidad.Empleado obj_pEmpleado = Kruma.KantaPe.Negocio.Empleado.Listar(null, null, int_pIdPersona, null, null, null, null, null, null, null).Result[0];
+        //int int_pIdLocal = obj_pEmpleado.IdLocal.Value;
+
+        //Kruma.KantaPe.Entidad.Local obj_pLocal = Kruma.KantaPe.Negocio.Local.Listar(int_pIdLocal, null, null, null, null, null, null, null, null, null,null,null,null,null).Result[0];
+        //hdHoraInicio.Value = obj_pLocal.HoraInicio.Value.ToString();
+        //hdHoraFin.Value = obj_pLocal.HoraFin.Value.ToString();
+
+    }
+
+    #endregion
+
+    #region Metodos Publicos
+
+    /// <summary>
+    /// Listar Local
+    /// </summary>
+    /// <param name="str_pIdUsuario">Id del usuario</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>06/08/2015</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static object ListarLocal(int? int_pIdPersona)
+    {
+        return Kruma.Core.Business.Data.PersonaDireccion.Listar(int_pIdPersona, null, null, null, null, null, null, null, null, null, null);
+    }
+
+    [WebMethod]
+    public static object ListarLocalFiltro(int? int_IdPersona, int? int_IdDirecion)
+    {
+        return Kruma.KantaPe.Negocio.Local.Listar(null, int_IdPersona, int_IdDirecion, null, null, null, null, null, null, null, null, null, null, null, null);
+    }
+
+    [WebMethod]
+    public static object ReporteUbicacionAperturaHora(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFecha,
+            int? int_pHoraInicio,
+            int? int_pHoraFin,
+            int? int_pIdUbicacionTipo,
+            int? int_pNroUbicacion)
+    {
+        return Kruma.KantaPe.Negocio.AperturaUbicacion.ReporteUbicacionAperturaHora(int_pIdEmpresa, int_pIdLocal, dt_pFecha, int_pHoraInicio, int_pHoraFin, int_pIdUbicacionTipo, int_pNroUbicacion);
+    }
+    [WebMethod]
+    public static object ListarHoraReporte(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFecha,
+            int? int_pHoraInicio,
+            int? int_pHoraFin,
+            int? int_pIdUbicacionTipo,
+            int? int_pNroUbicacion)
+    {
+        return Kruma.KantaPe.Negocio.AperturaUbicacion.ListarHoraReporte(int_pIdEmpresa, int_pIdLocal, dt_pFecha, int_pHoraInicio, int_pHoraFin, int_pIdUbicacionTipo, int_pNroUbicacion);
+    }
+    [WebMethod]
+    public static object ListaUbicacionReporte(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal)
+    {
+        return Kruma.KantaPe.Negocio.AperturaUbicacion.ListaUbicacionReporte(int_pIdEmpresa, int_pIdLocal);
+    }
+    [WebMethod]
+    public static object ListarUbicacionAperturaMesaGrafico(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFecha,
+            int? int_pHoraInicio,
+            int? int_pHoraFin,
+            int? int_pIdUbicacionTipo,
+            int? int_pNroUbicacion)
+    {
+        return Kruma.KantaPe.Negocio.AperturaUbicacion.ListarUbicacionAperturaMesaGrafico(int_pIdEmpresa, int_pIdLocal, dt_pFecha, int_pHoraInicio, int_pHoraFin, int_pIdUbicacionTipo, int_pNroUbicacion);
+    }
+
+    [WebMethod]
+    public static object ListarUbicacionAperturaBoxGrafico(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFecha,
+            int? int_pHoraInicio,
+            int? int_pHoraFin,
+            int? int_pIdUbicacionTipo,
+            int? int_pNroUbicacion)
+    {
+        return Kruma.KantaPe.Negocio.AperturaUbicacion.ListarUbicacionAperturaBoxGrafico(int_pIdEmpresa, int_pIdLocal, dt_pFecha, int_pHoraInicio, int_pHoraFin, int_pIdUbicacionTipo, int_pNroUbicacion);
+    }
+
+    #endregion
+}

@@ -1,0 +1,189 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Album</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>03-07-2016</FecCrea></item></list></remarks>
+
+    public class Album
+    {
+
+        #region Metodos Públicos
+
+        /// <summary>Listado de albumes</summary>
+        /// <param name="int_pIdArtista">Id del artista</param>
+        /// <param name="str_pTitulo">Descripción del titulo</param>
+        /// <param name="str_pEstado">Estado del album</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de albumes</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>03-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Album> Listar(
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            string str_pTitulo,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Album.Listar(
+                null,
+                int_pIdArtista,
+                str_pArtistaNombre,
+                str_pTitulo,
+                str_pEstado,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /// <summary>Obtener Album</summary>
+        /// <param name="int_pIdAlbum">Id del album</param>
+        /// <returns>Objeto Album</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>03-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Album Obtener(int int_pIdAlbum)
+        {
+            return Kruma.KantaPe.Data.Album.Obtener(int_pIdAlbum);
+        }
+
+        /// <summary>Insertar album</summary>
+        /// <param name="obj_pAlbum">Album</param>
+        /// <returns>Id de Album</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>03-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult Insertar(Kruma.KantaPe.Entidad.Album obj_pAlbum)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Inserción del album
+                    obj_pAlbum.IdAlbum = Kruma.KantaPe.Data.Album.Insertar(obj_pAlbum);
+
+                    //Actualización de la imagen
+                    if (obj_pAlbum.Foto != null)
+                    {
+                        if (obj_pAlbum.Foto.IdDocumento.HasValue)
+                        {
+                            int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Album).Valor);
+
+                            new Kruma.Core.FileServer.FileServerManager().copyFile(
+                                obj_pAlbum.Foto.IdAlmacen.Value,
+                                obj_pAlbum.Foto.IdRegistro.Value,
+                                obj_pAlbum.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_pAlbum.IdAlbum.Value,
+                                obj_pAlbum.UsuarioCreacion);
+                        }
+                    }
+                    obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pAlbum.IdAlbum);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Album</summary>
+        /// <param name="obj_pAlbum">Album</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>03-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult Modificar(Kruma.KantaPe.Entidad.Album obj_pAlbum)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Actualización del album
+                    Kruma.KantaPe.Data.Album.Modificar(obj_pAlbum);
+
+                    //Actualización de la imagen
+                    if (obj_pAlbum.Foto != null)
+                    {
+                        int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Album).Valor);
+
+                        Kruma.Core.FileServer.FileServerManager obj_FileServerManager = new Kruma.Core.FileServer.FileServerManager();
+                        System.Collections.Generic.List<Kruma.Core.FileServer.Entity.FileUpload> lstFotos = obj_FileServerManager.getFiles(int_IdAlmacenDestino, obj_pAlbum.IdAlbum.Value);
+                        foreach (Kruma.Core.FileServer.Entity.FileUpload obj_Foto in lstFotos)
+                            obj_FileServerManager.deleteFile(
+                                obj_Foto.IdDocumento.Value, obj_Foto.IdAlmacen.Value, obj_Foto.IdRegistro.Value, obj_pAlbum.UsuarioModificacion);
+
+                        if (obj_pAlbum.Foto.IdDocumento.HasValue)
+                            obj_FileServerManager.copyFile(
+                                obj_pAlbum.Foto.IdAlmacen.Value,
+                                obj_pAlbum.Foto.IdRegistro.Value,
+                                obj_pAlbum.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_pAlbum.IdAlbum.Value,
+                                obj_pAlbum.UsuarioModificacion);
+                    }
+
+                    obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pAlbum.IdAlbum);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado Album</summary>
+        /// <param name="obj_pAlbum">Album</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>03-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.Album obj_pAlbum)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.Album obj_Album = Kruma.KantaPe.Data.Album.Obtener(obj_pAlbum.IdAlbum.Value);
+                if (obj_Album.Estado == obj_pAlbum.Estado)
+                {
+                    string str_Mensaje = obj_pAlbum.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "El álbum ya se encuentra activa." :
+                        "El álbum ya se encuentra inactiva.";
+                    return new Kruma.Core.Util.Common.ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_Album.Estado = obj_pAlbum.Estado;
+                obj_Album.UsuarioModificacion = obj_pAlbum.UsuarioModificacion;
+                Kruma.KantaPe.Data.Album.Modificar(obj_Album);
+
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pAlbum.IdAlbum);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+
+            return obj_Resultado;
+        }
+
+        #endregion
+
+    }
+}

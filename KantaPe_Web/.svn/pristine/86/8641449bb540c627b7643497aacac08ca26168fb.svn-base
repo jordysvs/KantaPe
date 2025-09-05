@@ -1,0 +1,151 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Componentes", "Componentes", "{668404F9-43FE-4A2E-8191-4408DA675566}"
+	ProjectSection(SolutionItems) = preProject
+		Componentes\itextsharp.dll = Componentes\itextsharp.dll
+		Componentes\itextsharp.xml = Componentes\itextsharp.xml
+		Componentes\itextsharp.xmlworker.dll = Componentes\itextsharp.xmlworker.dll
+		Componentes\Kruma.Core.Business.dll = Componentes\Kruma.Core.Business.dll
+		Componentes\Kruma.Core.Configuration.dll = Componentes\Kruma.Core.Configuration.dll
+		Componentes\Kruma.Core.Criptography.dll = Componentes\Kruma.Core.Criptography.dll
+		Componentes\Kruma.Core.Data.dll = Componentes\Kruma.Core.Data.dll
+		Componentes\Kruma.Core.Exception.dll = Componentes\Kruma.Core.Exception.dll
+		Componentes\Kruma.Core.FileServer.dll = Componentes\Kruma.Core.FileServer.dll
+		Componentes\Kruma.Core.Log.dll = Componentes\Kruma.Core.Log.dll
+		Componentes\Kruma.Core.Notification.dll = Componentes\Kruma.Core.Notification.dll
+		Componentes\Kruma.Core.Security.dll = Componentes\Kruma.Core.Security.dll
+		Componentes\Kruma.Core.Util.dll = Componentes\Kruma.Core.Util.dll
+		Componentes\Kruma.Core.Util.Web.dll = Componentes\Kruma.Core.Util.Web.dll
+		Componentes\MessagingToolkit.QRCode.dll = Componentes\MessagingToolkit.QRCode.dll
+		Componentes\Sybase.Data.AseClient.dll = Componentes\Sybase.Data.AseClient.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Script", "Script", "{630D1C02-2BFC-424D-BE03-DCA0103033D4}"
+	ProjectSection(SolutionItems) = preProject
+		Componentes\Script\Creacion Campos Auditoria.sql = Componentes\Script\Creacion Campos Auditoria.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generador", "Generador", "{08A050C6-C373-4419-BB50-5FF701D1114B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kruma.KantaPe.Entidad", "Kruma.KantaPe.Entidad\Kruma.KantaPe.Entidad.csproj", "{2FB16B07-8692-45E7-B161-6E6D2763DA67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kruma.KantaPe.Data", "Kruma.KantaPe.Data\Kruma.KantaPe.Data.csproj", "{20E88311-55D2-4470-A3CF-2573E892DF9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kruma.KantaPe.Negocio", "Kruma.KantaPe.Negocio\Kruma.KantaPe.Negocio.csproj", "{6FA1F94B-C95A-4B52-93C6-381A7E9EF471}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Kruma.KantaPe.Web", "http://localhost:48198", "{9ECBB69B-AB8B-4B1B-A52A-A8A13DC3F78E}"
+	ProjectSection(WebsiteProperties) = preProject
+		UseIISExpress = "true"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
+		ProjectReferences = "{6fa1f94b-c95a-4b52-93c6-381a7e9ef471}|Kruma.KantaPe.Negocio.dll;{2FB16B07-8692-45E7-B161-6E6D2763DA67}|Kruma.KantaPe.Entidad.dll;{20E88311-55D2-4470-A3CF-2573E892DF9F}|Kruma.KantaPe.Data.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_48198"
+		Debug.AspNetCompiler.PhysicalPath = "Kruma.KantaPe.Web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_48198\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_48198"
+		Release.AspNetCompiler.PhysicalPath = "Kruma.KantaPe.Web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_48198\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "Kruma.KantaPe.Web\"
+	EndProjectSection
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Kruma.KantaPe.DataBase", "Kruma.KantaPe.DataBase\Kruma.KantaPe.DataBase.sqlproj", "{148E53B1-5949-47F5-AB6D-E90E0A09365A}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Kruma.KantaPe.Service", "http://localhost:48255", "{466B8F95-3E7C-43DF-998E-456163BE859D}"
+	ProjectSection(WebsiteProperties) = preProject
+		UseIISExpress = "true"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
+		ProjectReferences = "{2fb16b07-8692-45e7-b161-6e6d2763da67}|Kruma.KantaPe.Entidad.dll;{6fa1f94b-c95a-4b52-93c6-381a7e9ef471}|Kruma.KantaPe.Negocio.dll;{20E88311-55D2-4470-A3CF-2573E892DF9F}|Kruma.KantaPe.Data.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_48255"
+		Debug.AspNetCompiler.PhysicalPath = "Kruma.KantaPe.Service\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_48255\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_48255"
+		Release.AspNetCompiler.PhysicalPath = "Kruma.KantaPe.Service\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_48255\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "Kruma.KantaPe.Service\"
+	EndProjectSection
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Kruma.KantaPe.Portal.Web(1)", "Kruma.KantaPe.Portal.Web\", "{3B933F67-50C2-4992-932B-8FB04D16ECB4}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
+		ProjectReferences = "{20e88311-55d2-4470-a3cf-2573e892df9f}|Kruma.KantaPe.Data.dll;{2FB16B07-8692-45E7-B161-6E6D2763DA67}|Kruma.KantaPe.Entidad.dll;{6fa1f94b-c95a-4b52-93c6-381a7e9ef471}|Kruma.KantaPe.Negocio.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_52535"
+		Debug.AspNetCompiler.PhysicalPath = "Kruma.KantaPe.Portal.Web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_52535\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_52535"
+		Release.AspNetCompiler.PhysicalPath = "Kruma.KantaPe.Portal.Web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_52535\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "52535"
+		SlnRelativePath = "Kruma.KantaPe.Portal.Web\"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FB16B07-8692-45E7-B161-6E6D2763DA67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FB16B07-8692-45E7-B161-6E6D2763DA67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FB16B07-8692-45E7-B161-6E6D2763DA67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FB16B07-8692-45E7-B161-6E6D2763DA67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20E88311-55D2-4470-A3CF-2573E892DF9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E88311-55D2-4470-A3CF-2573E892DF9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E88311-55D2-4470-A3CF-2573E892DF9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E88311-55D2-4470-A3CF-2573E892DF9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FA1F94B-C95A-4B52-93C6-381A7E9EF471}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA1F94B-C95A-4B52-93C6-381A7E9EF471}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA1F94B-C95A-4B52-93C6-381A7E9EF471}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA1F94B-C95A-4B52-93C6-381A7E9EF471}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ECBB69B-AB8B-4B1B-A52A-A8A13DC3F78E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ECBB69B-AB8B-4B1B-A52A-A8A13DC3F78E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ECBB69B-AB8B-4B1B-A52A-A8A13DC3F78E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ECBB69B-AB8B-4B1B-A52A-A8A13DC3F78E}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{148E53B1-5949-47F5-AB6D-E90E0A09365A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{148E53B1-5949-47F5-AB6D-E90E0A09365A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{148E53B1-5949-47F5-AB6D-E90E0A09365A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{148E53B1-5949-47F5-AB6D-E90E0A09365A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{148E53B1-5949-47F5-AB6D-E90E0A09365A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{148E53B1-5949-47F5-AB6D-E90E0A09365A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{466B8F95-3E7C-43DF-998E-456163BE859D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{466B8F95-3E7C-43DF-998E-456163BE859D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{466B8F95-3E7C-43DF-998E-456163BE859D}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{466B8F95-3E7C-43DF-998E-456163BE859D}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{3B933F67-50C2-4992-932B-8FB04D16ECB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B933F67-50C2-4992-932B-8FB04D16ECB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B933F67-50C2-4992-932B-8FB04D16ECB4}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B933F67-50C2-4992-932B-8FB04D16ECB4}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{630D1C02-2BFC-424D-BE03-DCA0103033D4} = {668404F9-43FE-4A2E-8191-4408DA675566}
+		{08A050C6-C373-4419-BB50-5FF701D1114B} = {668404F9-43FE-4A2E-8191-4408DA675566}
+	EndGlobalSection
+EndGlobal

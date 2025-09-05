@@ -1,0 +1,61 @@
+﻿create procedure [dbo].[SecurityInsertarUsuario]
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de inserción del usuario
+	para el usuario
+'*	Input			: @pIdUsuario - Codigo del usuario
+					  @pClave - Clave del usuario
+					  @pUsuarioRed - Usuario de red
+					  @pIdPersona - Id de la persona
+					  @pFlagExpiracion - Flag de expiracion del usuario
+					  @pFechaExpiracion - Fecha de expiracion del usuario
+					  @pEstado - Estado del usuario
+					  @pUsuarioCreacion - Usuario de creacion
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación		: 15/12/2014
+'**********************************************************************************
+*/
+(
+@pIdUsuario				varchar(20),
+@pClave					varchar(50),
+@pUsuarioRed			varchar(20),
+@pIdPersona				int,
+@pFlagExpiracion		char(1),
+@pFechaExpiracion		datetime,
+@pEstado				char(1),
+@pUsuarioCreacion		varchar(20)
+)
+AS
+
+Insert into SecurityUsuario(
+IdUsuario,
+Clave,
+UsuarioRed,
+IdPersona,
+FlagExpiracion,
+FechaExpiracion,
+FechaCambioClave,
+Sistema,
+Estado,
+UsuarioCreacion,
+FechaCreacion,
+UsuarioModificacion,
+FechaModificacion
+)
+Values
+(
+@pIdUsuario,
+@pClave,
+@pUsuarioRed,
+@pIdPersona,
+@pFlagExpiracion,
+@pFechaExpiracion,
+GETDATE(),
+'N',
+@pEstado,
+@pUsuarioCreacion,
+GETDATE(),
+@pUsuarioCreacion,
+GETDATE()
+)

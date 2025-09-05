@@ -1,0 +1,269 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+using Kruma.KantaPe.Service.Interface;
+using System.ServiceModel.Activation;
+using Kruma.Core.Util.Common;
+using Kruma.KantaPe.Entidad;
+using Kruma.KantaPe.Service.Entity;
+
+namespace Kruma.KantaPe.Service.Logical
+{
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
+    public class Apertura : IApertura
+    {
+        #region Metodos Publicos
+
+        #region Notificacion
+
+        /// <summary>
+        /// Notificación de apertura de mesa / box
+        /// </summary>
+        /// <param name="IdLocal">Id del local</param>
+        /// <param name="IdUbicacion">Id de la ubicación</param>
+        /// <param name="IdUsuario">Id del usuario</param>
+        /// <returns>Resultado del proceso</returns>
+        public Entity.ServiceResult<Core.Util.Common.ProcessResult> Notificar(KantaPe.Entidad.Alerta Alerta)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+            try
+            {
+                //Alerta tipo apertura
+                int int_IdAlertaTipo_Apertura = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                    Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                    Kruma.KantaPe.Entidad.Constante.Parametro.AlertaTipo_Apertura).Valor);
+                Alerta.IdAlertaTipo = int_IdAlertaTipo_Apertura;
+                Alerta.UsuarioCreacion = Alerta.IdUsuario;
+
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.KantaPe.Negocio.Alerta.Notificar(Alerta));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/Notificar", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public ServiceResult<Kruma.KantaPe.Entidad.Alerta> ObtenerNotificacion(string IdLocal, string IdUbicacion, string IdAlerta)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Alerta> obj_Resultado = null;
+            try
+            {
+                int int_IdLocal = int.Parse(IdLocal);
+                int int_IdUbicacion = int.Parse(IdUbicacion);
+                int int_IdAlerta = int.Parse(IdAlerta);
+
+                //Obtiene la alerta
+                Kruma.KantaPe.Entidad.Alerta obj_AlertaConsulta = Kruma.KantaPe.Negocio.Alerta.Obtener(int_IdLocal, int_IdUbicacion, int_IdAlerta);
+                Kruma.KantaPe.Entidad.Alerta obj_Alerta = new Alerta();
+                obj_Alerta.IdLocal = obj_AlertaConsulta.IdLocal;
+                obj_Alerta.IdUbicacion = obj_AlertaConsulta.IdUbicacion;
+                obj_Alerta.IdAlerta = obj_AlertaConsulta.IdAlerta;
+                obj_Alerta.IdAlertaTipo = obj_AlertaConsulta.IdAlertaTipo;
+                obj_Alerta.IdUsuario = obj_AlertaConsulta.IdUsuario;
+                obj_Alerta.Estado = obj_AlertaConsulta.Estado;
+
+                //Obtiene la apertura
+                Kruma.KantaPe.Entidad.Apertura obj_AperturaConsulta = Kruma.KantaPe.Negocio.Apertura.ObtenerPorAlerta(int_IdLocal, int_IdAlerta);
+                if (obj_AperturaConsulta != null)
+                {
+                    obj_Alerta.Apertura = new Kruma.KantaPe.Entidad.Apertura();
+                    obj_Alerta.Apertura.IdLocal = obj_AperturaConsulta.IdLocal;
+                    obj_Alerta.Apertura.IdApertura = obj_AperturaConsulta.IdApertura;
+                    obj_Alerta.Apertura.IdMozo = obj_AperturaConsulta.IdMozo;
+                    obj_Alerta.Apertura.FechaApertura = obj_AperturaConsulta.FechaApertura;
+                    obj_Alerta.Apertura.FechaFinal = obj_AperturaConsulta.FechaFinal;
+                    obj_Alerta.Apertura.Total = obj_AperturaConsulta.Total;
+                    obj_Alerta.Apertura.IdAlerta = obj_AperturaConsulta.IdAlerta;
+                    obj_Alerta.Apertura.Estado = obj_AperturaConsulta.Estado;
+                }
+
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Alerta>(obj_Alerta);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Alerta>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/ObtenerNotificacion", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public ServiceResult<ProcessResult> CancelarNotificacion(Alerta Alerta)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+            try
+            {
+                Alerta.FechaAtencion = DateTime.Now;
+                Alerta.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Cancelado;
+                Alerta.UsuarioModificacion = Alerta.IdUsuario;
+
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.KantaPe.Negocio.Alerta.Modificar(Alerta));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/CancelarNotificacion", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Core.Util.Common.ProcessResult> NotificarProducto(KantaPe.Entidad.Alerta Alerta)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+            try
+            {
+                //Alerta tipo apertura
+                int int_IdAlertaTipo_Producto = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                    Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                    Kruma.KantaPe.Entidad.Constante.Parametro.AlertaTipo_Producto).Valor);
+
+                Alerta.IdAlertaTipo = int_IdAlertaTipo_Producto;
+                Alerta.UsuarioCreacion = Alerta.IdUsuario;
+
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.KantaPe.Negocio.Alerta.Notificar(Alerta));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/NotificarProducto", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        #endregion
+
+        public Entity.ServiceResult<Core.Util.Common.ProcessResult> Insertar(Entidad.Apertura Apertura)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.KantaPe.Negocio.Apertura.Insertar(Apertura));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/Insertar", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Core.Util.Common.ProcessResult> Cerrar(Entidad.Apertura Apertura)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.KantaPe.Negocio.Apertura.Cerrar(Apertura));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/Cerrar", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Entidad.Apertura> ObtenerActual(string IdLocal, string IdUbicacion)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Apertura> obj_Resultado = null;
+            try
+            {
+                int int_IdLocal = int.Parse(IdLocal);
+                int int_IdUbicacion = int.Parse(IdUbicacion);
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.KantaPe.Entidad.Apertura>(Kruma.KantaPe.Negocio.Apertura.ObtenerActual(int_IdLocal, int_IdUbicacion));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Apertura>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/ObtenerActual", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Core.Util.Common.ProcessResult> CancelarCancion(Entidad.AperturaCancion AperturaCancion)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.KantaPe.Negocio.AperturaCancion.Cancelar(AperturaCancion));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/CancelarCancion", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Core.Util.Common.List<Entidad.AperturaCancion>> ListarCancion(string IdLocal, string IdApertura, string IdUsuario)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<
+                    Kruma.KantaPe.Entidad.AperturaCancion>> obj_Resultado = null;
+            try
+            {
+                int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+                int? int_IdApertura = IdApertura == Constante.NULLTYPE ? null : (int?)int.Parse(IdApertura);
+                string str_IdUsuario = IdUsuario == Constante.NULLTYPE ? null : IdUsuario;
+
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>>(
+                Kruma.KantaPe.Negocio.AperturaCancion.Listar(int_IdLocal, int_IdApertura, null, str_IdUsuario, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                                         Kruma.Core.Util.Common.List<
+                                            Kruma.KantaPe.Entidad.AperturaCancion>>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/ListarCancion", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> SolicitarCancion(Entidad.AperturaCancion AperturaCancion)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.KantaPe.Negocio.AperturaCancion.Solicitar(AperturaCancion));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Apertura/SolicitarCancion", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,203 @@
+﻿//Atributos
+var urlPrincipal = 'Producto.aspx';
+var urlEdicion = 'RegistroProducto.aspx';
+
+$(function () {
+    CargarInicial();
+    CargarControles();
+    ObtenerProducto();
+});
+
+function CargarInicial() {
+
+    $("#ddlEmpresa").change(function () {
+        CargarLocal(null);
+        return false;
+    });
+
+    jQuery.validator.addMethod('selectEmpresa', function (value) {
+        return (value != '');
+    }, "Seleccione la empresa");
+
+    jQuery.validator.addMethod('selectLocal', function (value) {
+        return (value != '');
+    }, "Seleccione el local");
+
+    jQuery.validator.addMethod('selectProductoTipo', function (value) {
+        return (value != '');
+    }, "Seleccione el tipo");
+
+    jQuery.validator.addMethod('selectEstado', function (value) {
+        return (value != '');
+    }, "Seleccione el estado");
+
+    $('#frmContent').validate({
+        rules: {
+            ctl00$cphBody$ddlEmpresa: { selectEmpresa: true },
+            ctl00$cphBody$ddlLocal: { selectLocal: true },
+            ctl00$cphBody$txtNombre: { required: true },
+            ctl00$cphBody$ddlProductoTipo: { selectProductoTipo: true },
+            ctl00$cphBody$txtCosto: { required: true },
+            ctl00$cphBody$txtPrecio: { required: true },
+            ctl00$cphBody$ddlEstado: { selectEstado: true }
+        },
+        messages: {
+            ctl00$cphBody$txtNombre: { required: 'Ingrese el nombre' },
+            ctl00$cphBody$txtCosto: { required: 'Ingrese el costo del producto' },
+            ctl00$cphBody$txtPrecio: { required: 'Ingrese el precio del producto' }
+        },
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+}
+
+function CargarControles() {
+
+    $("#fileUpload").fileserver(
+    {
+        idAlmacen: $("#hdIdAlmacen").val(),
+        idRegistro: -1,
+        autoUpload: true,
+        replace: true,
+        successMessage: false,
+        success: function (obj_pResultado) {
+            $("#lnkEliminarFoto").css('display', '');
+            $("#hdIdDocumento").val(obj_pResultado.ReturnId);
+            VerArchivoElemento('imgProductoImagen', $("#hdIdAlmacen").val(), -1, obj_pResultado.ReturnId);
+        }
+    });
+
+    $(".btnGrabar").click(function () { return GuardarProducto(); });
+
+    $(".btnCancelar").click(function () {
+        ConfirmJQ('¿Está seguro de regresar a la ventana anterior?',
+            function () {
+                document.location.href = urlPrincipal;
+            });
+        return false;
+    });
+
+    //Eliminar Foto
+    $("#lnkEliminarFoto").click(function () { ConfirmJQ('¿Está seguro de eliminar la foto?', EliminarFoto); });
+    $("#lnkEliminarFoto").css('display', 'none');
+
+    //Focus Inicial
+    $("#ddlEmpresa").focus();
+}
+
+function CargarLocal(int_pIdLocal) {
+    var ddlLocal = $("#ddlLocal");
+    ddlLocal.html('');
+    ddlLocal.append($("<option value=''>--Seleccione--</option>"));
+
+    if ($("#ddlEmpresa").val() != '') {
+        var obj_Data = { "int_pIdEmpresa": $("#ddlEmpresa").val() };
+        AccionDefault(int_pIdLocal == null, "RegistroProducto.aspx/ListarLocal", obj_Data,
+        function (obj_pLista) {
+            var str_Selected = '';
+            for (var i = 0; i < obj_pLista.length; i++) {
+                str_Selected = (obj_pLista[i].IdLocal == int_pIdLocal) ? 'selected' : '';
+                ddlLocal.append($("<option value='" + obj_pLista[i].IdLocal + "' " + str_Selected + " >" + obj_pLista[i].Nombre + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+function GuardarProducto() {
+
+    //validacion del formulario
+    if ($('#frmContent').valid()) {
+
+        //Obtiene los valores de la entidad
+        obj_Producto = new Object();
+        obj_Producto.IdProducto = $("#hdIdProducto").val();
+        obj_Producto.IdLocal = $("#ddlLocal").val();
+        obj_Producto.Nombre = $("#txtNombre").val();
+        obj_Producto.IdProductoTipo = $("#ddlProductoTipo").val();
+        obj_Producto.Costo = $("#txtCosto").val();
+        obj_Producto.Precio = $("#txtPrecio").val();
+        obj_Producto.Estado = $("#ddlEstado").val();
+
+        //Eliminacion de la imagen
+        var str_Ruta = $('#hdProductoImagen').val();
+        if (str_Ruta == $("#imgProductoImagen").attr('src')) {
+            obj_Producto.Foto = new Object();
+            obj_Producto.Foto.IdAlmacen = $("#hdIdAlmacen").val();
+            obj_Producto.Foto.IdRegistro = -1;
+            obj_Producto.Foto.IdDocumento = null;
+        }
+
+        //Anexar Imagen
+        if ($("#hdIdDocumento").val() != '') {
+            obj_Producto.Foto = new Object();
+            obj_Producto.Foto.IdAlmacen = $("#hdIdAlmacen").val();
+            obj_Producto.Foto.IdRegistro = -1;
+            obj_Producto.Foto.IdDocumento = $("#hdIdDocumento").val();
+        }
+
+        //Registro del producto
+        Accion('RegistroProducto.aspx/GuardarProducto',
+            {
+                "str_pProducto": JSON.stringify(obj_Producto)
+            },
+            function () {
+                document.location.href = urlPrincipal;
+            });
+    }
+    return false;
+}
+
+function ObtenerProducto() {
+
+    //Se obtiene los valores key de la entidad
+    var int_IdLocal = $("#hdIdLocal").val();
+    var int_IdProducto = $("#hdIdProducto").val();
+
+    if (int_IdProducto != '') {
+
+        //Se obtiene la información de la entidad
+        var obj_Producto = ObtenerData("RegistroProducto.aspx/ObtenerProducto", {
+            "int_pIdLocal": int_IdLocal,
+            "int_pIdProducto": int_IdProducto
+        });
+
+        if (obj_Producto != null) {
+            $("#ddlEmpresa").val(obj_Producto.Local.IdEmpresa);
+            CargarLocal(obj_Producto.IdLocal);
+
+            $("#txtNombre").val(obj_Producto.Nombre);
+            $("#ddlProductoTipo").val(obj_Producto.IdProductoTipo);
+            $("#txtCosto").val(obj_Producto.Costo);
+            $("#txtPrecio").val(obj_Producto.Precio);
+            $("#ddlEstado").val(obj_Producto.Estado);
+
+            //Auditoria
+            $("#ddUsuarioCreacion").html(obj_Producto.UsuarioCreacion);
+            $("#ddUsuarioModificacion").html(obj_Producto.UsuarioModificacion);
+            $("#ddFechaCreacion").html(ToDateTimeString(obj_Producto.FechaCreacion));
+            $("#ddFechaModificacion").html(ToDateTimeString(obj_Producto.FechaModificacion));
+
+            $("#ddlEmpresa").prop('disabled', true);
+            $("#ddlLocal").prop('disabled', true);
+
+            //Foto
+            $("#lnkEliminarFoto").css('display', '');
+            if (obj_Producto.ImagenURL == '') {
+                str_pUrl = $("#hdProductoImagen").val();
+                $("#lnkEliminarFoto").css('display', 'none');
+            }
+            $("#imgProductoImagen").attr("src", obj_Producto.ImagenURL);
+        }
+    }
+}
+
+function EliminarFoto() {
+    $("#hdIdDocumento").val('');
+    var str_Ruta = $('#hdProductoImagen').val();
+    $("#imgProductoImagen").attr('src', str_Ruta);
+    $("#lnkEliminarFoto").css('display', 'none');
+}

@@ -1,0 +1,31 @@
+﻿create PROCEDURE [dbo].[CoreActualizarModulo]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de modificación de CoreModulo
+'* Input :
+		@pIdModulo - IdGrupo del CoreModulo
+		@pDescripcion - Descripcion del CoreModulo
+		@pEstado - Estado del CoreModulo
+		@pUsuarioModificacion - UsuarioModificacion del CoreModulo
+'* Output : Ninguno
+'* Creado Por : Kruma
+'* Fecha Creación : 14-04-2016
+'**********************************************************************************
+*/
+(
+	@pIdModulo char(8) = null,
+	@pDescripcion varchar(50) = null, 
+	@pEstado varchar(1) = null, 
+	@pUsuarioModificacion varchar(20) = null
+)
+AS
+BEGIN
+		Update CoreModulo
+		Set 
+			Descripcion = @pDescripcion,
+			Estado = @pEstado,
+			UsuarioModificacion = @pUsuarioModificacion,
+			FechaModificacion = getdate()
+		Where
+			IdModulo = @pIdModulo 
+END

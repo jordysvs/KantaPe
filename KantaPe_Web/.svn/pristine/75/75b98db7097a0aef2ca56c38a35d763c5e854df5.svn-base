@@ -1,0 +1,306 @@
+﻿//Atributos
+var int_NumPagina = 1;
+var int_TamPagina = 10;
+var int_PagMostrar = 9;
+var urlEdicion = 'RegistroEvento.aspx';
+
+$(function () {
+    CargarInicial();
+    CargarControles();
+});
+
+function CargarInicial() {
+    jQuery.fn.dataTableExt.oSort['usdate-asc'] = function (a, b) {
+        var x = parseDate(a);
+        var y = parseDate(b);
+        var data = ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        return data;
+    };
+
+    jQuery.fn.dataTableExt.oSort['usdate-desc'] = function (a, b) {
+        var x = parseDate(a);
+        var y = parseDate(b);
+        var data = ((x < y) ? 1 : ((x > y) ? -1 : 0));
+        return data;
+    };
+}
+
+function CargarControles() {
+    $("#txtFechaInicio").datetimepicker({
+        language: 'es',
+        format: 'dd/mm/yyyy',
+        pickerPosition: "bottom-left",
+        autoclose: true,
+        minView: 0,
+        maxView: 4
+    });
+
+    $("#txtFechaFin").datetimepicker({
+        language: 'es',
+        format: 'dd/mm/yyyy',
+        pickerPosition: "bottom-left",
+        autoclose: true,
+        minView: 0,
+        maxView: 4
+    });
+
+    $("#ddlEmpresa").change(function () {
+        CargarLocal();
+        return false;
+    });
+
+    $("#btnAgregar").click(function () {
+        MostrarMensajeCargando();
+        document.location.href = urlEdicion;
+        return false;
+    });
+
+    $("#btnModificar").click(function () {
+        Editar();
+        return false;
+    });
+
+    $("#btnActivar").click(function () {
+        Activar();
+        return false;
+    });
+
+    $("#btnInactivar").click(function () {
+        Inactivar();
+        return false;
+    });
+
+    $("#btnBuscar").click(function () {
+        ListarEvento(1);
+        return false;
+    });
+
+    KeyPressEnter("divFiltro",
+        function () {
+            $("#btnBuscar").click();
+        });
+
+    $("#btnBuscar").focus();
+
+    ListarEvento(1);
+}
+
+function ObtenerFiltros() {
+
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdEmpresa = null;
+    if ($("#ddlEmpresa").val() != '')
+        obj_Filtro.IdEmpresa = $("#ddlEmpresa").val();
+
+    obj_Filtro.IdLocal = null;
+    if ($("#ddlLocal").val() != '')
+        obj_Filtro.IdLocal = $("#ddlLocal").val();
+
+    obj_Filtro.Nombre = $("#txtNombre").val();
+
+    obj_Filtro.FechaInicio = null;
+    if ($("#txtFechaInicio_input").val() != '')
+        obj_Filtro.FechaInicio = $("#txtFechaInicio").data("datetimepicker").getDate();
+
+    obj_Filtro.FechaFin = null;
+    if ($("#txtFechaFin_input").val() != '')
+        obj_Filtro.FechaFin = $("#txtFechaFin").data("datetimepicker").getDate();
+
+    obj_Filtro.Estado = null;
+    if ($("#ddlEstado").val() != '')
+        obj_Filtro.Estado = $("#ddlEstado").val();
+
+    return obj_Filtro;
+}
+
+function CargarLocal() {
+    var ddlLocal = $("#ddlLocal");
+    ddlLocal.html('');
+    ddlLocal.append($("<option value=''>--Todos--</option>"));
+
+    if ($("#ddlEmpresa").val() != '') {
+        var obj_Data = { "int_pIdEmpresa": $("#ddlEmpresa").val() };
+        AccionDefault(true, "Evento.aspx/ListarLocal", obj_Data,
+        function (obj_pLista) {
+            for (var i = 0; i < obj_pLista.length; i++) {
+                ddlLocal.append($("<option value='" + obj_pLista[i].IdLocal + "'>" + obj_pLista[i].Nombre + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+function ListarEvento(int_pNumPagina) {
+    int_NumPagina = int_pNumPagina;
+    var obj_Filtro = ObtenerFiltros();
+    var obj_Data = {
+        "int_pIdEmpresa": obj_Filtro.IdEmpresa,
+        "int_pIdLocal": obj_Filtro.IdLocal,
+        "str_pNombre": obj_Filtro.Nombre,
+        "dtm_pFechaInicio": obj_Filtro.FechaInicio,
+        "dtm_pFechaFin": obj_Filtro.FechaFin,
+        "str_pEstado": obj_Filtro.Estado,
+        "int_pNumPagina": int_pNumPagina,
+        "int_pTamPagina": int_TamPagina
+    };
+    AccionDefault(true, "Evento.aspx/ListarEvento", obj_Data, CargarGrilla, null, null, null, 1);
+}
+
+function CargarGrilla(obj_pLista) {
+
+    var obj_TablaPrincipal = $("<table id='tblEvento' class='table table-bordered table-hover dt-responsive'></table>");
+    var obj_THead = $("<thead></thead>");
+    var obj_FilaPrincipal = $("<tr></tr>");
+
+    obj_FilaPrincipal.append($("<th style='width:20%;'>Empresa</th>"));
+    obj_FilaPrincipal.append($("<th style='width:20%;'>Local</th>"));
+    obj_FilaPrincipal.append($("<th style='width:15%;'>Nombre</th>"));
+    obj_FilaPrincipal.append($("<th style='width:20%;'>Descripción</th>"));
+    obj_FilaPrincipal.append($("<th style='width:15%;'>Fecha Evento</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Estado</th>"));
+    obj_THead.append(obj_FilaPrincipal);
+    obj_TablaPrincipal.append(obj_THead);
+
+    var str_Estado = '';
+
+    var obj_TBody = $("<tbody></tbody>");
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+        obj_FilaPrincipal = $("<tr idlocal='" + obj_pLista.Result[i].IdLocal + "' idevento='" + obj_pLista.Result[i].IdEvento + "'></tr>");
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Local.Empresa.NombreComercial + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Local.Nombre + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Nombre + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Descripcion + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + ToDateString(obj_pLista.Result[i].FechaEvento) + "</td>"));
+        str_Estado = obj_pLista.Result[i].Estado == 'A' ? "Activo" : "Inactivo";
+        obj_FilaPrincipal.append($("<td style='text-align:center'>" + str_Estado + "</td>"));
+
+        obj_TBody.append(obj_FilaPrincipal);
+    }
+    obj_TablaPrincipal.append(obj_TBody);
+
+    $("#divPaginacion").html('');
+    $("#divPaginacion").append(CargarPaginacion(obj_pLista));
+
+    $("#divGrilla").html('');
+    $("#divGrilla").append(obj_TablaPrincipal);
+
+    var obj_Tabla = $('#tblEvento').dataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Página _PAGE_ de _PAGES_",
+            "infoEmpty": "",
+            "infoFiltered": "(Filtrado hasta _MAX_ total registros)"
+        },
+        "processing": false,
+        "bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": true,
+        "bInfo": false,
+        "bAutoWidth": false
+    });
+
+    $('#tblEvento tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        }
+        else {
+            obj_Tabla.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+}
+
+function CargarPaginacion(obj_pLista) {
+    var int_vNumPagina = int_NumPagina;
+    var int_vPagMostrar = int_PagMostrar;
+    var int_TotalRegistros = obj_pLista.Total;
+
+    var obj_Ul = $("<ul class='pagination'></ul>");
+    var obj_Li = $("<li class='paginate_button'></li>");
+    obj_Ul.append(obj_Li);
+    obj_Li.append(CrearNumeroPagina(int_vNumPagina, int_vNumPagina));
+
+    while ((int_TotalRegistros - ((int_NumPagina - 1) * int_TamPagina) - int_TamPagina) > 0) {
+        int_TotalRegistros = (int_TotalRegistros - int_TamPagina);
+        int_vNumPagina++;
+        int_vPagMostrar--;
+        if (int_vPagMostrar > 0)
+            obj_Li.append(CrearNumeroPagina(int_vNumPagina, int_vNumPagina));
+        else {
+            if (int_TotalRegistros > 0) {
+                obj_Li.append(CrearNumeroPagina(int_vNumPagina, ">"));
+                break;
+            }
+        }
+    }
+
+    int_vNumPagina = int_NumPagina;
+    while ((int_TotalRegistros - int_TamPagina) > 0) {
+        int_TotalRegistros = (int_TotalRegistros - int_TamPagina);
+        int_vNumPagina--;
+        int_vPagMostrar--;
+        if (int_vPagMostrar > 0)
+            obj_Li.prepend(CrearNumeroPagina(int_vNumPagina, int_vNumPagina));
+    }
+    if (int_vNumPagina > 1)
+        obj_Li.prepend(CrearNumeroPagina(int_vNumPagina, "<"));
+
+    var int_TotalPaginas = Math.ceil(obj_pLista.Total / int_TamPagina);
+    int_TotalPaginas = int_TotalPaginas == 0 ? 1 : int_TotalPaginas;
+    $("#divPaginacionInfo").html("Página " + int_NumPagina + " de " + int_TotalPaginas);
+
+    return obj_Ul;
+}
+
+function CrearNumeroPagina(int_pNumPagina, str_pTexto) {
+    var obj_AnchorPag = $("<a></a>");
+    $(obj_AnchorPag).attr('href', '#');
+    $(obj_AnchorPag).attr('onclick', 'ListarEvento(' + (int_pNumPagina) + ');');
+    $(obj_AnchorPag).text(str_pTexto);
+    return obj_AnchorPag;
+}
+
+function ObtenerIdRegistro() {
+    var obj_Key = [];
+    var obj_Seleccion = $('#tblEvento').find('.selected');
+    if (obj_Seleccion.length > 0) {
+        obj_Key.push($(obj_Seleccion[0]).attr('idlocal'));
+        obj_Key.push($(obj_Seleccion[0]).attr('idevento'));
+    }
+    else
+        AlertJQ(1, 'Seleccione un evento.');
+    return obj_Key;
+}
+
+function Editar() {
+    var obj_Key = ObtenerIdRegistro();
+    if (obj_Key.length > 0) {
+        MostrarMensajeCargando();
+        document.location.href = urlEdicion + "?id=" + obj_Key[0] + "&id2=" + obj_Key[1];
+    }
+}
+
+function Activar() {
+    var obj_Key = ObtenerIdRegistro();
+    if (obj_Key.length > 0) {
+        ConfirmJQ('¿Está seguro de activar el evento?', ModificarEstado, [obj_Key, 'A']);
+    }
+}
+
+function Inactivar() {
+    var obj_Key = ObtenerIdRegistro();
+    if (obj_Key.length > 0) {
+        ConfirmJQ('¿Está seguro de inactivar el evento?', ModificarEstado, [obj_Key, 'I']);
+    }
+}
+
+function ModificarEstado(obj_pKey, str_pEstado) {
+    Accion('Evento.aspx/ModificarEstado', {
+        "int_pIdLocal": obj_pKey[0],
+        "int_pIdEvento": obj_pKey[1],
+        "str_pEstado": str_pEstado
+    }, function () { ListarEvento(1); });
+}

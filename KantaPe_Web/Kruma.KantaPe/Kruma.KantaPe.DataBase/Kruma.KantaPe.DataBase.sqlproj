@@ -1,0 +1,385 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Kruma.Core.DataBase</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{148e53b1-5949-47f5-ab6d-e90e0a09365a}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql110DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>Kruma.Core.DataBase</RootNamespace>
+    <AssemblyName>Kruma.Core.DataBase</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- VS10 without SP1 will not have VisualStudioVersion set, so do that here -->
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <!-- Default to the v10.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Procedures" />
+    <Folder Include="Tables" />
+    <Folder Include="Data" />
+    <Folder Include="Functions" />
+    <Folder Include="Data\Core" />
+    <Folder Include="Data\Core\Security" />
+    <Folder Include="Data\Core\FileServer" />
+    <Folder Include="Data\Core\Business" />
+    <Folder Include="Procedures\Core" />
+    <Folder Include="Tables\Configuracion" />
+    <Folder Include="Data\KantaPe" />
+    <Folder Include="Procedures\FileServer" />
+    <Folder Include="Procedures\Security" />
+    <Folder Include="Procedures\Configuracion" />
+    <Folder Include="Tables\Core" />
+    <Folder Include="Tables\FileServer" />
+    <Folder Include="Tables\Security" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Functions\Split.sql" />
+    <None Include="Data\Core\Security\SecurityGrupo.sql" />
+    <None Include="Data\Core\Security\SecurityGrupoDetalle.sql" />
+    <None Include="Data\Core\Security\SecurityPerfil.sql" />
+    <None Include="Data\Core\Security\SecurityPerfilGrupoDetalleAcceso.sql" />
+    <None Include="Data\Core\Security\SecurityPerfilUsuario.sql" />
+    <None Include="Data\Core\Security\SecurityUsuario.sql" />
+    <None Include="Data\Core\FileServer\FileServerAlmacen.sql" />
+    <None Include="Data\Core\FileServer\FileServerDocumento.sql" />
+    <None Include="Data\Core\Business\CoreModulo.sql" />
+    <None Include="Data\Core\Business\CoreParametro.sql" />
+    <None Include="Data\Core\Business\CorePersona.sql" />
+    <None Include="Data\Core\Business\CoreTipoDocumento.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarAlbum.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarAlerta.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarApertura.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarAperturaCancion.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarAperturaUsuario.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarArtista.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarCancion.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarEmpleado.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarEmpresa.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarEvento.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarGenero.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarIdioma.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarInsumo.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarLocal.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarLocalCancion.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarLocalCancion_Old.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarLocalCancionTemporal.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarOferta.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarProducto.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarSolicitudCancion.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarToken.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarTokenNotificacion.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarTurno.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarTurnoDetalle.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarUbicacion.sql" />
+    <Build Include="Procedures\Configuracion\ActualizarUnidadMedida.sql" />
+    <Build Include="Procedures\Configuracion\CerrarAlertas.sql" />
+    <Build Include="Procedures\Configuracion\CerrarApertura.sql" />
+    <Build Include="Procedures\Core\CoreActualizarArea.sql" />
+    <Build Include="Procedures\Core\CoreActualizarDepartamento.sql" />
+    <Build Include="Procedures\Core\CoreActualizarDistrito.sql" />
+    <Build Include="Procedures\Core\CoreActualizarEmpleado.sql" />
+    <Build Include="Procedures\Core\CoreActualizarModulo.sql" />
+    <Build Include="Procedures\Core\CoreActualizarPais.sql" />
+    <Build Include="Procedures\Core\CoreActualizarParametro.sql" />
+    <Build Include="Procedures\Core\CoreActualizarPersona.sql" />
+    <Build Include="Procedures\Core\CoreActualizarPersonaDireccion.sql" />
+    <Build Include="Procedures\Core\CoreActualizarPersonaMail.sql" />
+    <Build Include="Procedures\Core\CoreActualizarPersonaTelefono.sql" />
+    <Build Include="Procedures\Core\CoreActualizarProvincia.sql" />
+    <Build Include="Procedures\Core\CoreActualizarPuesto.sql" />
+    <Build Include="Procedures\Core\CoreActualizarTipoDocumento.sql" />
+    <Build Include="Procedures\Core\CoreInsertarArea.sql" />
+    <Build Include="Procedures\Core\CoreInsertarDepartamento.sql" />
+    <Build Include="Procedures\Core\CoreInsertarDistrito.sql" />
+    <Build Include="Procedures\Core\CoreInsertarEmpleado.sql" />
+    <Build Include="Procedures\Core\CoreInsertarModulo.sql" />
+    <Build Include="Procedures\Core\CoreInsertarPais.sql" />
+    <Build Include="Procedures\Core\CoreInsertarParametro.sql" />
+    <Build Include="Procedures\Core\CoreInsertarPersona.sql" />
+    <Build Include="Procedures\Core\CoreInsertarPersonaDireccion.sql" />
+    <Build Include="Procedures\Core\CoreInsertarPersonaMail.sql" />
+    <Build Include="Procedures\Core\CoreInsertarPersonaTelefono.sql" />
+    <Build Include="Procedures\Core\CoreInsertarProvincia.sql" />
+    <Build Include="Procedures\Core\CoreInsertarPuesto.sql" />
+    <Build Include="Procedures\Core\CoreInsertarTipoDocumento.sql" />
+    <Build Include="Procedures\Core\CoreListarArea.sql" />
+    <Build Include="Procedures\Core\CoreListarDepartamento.sql" />
+    <Build Include="Procedures\Core\CoreListarDistrito.sql" />
+    <Build Include="Procedures\Core\CoreListarEmpleado.sql" />
+    <Build Include="Procedures\Core\CoreListarEstadoCivil.sql" />
+    <Build Include="Procedures\Core\CoreListarModulo.sql" />
+    <Build Include="Procedures\Core\CoreListarPais.sql" />
+    <Build Include="Procedures\Core\CoreListarParametro.sql" />
+    <Build Include="Procedures\Core\CoreListarPersona.sql" />
+    <Build Include="Procedures\Core\CoreListarPersonaDireccion.sql" />
+    <Build Include="Procedures\Core\CoreListarPersonaMail.sql" />
+    <Build Include="Procedures\Core\CoreListarPersonaTelefono.sql" />
+    <Build Include="Procedures\Core\CoreListarProvincia.sql" />
+    <Build Include="Procedures\Core\CoreListarPuesto.sql" />
+    <Build Include="Procedures\Core\CoreListarTipoDocumento.sql" />
+    <Build Include="Procedures\Core\CoreListarUbigeo.sql" />
+    <Build Include="Procedures\Core\CoreListarUbigeoDepartamento.sql" />
+    <Build Include="Procedures\Core\CoreListarUbigeoDistrito.sql" />
+    <Build Include="Procedures\Core\CoreListarUbigeoPais.sql" />
+    <Build Include="Procedures\Core\CoreListarUbigeoProvincia.sql" />
+    <Build Include="Procedures\FileServer\FileServerActualizarAlmacen.sql" />
+    <Build Include="Procedures\FileServer\FileServerEliminarDocumento.sql" />
+    <Build Include="Procedures\FileServer\FileServerInsertarAlmacen.sql" />
+    <Build Include="Procedures\FileServer\FileServerListarAlmacen.sql" />
+    <Build Include="Procedures\FileServer\FileServerObtenerAlmacen.sql" />
+    <Build Include="Procedures\FileServer\FileServerObtenerDocumento.sql" />
+    <Build Include="Procedures\FileServer\FileServerRegistrarDocumento.sql" />
+    <Build Include="Procedures\Configuracion\InsertarAlbum.sql" />
+    <Build Include="Procedures\Configuracion\InsertarAlerta.sql" />
+    <Build Include="Procedures\Configuracion\InsertarApertura.sql" />
+    <Build Include="Procedures\Configuracion\InsertarAperturaCancion.sql" />
+    <Build Include="Procedures\Configuracion\InsertarAperturaUbicacion.sql" />
+    <Build Include="Procedures\Configuracion\InsertarAperturaUsuario.sql" />
+    <Build Include="Procedures\Configuracion\InsertarArtista.sql" />
+    <Build Include="Procedures\Configuracion\InsertarCancion.sql" />
+    <Build Include="Procedures\Configuracion\InsertarEmpleado.sql" />
+    <Build Include="Procedures\Configuracion\InsertarEmpresa.sql" />
+    <Build Include="Procedures\Configuracion\InsertarEvento.sql" />
+    <Build Include="Procedures\Configuracion\InsertarGenero.sql" />
+    <Build Include="Procedures\Configuracion\InsertarIdioma.sql" />
+    <Build Include="Procedures\Configuracion\InsertarInsumo.sql" />
+    <Build Include="Procedures\Configuracion\InsertarLocal.sql" />
+    <Build Include="Procedures\Configuracion\InsertarLocalCancion.sql" />
+    <Build Include="Procedures\Configuracion\InsertarLocalCancion_old.sql" />
+    <Build Include="Procedures\Configuracion\InsertarLocalCancionTemporal.sql" />
+    <Build Include="Procedures\Configuracion\InsertarOferta.sql" />
+    <Build Include="Procedures\Configuracion\InsertarProducto.sql" />
+    <Build Include="Procedures\Configuracion\InsertarSolicitudCancion.sql" />
+    <Build Include="Procedures\Configuracion\InsertarToken.sql" />
+    <Build Include="Procedures\Configuracion\InsertarTokenNotificacion.sql" />
+    <Build Include="Procedures\Configuracion\InsertarTurno.sql" />
+    <Build Include="Procedures\Configuracion\InsertarTurnoDetalle.sql" />
+    <Build Include="Procedures\Configuracion\InsertarUbicacion.sql" />
+    <Build Include="Procedures\Configuracion\InsertarUnidadMedida.sql" />
+    <Build Include="Procedures\Configuracion\ListarAlbum.sql" />
+    <Build Include="Procedures\Configuracion\ListarAlerta.sql" />
+    <Build Include="Procedures\Configuracion\ListarApertura.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaCancion.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaCancionSolicitud.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaCancionTop.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaCancionTurno.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaCancionTurnoActual.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaDashBoard.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaMesaCerradoInicio.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaMesaInicio.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaMesaMozoTop.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaMesaTop.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaTurno.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaUbicacion.sql" />
+    <Build Include="Procedures\Configuracion\ListarAperturaUsuario.sql" />
+    <Build Include="Procedures\Configuracion\ListarArtista.sql" />
+    <Build Include="Procedures\Configuracion\ListarArtistaTop.sql" />
+    <Build Include="Procedures\Configuracion\ListarCancion.sql" />
+    <Build Include="Procedures\Configuracion\ListarCancionSolicitud.sql" />
+    <Build Include="Procedures\Configuracion\ListarEmpleado.sql" />
+    <Build Include="Procedures\Configuracion\ListarEmpresa.sql" />
+    <Build Include="Procedures\Configuracion\ListarEmpresaTemporal.sql" />
+    <Build Include="Procedures\Configuracion\ListarEstadoAperturaUsuario.sql" />
+    <Build Include="Procedures\Configuracion\ListarEvento.sql" />
+    <Build Include="Procedures\Configuracion\ListarExtension.sql" />
+    <Build Include="Procedures\Configuracion\ListarGenero.sql" />
+    <Build Include="Procedures\Configuracion\ListarGeneroTop.sql" />
+    <Build Include="Procedures\Configuracion\ListarHoraReporte.sql" />
+    <Build Include="Procedures\Configuracion\ListarHorario.sql" />
+    <Build Include="Procedures\Configuracion\ListarIdioma.sql" />
+    <Build Include="Procedures\Configuracion\ListarIdiomaTop.sql" />
+    <Build Include="Procedures\Configuracion\ListarInsumo.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocal.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancion.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancion_OLD.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancionDoble.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancionDobleRankingTOP.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancionDobleRankingTOPANTIGUO.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancionNovedades.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancionNovedadesDoble.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancionRanking.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancionRanking2.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalCancionTemporal.sql" />
+    <Build Include="Procedures\Configuracion\ListarLocalTemporal.sql" />
+    <Build Include="Procedures\Configuracion\ListarMovilGenero.sql" />
+    <Build Include="Procedures\Configuracion\ListarMovilIdioma.sql" />
+    <Build Include="Procedures\Configuracion\ListarOferta.sql" />
+    <Build Include="Procedures\Configuracion\ListarOfertaSinVencer.sql" />
+    <Build Include="Procedures\Configuracion\ListarProducto.sql" />
+    <Build Include="Procedures\Configuracion\ListarProductoTipo.sql" />
+    <Build Include="Procedures\Configuracion\ListarRankiados.sql" />
+    <Build Include="Procedures\Configuracion\ListarSolicitarPedidoCarta.sql" />
+    <Build Include="Procedures\Configuracion\ListarSolicitudCancion.sql" />
+    <Build Include="Procedures\Configuracion\ListarTiempoAtencionMozoTop.sql" />
+    <Build Include="Procedures\Configuracion\ListarToken.sql" />
+    <Build Include="Procedures\Configuracion\ListarTokenNotificacion.sql" />
+    <Build Include="Procedures\Configuracion\ListarTotalUbicacion.sql" />
+    <Build Include="Procedures\Configuracion\ListarTurno.sql" />
+    <Build Include="Procedures\Configuracion\ListarTurnoDetalle.sql" />
+    <Build Include="Procedures\Configuracion\ListarUbicacion.sql" />
+    <Build Include="Procedures\Configuracion\ListarUbicacionAperturaBoxGrafico.sql" />
+    <Build Include="Procedures\Configuracion\ListarUbicacionAperturaMesaGrafico.sql" />
+    <Build Include="Procedures\Configuracion\ListarUbicacionTipo.sql" />
+    <Build Include="Procedures\Configuracion\ListarUnidadMedida.sql" />
+    <Build Include="Procedures\Configuracion\ListarUsuario.sql" />
+    <Build Include="Procedures\Configuracion\ListarUsuarioPideCancionesTop.sql" />
+    <Build Include="Procedures\Configuracion\ListaUbicacionReporte.sql" />
+    <Build Include="Procedures\Configuracion\ObtenerUltimoTurno.sql" />
+    <Build Include="Procedures\Configuracion\ReporteAperturaMesa.sql" />
+    <Build Include="Procedures\Configuracion\ReporteCancionPedida.sql" />
+    <Build Include="Procedures\Configuracion\ReporteTiempoAtencion.sql" />
+    <Build Include="Procedures\Configuracion\ReporteUbicacionAperturaHora.sql" />
+    <Build Include="Procedures\Configuracion\ReporteUsuarioFrecuente.sql" />
+    <Build Include="Procedures\Configuracion\ReporteUsuarioFrecuenteComparacion.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarDispositivo.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarEstadoUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarGrupo.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarGrupoDetalle.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarGrupoDetalleOrden.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarGrupoDetalleProceso.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarPerfil.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarPerfilGrupoDetalleAcceso.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarPerfilUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarUsuarioOlvidoContrasenia.sql" />
+    <Build Include="Procedures\Security\SecurityActualizarUsuarioUltimoLogin.sql" />
+    <Build Include="Procedures\Security\SecurityInsertarDispositivo.sql" />
+    <Build Include="Procedures\Security\SecurityInsertarGrupo.sql" />
+    <Build Include="Procedures\Security\SecurityInsertarGrupoDetalle.sql" />
+    <Build Include="Procedures\Security\SecurityInsertarGrupoDetalleProceso.sql" />
+    <Build Include="Procedures\Security\SecurityInsertarPerfil.sql" />
+    <Build Include="Procedures\Security\SecurityInsertarPerfilGrupoDetalleAcceso.sql" />
+    <Build Include="Procedures\Security\SecurityInsertarPerfilUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityInsertarUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityListarDispositivo.sql" />
+    <Build Include="Procedures\Security\SecurityListarGrupo.sql" />
+    <Build Include="Procedures\Security\SecurityListarGrupoDetalle.sql" />
+    <Build Include="Procedures\Security\SecurityListarGrupoDetalleProceso.sql" />
+    <Build Include="Procedures\Security\SecurityListarPerfil.sql" />
+    <Build Include="Procedures\Security\SecurityListarPerfilGrupoDetalleAcceso.sql" />
+    <Build Include="Procedures\Security\SecurityListarPerfilGrupoDetalleAccesoPerfil.sql" />
+    <Build Include="Procedures\Security\SecurityListarPerfilGrupoDetalleAccesoUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityListarPerfilGrupoDetalleProcesoAccesoUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityListarPerfilUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityListarUsuario.sql" />
+    <Build Include="Procedures\Security\SecurityValidarUsuario.sql" />
+    <Build Include="Procedures\Configuracion\SolicitarPedidoCarta.sql" />
+    <Build Include="Tables\Core\CoreDepartamento.sql" />
+    <Build Include="Tables\Core\CoreDistrito.sql" />
+    <Build Include="Tables\Core\CoreEstadoCivil.sql" />
+    <Build Include="Tables\Core\CoreMailTipo.sql" />
+    <Build Include="Tables\Core\CoreModulo.sql" />
+    <Build Include="Tables\Core\CorePais.sql" />
+    <Build Include="Tables\Core\CorePersona.sql" />
+    <Build Include="Tables\Core\CorePersonaMail.sql" />
+    <Build Include="Tables\Core\CoreProvincia.sql" />
+    <Build Include="Tables\Core\CoreTelefonoTipo.sql" />
+    <Build Include="Tables\Core\CoreTipoDocumento.sql" />
+    <Build Include="Tables\Core\CoreUbigeo.sql" />
+    <Build Include="Tables\Core\CorePersonaTelefono.sql" />
+    <Build Include="Tables\Core\CorePersonaDireccion.sql" />
+    <Build Include="Tables\Security\SecurityDispositivo.sql" />
+    <Build Include="Tables\Security\SecurityUsuario.sql" />
+    <Build Include="Tables\Configuracion\AlertaTipo.sql" />
+    <Build Include="Tables\Configuracion\AperturaCancionSolicitud.sql" />
+    <Build Include="Tables\Configuracion\AperturaCancionTipo.sql" />
+    <Build Include="Tables\Configuracion\Artista.sql" />
+    <Build Include="Tables\Configuracion\Cancion.sql" />
+    <Build Include="Tables\Configuracion\CancionSolicitud.sql" />
+    <Build Include="Tables\Configuracion\Empresa.sql" />
+    <Build Include="Tables\Configuracion\EmpresaContacto.sql" />
+    <Build Include="Tables\Configuracion\Extension.sql" />
+    <Build Include="Tables\Configuracion\Genero.sql" />
+    <Build Include="Tables\Configuracion\Idioma.sql" />
+    <Build Include="Tables\Configuracion\Local.sql" />
+    <Build Include="Tables\Configuracion\LocalCancionTemporal.sql" />
+    <Build Include="Tables\Configuracion\Insumo.sql" />
+    <Build Include="Tables\Configuracion\LocalInsumo.sql" />
+    <Build Include="Tables\Configuracion\Oferta.sql" />
+    <Build Include="Tables\Configuracion\PedidoEstado.sql" />
+    <Build Include="Tables\Configuracion\Producto.sql" />
+    <Build Include="Tables\Configuracion\ProductoInsumo.sql" />
+    <Build Include="Tables\Configuracion\ProductoTipo.sql" />
+    <Build Include="Tables\Configuracion\Solicitud.sql" />
+    <Build Include="Tables\Configuracion\SolicitudCancion.sql" />
+    <Build Include="Tables\Configuracion\Token.sql" />
+    <Build Include="Tables\Configuracion\TokenNotificacion.sql" />
+    <Build Include="Tables\Configuracion\Turno.sql" />
+    <Build Include="Tables\Configuracion\TurnoDetalle.sql" />
+    <Build Include="Tables\Configuracion\TurnoEstado.sql" />
+    <Build Include="Tables\Configuracion\Ubicacion.sql" />
+    <Build Include="Tables\Configuracion\UbicacionTipo.sql" />
+    <Build Include="Tables\Configuracion\UnidadMedida.sql" />
+    <Build Include="Tables\Configuracion\Album.sql" />
+    <Build Include="Tables\Configuracion\Alerta.sql" />
+    <Build Include="Tables\Configuracion\Apertura.sql" />
+    <Build Include="Tables\Configuracion\AperturaCancion.sql" />
+    <Build Include="Tables\Configuracion\AperturaUbicacion.sql" />
+    <Build Include="Tables\Configuracion\AperturaUsuario.sql" />
+    <Build Include="Tables\Core\CoreParametro.sql" />
+    <Build Include="Tables\Configuracion\Empleado.sql" />
+    <Build Include="Tables\Configuracion\Evento.sql" />
+    <Build Include="Tables\FileServer\FileServerAlmacen.sql" />
+    <Build Include="Tables\FileServer\FileServerDocumento.sql" />
+    <Build Include="Tables\Configuracion\Horario.sql" />
+    <Build Include="Tables\Configuracion\LocalCancion.sql" />
+    <Build Include="Tables\Configuracion\Pedido.sql" />
+    <Build Include="Tables\Configuracion\PedidoDetalle.sql" />
+    <Build Include="Tables\Security\SecurityGrupo.sql" />
+    <Build Include="Tables\Security\SecurityGrupoDetalle.sql" />
+    <Build Include="Tables\Security\SecurityGrupoDetalleProceso.sql" />
+    <Build Include="Tables\Security\SecurityPerfil.sql" />
+    <Build Include="Tables\Security\SecurityPerfilGrupoDetalleAcceso.sql" />
+    <Build Include="Tables\Security\SecurityPerfilGrupoDetalleProcesoAcceso.sql" />
+    <Build Include="Tables\Security\SecurityPerfilUsuario.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+</Project>

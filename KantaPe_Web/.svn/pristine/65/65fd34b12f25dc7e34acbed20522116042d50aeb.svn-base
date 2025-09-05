@@ -1,0 +1,47 @@
+﻿create Procedure [dbo].[CoreListarTipoDocumento] 
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de listado de tipo de documento
+'*	Input			: 	@pIdTipoDocumento - Id del tipo de documento,
+						@pCodigo - Código del tipo de documento,
+						@pDescripcion - Descripcion del tipo de documento,
+						@pEstado - Estado del tipo de documento,
+						@pNumPagina - Número de pagina
+						@pTamPagina - Cantidad de registros por pagina
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación	: 02/06/2015
+'**********************************************************************************
+*/
+(
+	@pIdTipoDocumento varchar(20) = null,
+	@pCodigo varchar(20) = null,
+	@pDescripcion varchar(100) = null,
+	@pEstado char(1) = null,
+	@pNumPagina int = null,
+	@pTamPagina int = null
+)
+As
+Begin
+		Select tbl.*
+		from(
+		Select
+		ROW_NUMBER() OVER (ORDER BY TD.IdTipoDocumento ASC) AS Num_Fila,
+			TD.IdTipoDocumento,
+			TD.Codigo,
+			TD.Descripcion,
+			TD.Estado,
+			TD.UsuarioCreacion,
+			TD.FechaCreacion,
+			TD.UsuarioModificacion,
+			TD.FechaModificacion,
+			COUNT(*) OVER() Total_Filas
+			From CoreTipoDocumento TD
+			Where 
+			(@pIdTipoDocumento is null or TD.IdTipoDocumento = @pIdTipoDocumento) AND
+			(@pDescripcion is null or TD.Descripcion like '%' +  @pDescripcion + '%') AND
+			(@pEstado is null or TD.Estado = @pEstado) 
+		) tbl
+		WHERE (@pTamPagina IS NULL OR tbl.Num_Fila BETWEEN (@pNumPagina * @pTamPagina)- @pTamPagina + 1 AND (@pNumPagina * @pTamPagina));
+
+End

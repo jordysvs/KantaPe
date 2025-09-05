@@ -1,0 +1,69 @@
+﻿CREATE PROCEDURE [CoreListarPersona] 
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de listado de personas
+	para el usuario
+'*	Input			: 	@pIdPersona - Id de la persona,
+						@pNombreCompleto - Nombre completo de la persona,
+						@pIdTipoDocumento - Id del tipo de documento de la persona,
+						@pNumeroDocumento - Numero de documento de la persona,
+						@pEstado - Estado de la persona,
+						@pNumPagina - Número de pagina
+						@pTamPagina - Cantidad de registros por pagina
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación		: 09/08/2015
+'**********************************************************************************
+*/
+(
+	@pIdPersona varchar(20) = null,
+	@pNombreCompleto varchar(200) = null,
+	@pIdTipoDocumento int = null,
+	@pNumeroDocumento varchar(50) = null,
+	@pSistema char(1) = null,
+	@pEstado char(1) = null,
+	@pNumPagina int = null,
+	@pTamPagina int = null
+)
+As
+Begin
+		Select tbl.*
+		from(
+		Select
+		ROW_NUMBER() OVER (ORDER BY P.IdPersona ASC) AS Num_Fila,
+			P.IdPersona,
+			P.Nombres,
+			P.ApellidoPaterno,
+			P.ApellidoMaterno,
+			P.Mail,
+			P.IdTipoDocumento,
+			P.NumeroDocumento,
+			P.Celular,
+			P.Sistema,
+			P.Estado,
+			P.UsuarioCreacion,
+			P.FechaCreacion,
+			P.UsuarioModificacion,
+			P.FechaModificacion,
+			TD.Descripcion as TipoDocumento_Descripcion,
+			COUNT(*) OVER() Total_Filas
+			From CorePersona P
+			Left Join CoreTipoDocumento TD on
+			TD.IdTipoDocumento = P.IdTipoDocumento
+			Where 
+			(@pIdPersona is null or P.IdPersona = @pIdPersona) AND
+			(@pNombreCompleto is null or 
+			(
+			P.Nombres like '%' + @pNombreCompleto + '%' OR
+			P.ApellidoPaterno like '%' + @pNombreCompleto + '%' OR
+			P.ApellidoMaterno like '%' + @pNombreCompleto + '%' 
+			)) AND
+			(@pIdTipoDocumento is null or P.IdTipoDocumento = @pIdTipoDocumento) AND
+			(@pNumeroDocumento is null or P.NumeroDocumento like '%' + @pNumeroDocumento + '%') AND
+			(@pSistema is null or P.Sistema = @pSistema) AND
+			(@pEstado is null or P.Estado = @pEstado) 
+		) tbl
+		WHERE (@pTamPagina IS NULL OR tbl.Num_Fila BETWEEN (@pNumPagina * @pTamPagina)- @pTamPagina + 1 AND (@pNumPagina * @pTamPagina));
+
+End
+

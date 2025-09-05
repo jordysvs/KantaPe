@@ -1,0 +1,296 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+using System.Transactions;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Usuario de la apertura</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+
+    public class AperturaUsuario
+    {
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaUsuario> lstReporteUsuarioFrecuente;
+        #region Metodos Públicos
+
+        /// <summary>Listado de usuarios de la apertura</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="str_pIdUsuario">IdUsuario</param>
+        /// <param name="str_pAdministrador">Administrador</param>
+        /// <param name="dec_pLatitud">Latitud</param>
+        /// <param name="dec_pLongitud">Longitud</param>
+        /// <param name="str_pActivo">Activo</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaUsuario</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaUsuario> Listar(
+            int? int_pIdLocal,
+            int? int_pIdApertura,
+            string str_pIdUsuario,
+            string str_pAdministrador,
+            decimal? dec_pLatitud,
+            decimal? dec_pLongitud,
+            string str_pActivo,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.AperturaUsuario.Listar(int_pIdLocal, int_pIdApertura, null, str_pIdUsuario, str_pAdministrador, dec_pLatitud, dec_pLongitud, str_pActivo, int_pNumPagina, int_pTamPagina);
+        }
+
+        /// <summary>Obtener usuario de la apertura</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="str_pIdUsuario">IdUsuario</param>
+        /// <returns>Objeto AperturaUsuario</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.AperturaUsuario Obtener(int int_pIdLocal, int int_pIdApertura, string str_pIdUsuario)
+        {
+            return Kruma.KantaPe.Data.AperturaUsuario.Obtener(int_pIdLocal, int_pIdApertura, str_pIdUsuario);
+        }
+
+        /// <summary>Insertar usuario de la apertura</summary>
+        /// <param name="obj_pAperturaUsuario">AperturaUsuario</param>
+        /// <returns>Id de AperturaUsuario</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Insertar(Kruma.KantaPe.Entidad.AperturaUsuario obj_pAperturaUsuario)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                int int_IdAperturaUsuario = Kruma.KantaPe.Data.AperturaUsuario.Insertar(obj_pAperturaUsuario);
+
+                System.Collections.Generic.List<Kruma.KantaPe.Entidad.AperturaUsuario> lst_Usuarios = Kruma.KantaPe.Negocio.AperturaUsuario.Listar(
+                    obj_pAperturaUsuario.IdLocal, obj_pAperturaUsuario.IdApertura, null, Kruma.KantaPe.Entidad.Constante.Condicion_Positivo, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+
+                Kruma.Core.Security.Entity.Usuario obj_Usuario = Kruma.Core.Security.Logical.Usuario.Obtener(obj_pAperturaUsuario.IdUsuario, null);
+                foreach (Kruma.KantaPe.Entidad.AperturaUsuario obj_AperturaUsuario in lst_Usuarios)
+                    Kruma.KantaPe.Negocio.Notificacion.Enviar(
+                        obj_AperturaUsuario.IdUsuario, "Apertura de mesa", string.Format("El usuario {0} quiere ingresar a su mesa.", obj_Usuario.Persona.NombreCompleto),
+                        new { IdTipoNotificacion = Kruma.KantaPe.Entidad.Constante.Notificacion_Usuario }
+                        );
+                obj_Resultado = new ProcessResult(int_IdAperturaUsuario);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar AperturaUsuario</summary>
+        /// <param name="obj_pAperturaUsuario">AperturaUsuario</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Modificar(Kruma.KantaPe.Entidad.AperturaUsuario obj_pAperturaUsuario)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.AperturaUsuario obj_AperturaUsuarioAModificar = Kruma.KantaPe.Negocio.AperturaUsuario.Obtener(
+                    obj_pAperturaUsuario.IdLocal.Value,
+                    obj_pAperturaUsuario.IdApertura.Value,
+                    obj_pAperturaUsuario.IdUsuario);
+
+                obj_AperturaUsuarioAModificar.Estado = obj_pAperturaUsuario.Estado;
+                obj_AperturaUsuarioAModificar.Administrador = obj_pAperturaUsuario.Administrador;
+                obj_AperturaUsuarioAModificar.UsuarioModificacion = obj_pAperturaUsuario.UsuarioModificacion;
+
+                Kruma.KantaPe.Data.AperturaUsuario.Modificar(obj_pAperturaUsuario);
+                obj_Resultado = new ProcessResult(obj_pAperturaUsuario.IdUsuario);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>ReporteUsuarioFrecuente</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaUsuario</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaUsuario> ReporteUsuarioFrecuente(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            string str_pNombreCompleto,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            lstReporteUsuarioFrecuente = Kruma.KantaPe.Data.AperturaUsuario.ReporteUsuarioFrecuente(int_pIdEmpresa, int_pIdLocal, dt_pFechaInicio, dt_pFechaFin, str_pNombreCompleto, int_pNumPagina, int_pTamPagina);
+            return lstReporteUsuarioFrecuente;
+        }
+
+        /// <summary>ReporteUsuarioFrecuenteComparacion</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaUsuario</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaUsuario> ReporteUsuarioFrecuenteComparacion(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            string str_pNombreCompleto,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            lstReporteUsuarioFrecuente = Kruma.KantaPe.Data.AperturaUsuario.ReporteUsuarioFrecuenteComparacion(int_pIdEmpresa, int_pIdLocal, dt_pFechaInicio, dt_pFechaFin, str_pNombreCompleto, int_pNumPagina, int_pTamPagina);
+            return lstReporteUsuarioFrecuente;
+        }
+
+        /// <summary>Actualizar Solicitud</summary>
+        /// <param name="obj_pSolicitud">Solicitud</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>17-01-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarAdministrador(int int_pIdApertura, int int_pIdLocal, string int_pIdAdministrador, string int_pIdNuevoAdministrador)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //MODIFICAR APERTURA USUARIO ADMINISTRADOR
+                    Kruma.KantaPe.Entidad.AperturaUsuario obj_AperturaUsuarioAdministrador = Kruma.KantaPe.Negocio.AperturaUsuario.Obtener(
+                    int_pIdLocal,
+                    int_pIdApertura,
+                    int_pIdAdministrador);
+                    obj_AperturaUsuarioAdministrador.Estado = "N";
+                    Kruma.KantaPe.Data.AperturaUsuario.Modificar(obj_AperturaUsuarioAdministrador);
+
+                    //MODIFICAR APERTURA USUARIO NUEVO ADMINISTRADOR
+                    Kruma.KantaPe.Entidad.AperturaUsuario obj_AperturaUsuarioNuevoAdministrador = Kruma.KantaPe.Negocio.AperturaUsuario.Obtener(
+                    int_pIdLocal,
+                    int_pIdApertura,
+                    int_pIdNuevoAdministrador);
+                    obj_AperturaUsuarioNuevoAdministrador.Estado = "S";
+                    Kruma.KantaPe.Data.AperturaUsuario.Modificar(obj_AperturaUsuarioNuevoAdministrador);
+
+
+                    obj_Resultado = new ProcessResult(int_pIdApertura);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar AperturaUsuario_MOVIL</summary>
+        /// <param name="obj_pAperturaUsuario">AperturaUsuario</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Jordy Vilchez</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult ModificarMovil(Kruma.KantaPe.Entidad.AperturaUsuario obj_pAperturaUsuario)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    bool bln_EsAdministrador = false;
+                    Kruma.KantaPe.Entidad.AperturaUsuario obj_AperturaUsuarioAModificar = Kruma.KantaPe.Negocio.AperturaUsuario.ObtenerMovil(
+                  obj_pAperturaUsuario.IdLocal.Value,
+                  obj_pAperturaUsuario.IdApertura.Value,
+                  obj_pAperturaUsuario.IdAperturaUsuario.Value,
+                  obj_pAperturaUsuario.IdUsuario);
+
+                    //Variable para comprobar si el usuario a modificar es administrador o no
+                    bln_EsAdministrador = obj_AperturaUsuarioAModificar.Administrador == "S" ? true : false;
+                    obj_AperturaUsuarioAModificar.Estado = obj_pAperturaUsuario.Estado;
+                    obj_AperturaUsuarioAModificar.Administrador = obj_pAperturaUsuario.Administrador;
+                    obj_AperturaUsuarioAModificar.UsuarioModificacion = obj_pAperturaUsuario.UsuarioModificacion;
+                    Kruma.KantaPe.Data.AperturaUsuario.Modificar(obj_AperturaUsuarioAModificar);
+
+                    //En el caso de que el usuario se esté retirando de la mesa
+                    if (obj_pAperturaUsuario.Estado.Equals("I"))
+                    {
+                        //Verificando si es administrador 
+                        if (bln_EsAdministrador)
+                        {
+                            //Obteniendo el listado de los usuarios de la mesa
+                            System.Collections.Generic.List<Kruma.KantaPe.Entidad.AperturaUsuario> lst_Usuarios = Kruma.KantaPe.Data.AperturaUsuario.Listar(obj_pAperturaUsuario.IdLocal, obj_pAperturaUsuario.IdApertura, null, null, "N", null, null, "A", null, null).Result;
+                            if (lst_Usuarios.Count > 0)
+                            {
+                                //Modificando el primer usuario encontrado a administrador
+                                lst_Usuarios[0].Administrador = Kruma.KantaPe.Entidad.Constante.Condicion_Positivo;
+                                Kruma.KantaPe.Data.AperturaUsuario.Modificar(lst_Usuarios[0]);
+                                System.Collections.Generic.List<Kruma.KantaPe.Entidad.AperturaUbicacion> lst_AperturaUbicacion = Kruma.KantaPe.Data.AperturaUbicacion.Listar(new int?(obj_pAperturaUsuario.IdLocal.Value), new int?(obj_pAperturaUsuario.IdApertura.Value), null, "A", null, null).Result;
+                                if (lst_AperturaUbicacion.Count > 0)
+                                {
+                                    Kruma.Core.Business.Entity.Parametro obj_PerfilMozo = Kruma.Core.Business.Logical.Parametro.Obtener("KANTAPE", "PERFILMOZO");
+                                    System.Collections.Generic.List<Kruma.KantaPe.Entidad.Usuario> lst_Usuario = Usuario.Listar(null, null, null, null, null, obj_PerfilMozo.Valor, null, "A", null, new int?(obj_pAperturaUsuario.IdLocal.Value), null, null).Result;
+                                    foreach (Kruma.KantaPe.Entidad.Usuario obj_Usuario in lst_Usuario)
+                                        Notificacion.Enviar(obj_Usuario.IdUsuario, "La Apertura de mesa : " + lst_AperturaUbicacion[0].IdUbicacion, "Cambió de administrador",
+                                            new { IdTipoNotificacion = Kruma.KantaPe.Entidad.Constante.Notificacion_Apertura });
+                                }
+                            }
+                            else
+                            {//En el caso de que no exista otros usuarios en la mesa
+                                Kruma.KantaPe.Entidad.Apertura obj_AperturaAModificar = Kruma.KantaPe.Data.Apertura.Obtener(obj_pAperturaUsuario.IdLocal.Value, obj_pAperturaUsuario.IdApertura.Value);
+                                obj_AperturaAModificar.FechaFinal = DateTime.Now;
+                                obj_AperturaAModificar.UsuarioModificacion = obj_pAperturaUsuario.UsuarioModificacion;
+                                Kruma.KantaPe.Data.Apertura.Modificar(obj_AperturaAModificar);
+                                obj_Resultado = new ProcessResult(obj_pAperturaUsuario.IdApertura);
+                            }
+                        }
+
+                        System.Collections.Generic.List<Kruma.KantaPe.Entidad.AperturaCancion> lst_pAperturaCancionAModificar = Kruma.KantaPe.Negocio.AperturaCancion.ObtenerCancionesUsuario(
+                        obj_pAperturaUsuario.IdLocal.Value,
+                        obj_pAperturaUsuario.IdApertura.Value,
+                        obj_pAperturaUsuario.IdUsuario).Result;
+                        foreach (Kruma.KantaPe.Entidad.AperturaCancion obj_pAperturaCancionAModificar in lst_pAperturaCancionAModificar)
+                        {
+                            obj_pAperturaCancionAModificar.Estado = KantaPe.Entidad.Constante.Estado_Inactivo;
+                            Kruma.KantaPe.Data.AperturaCancion.Modificar(obj_pAperturaCancionAModificar);
+                        }
+                    }
+                    obj_Resultado = new ProcessResult(obj_pAperturaUsuario.IdUsuario);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        // Kruma.KantaPe.Negocio.AperturaUsuario
+        public static Kruma.KantaPe.Entidad.AperturaUsuario ObtenerMovil(int int_pIdLocal, int int_pIdApertura, int int_pIdAperturaUsuario, string str_pIdUsuario)
+        {
+            return Kruma.KantaPe.Data.AperturaUsuario.ObtenerMovil(int_pIdLocal, int_pIdApertura, int_pIdAperturaUsuario, str_pIdUsuario);
+        }
+
+        // Kruma.KantaPe.Negocio.AperturaUsuario
+        public static Kruma.KantaPe.Entidad.AperturaUsuario ObtenerEstadoAperturaUsuario(int int_pIdLocal, int int_pIdApertura, int int_pIdAperturaUsuario, string str_pIdUsuario)
+        {
+            return Kruma.KantaPe.Data.AperturaUsuario.ObtenerEstadoAperturaUsuario(int_pIdLocal, int_pIdApertura, int_pIdAperturaUsuario, str_pIdUsuario);
+        }
+
+        #endregion
+    }
+}

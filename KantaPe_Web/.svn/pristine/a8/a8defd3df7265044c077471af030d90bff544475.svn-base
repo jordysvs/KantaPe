@@ -1,0 +1,802 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+    /// <summary>Canción de apertura</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+
+    public class AperturaCancion
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de AperturaCancion</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pIdAperturaCancion">IdAperturaCancion</param>
+        /// <param name="str_pIdUsuario">IdUsuario</param>
+        /// <param name="int_pIdCancion">IdCancion</param>
+        /// <param name="int_pIdAperturaCancionTipo">IdAperturaCancionTipo</param>
+        /// <param name="int_pOrden">Orden</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> Listar(
+            int? int_pIdLocal,
+            int? int_pIdApertura,
+            int? int_pIdAperturaCancion,
+            string str_pIdUsuario,
+            int? int_pIdLocalCancion,
+            int? int_pIdAperturaCancionTipo,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaCancion");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", int_pIdApertura.HasValue ? int_pIdApertura.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAperturaCancion", int_pIdAperturaCancion.HasValue ? int_pIdAperturaCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUsuario", !string.IsNullOrEmpty(str_pIdUsuario) ? str_pIdUsuario : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocalCancion", int_pIdLocalCancion.HasValue ? int_pIdLocalCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAperturaCancionTipo", int_pIdAperturaCancionTipo.HasValue ? int_pIdAperturaCancionTipo.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_AperturaCancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+
+                //AperturaCancion
+                obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+                obj_AperturaCancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_AperturaCancion.IdApertura = obj_Row["IdApertura"] is DBNull ? null : (int?)obj_Row["IdApertura"];
+                obj_AperturaCancion.IdAperturaCancion = obj_Row["IdAperturaCancion"] is DBNull ? null : (int?)obj_Row["IdAperturaCancion"];
+                obj_AperturaCancion.IdUsuario = obj_Row["IdUsuario"] is DBNull ? null : obj_Row["IdUsuario"].ToString();
+                obj_AperturaCancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_AperturaCancion.IdAperturaCancionTipo = obj_Row["IdAperturaCancionTipo"] is DBNull ? null : (int?)obj_Row["IdAperturaCancionTipo"];
+                obj_AperturaCancion.IdAperturaCancionSolicitud = obj_Row["IdAperturaCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdAperturaCancionSolicitud"];
+                obj_AperturaCancion.Orden = obj_Row["Orden"] is DBNull ? null : (int?)obj_Row["Orden"];
+                obj_AperturaCancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_AperturaCancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_AperturaCancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_AperturaCancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_AperturaCancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                //AperturaCancionTipo
+                obj_AperturaCancion.AperturaCancionTipo = new Entidad.AperturaCancionTipo();
+                obj_AperturaCancion.AperturaCancionTipo.IdAperturaCancionTipo = obj_Row["AperturaCancionTipo_IdAperturaCancionTipo"] is DBNull ? null : (int?)obj_Row["AperturaCancionTipo_IdAperturaCancionTipo"];
+                obj_AperturaCancion.AperturaCancionTipo.Descripcion = obj_Row["AperturaCancionTipo_Descripcion"] is DBNull ? null : obj_Row["AperturaCancionTipo_Descripcion"].ToString();
+
+                //Cancion
+                obj_AperturaCancion.LocalCancion = new Entidad.LocalCancion();
+                obj_AperturaCancion.LocalCancion.IdCancion = obj_Row["LocalCancion_IdLocalCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdLocalCancion"];
+                obj_AperturaCancion.LocalCancion.IdAlbum = obj_Row["LocalCancion_IdAlbum"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdAlbum"];
+                obj_AperturaCancion.LocalCancion.IdArtista = obj_Row["LocalCancion_IdArtista"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdArtista"];
+                obj_AperturaCancion.LocalCancion.IdCancion = obj_Row["LocalCancion_IdCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdCancion"];
+                obj_AperturaCancion.LocalCancion.IdGenero = obj_Row["LocalCancion_IdGenero"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdGenero"];
+                obj_AperturaCancion.LocalCancion.IdIdioma = obj_Row["LocalCancion_IdIdioma"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdIdioma"];
+                obj_AperturaCancion.LocalCancion.Duracion = obj_Row["LocalCancion_Duracion"] is DBNull ? null : (int?)obj_Row["LocalCancion_Duracion"];
+
+                //CancionSimple
+                obj_AperturaCancion.LocalCancion.Cancion = new Entidad.Cancion();
+                obj_AperturaCancion.LocalCancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] is DBNull ? null : (int?)obj_Row["Cancion_IdCancion"];
+                obj_AperturaCancion.LocalCancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+
+                //Artista
+                obj_AperturaCancion.LocalCancion.Artista = new Entidad.Artista();
+                obj_AperturaCancion.LocalCancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] is DBNull ? null : (int?)obj_Row["Artista_IdArtista"];
+                obj_AperturaCancion.LocalCancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+
+                //Genero
+                obj_AperturaCancion.LocalCancion.Genero = new Entidad.Genero();
+                obj_AperturaCancion.LocalCancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] is DBNull ? null : (int?)obj_Row["Genero_IdGenero"];
+                obj_AperturaCancion.LocalCancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+
+                //Album
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_AperturaCancion.LocalCancion.Album = new Entidad.Album();
+                    obj_AperturaCancion.LocalCancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] is DBNull ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_AperturaCancion.LocalCancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["Album_Titulo"].ToString();
+                }
+
+                //Artista
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_AperturaCancion.LocalCancion.Idioma = new Entidad.Idioma();
+                    obj_AperturaCancion.LocalCancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] is DBNull ? null : (int?)obj_Row["Idioma_IdIdioma"];
+                    obj_AperturaCancion.LocalCancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+                //Usuario
+                obj_AperturaCancion.Usuario = new Core.Security.Entity.Usuario();
+                obj_AperturaCancion.Usuario.IdUsuario = obj_Row["Usuario_IdUsuario"] is DBNull ? null : obj_Row["Usuario_IdUsuario"].ToString();
+
+                //Persona
+                obj_AperturaCancion.Usuario.Persona = new Core.Business.Entity.Persona();
+                obj_AperturaCancion.Usuario.Persona.IdPersona = obj_Row["Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Persona_IdPersona"];
+                obj_AperturaCancion.Usuario.Persona.Nombres = obj_Row["Persona_Nombres"] is DBNull ? null : obj_Row["Persona_Nombres"].ToString();
+                obj_AperturaCancion.Usuario.Persona.ApellidoPaterno = obj_Row["Persona_ApellidoPaterno"] is DBNull ? null : obj_Row["Persona_ApellidoPaterno"].ToString();
+                obj_AperturaCancion.Usuario.Persona.ApellidoMaterno = obj_Row["Persona_ApellidoMaterno"] is DBNull ? null : obj_Row["Persona_ApellidoMaterno"].ToString();
+                obj_AperturaCancion.Usuario.Persona.IdTipoDocumento = obj_Row["Persona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["Persona_IdTipoDocumento"];
+                obj_AperturaCancion.Usuario.Persona.NumeroDocumento = obj_Row["Persona_NumeroDocumento"] is DBNull ? null : obj_Row["Persona_NumeroDocumento"].ToString();
+
+                //TipoDocumento
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento = new Core.Business.Entity.TipoDocumento();
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento.IdTipoDocumento = obj_Row["TipoDocumento_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["TipoDocumento_IdTipoDocumento"];
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento.Descripcion = obj_Row["TipoDocumento_Descripcion"] is DBNull ? null : obj_Row["TipoDocumento_Descripcion"].ToString();
+
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+            }
+
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+
+        /// <summary>Insertar cancion de apertura</summary>
+        /// <param name="obj_pAperturaCancion">AperturaCancion</param>
+        /// <returns>Id de AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static int Insertar(Kruma.KantaPe.Entidad.AperturaCancion obj_pAperturaCancion)
+        {
+            DataOperation dop_Operacion = new DataOperation("InsertarAperturaCancion");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pAperturaCancion.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", obj_pAperturaCancion.IdApertura));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAperturaCancionSolicitud", obj_pAperturaCancion.IdAperturaCancionSolicitud));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUsuario", obj_pAperturaCancion.IdUsuario));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocalCancion", obj_pAperturaCancion.IdLocalCancion));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAperturaCancionTipo", obj_pAperturaCancion.IdAperturaCancionTipo));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pAperturaCancion.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioCreacion", obj_pAperturaCancion.UsuarioCreacion));
+
+            Parameter obj_IdAperturaCancion = new Parameter("@pIdAperturaCancion", DbType.Int32);
+            obj_IdAperturaCancion.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdAperturaCancion);
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdAperturaCancion = (int)obj_IdAperturaCancion.Value;
+            return int_IdAperturaCancion;
+        }
+
+        /// <summary>Modificar cacion de apertura</summary>
+        /// <param name="obj_pAperturaCancion">AperturaCancion</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static void Modificar(Kruma.KantaPe.Entidad.AperturaCancion obj_pAperturaCancion)
+        {
+            DataOperation dop_Operacion = new DataOperation("ActualizarAperturaCancion");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pAperturaCancion.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", obj_pAperturaCancion.IdApertura));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAperturaCancion", obj_pAperturaCancion.IdAperturaCancion));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdUsuario", obj_pAperturaCancion.IdUsuario));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocalCancion", obj_pAperturaCancion.IdLocalCancion));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdAperturaCancionTipo", obj_pAperturaCancion.IdAperturaCancionTipo));
+            dop_Operacion.Parameters.Add(new Parameter("@pOrden", obj_pAperturaCancion.Orden));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pAperturaCancion.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioModificacion", obj_pAperturaCancion.UsuarioModificacion));
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+        /// <summary>Obtener cancion de apertura</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pIdAperturaCancion">IdAperturaCancion</param>
+        /// <returns>Objeto AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>25-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.AperturaCancion Obtener(int int_pIdLocal, int int_pIdApertura, int int_pIdAperturaCancion)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = Listar(int_pIdLocal, int_pIdApertura, int_pIdAperturaCancion, null, null, null, null, null, null);
+            return lst_AperturaCancion.Result.Count > 0 ? lst_AperturaCancion.Result[0] : null;
+        }
+
+
+        /// <summary>Reporte Canciones mas pedidas</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>08-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ReporteCancionPedida(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            string str_pDesArtista,
+            string str_pDesAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ReporteCancionPedida");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            dop_Operacion.Parameters.Add(new Parameter("@pDesArtista", !string.IsNullOrEmpty(str_pDesArtista) ? str_pDesArtista : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pDesAlbum", !string.IsNullOrEmpty(str_pDesAlbum) ? str_pDesAlbum : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_AperturaCancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+
+                //AperturaCancion
+                obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+                obj_AperturaCancion.CantidadPedido = obj_Row["CantidadPedido"] is DBNull ? null : (int?)obj_Row["CantidadPedido"];
+
+
+                //LocalCancion
+                obj_AperturaCancion.LocalCancion = new Entidad.LocalCancion();
+                obj_AperturaCancion.LocalCancion.IdLocalCancion = obj_Row["LocalCancion_IdLocalCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdLocalCancion"];
+                obj_AperturaCancion.LocalCancion.IdAlbum = obj_Row["LocalCancion_IdAlbum"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdAlbum"];
+                obj_AperturaCancion.LocalCancion.IdArtista = obj_Row["LocalCancion_IdArtista"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdArtista"];
+                obj_AperturaCancion.LocalCancion.IdCancion = obj_Row["LocalCancion_IdCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdCancion"];
+
+                obj_AperturaCancion.LocalCancion.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_AperturaCancion.LocalCancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+
+                //Cancion
+                obj_AperturaCancion.LocalCancion.Cancion = new Entidad.Cancion();
+                obj_AperturaCancion.LocalCancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] is DBNull ? null : (int?)obj_Row["Cancion_IdCancion"];
+                obj_AperturaCancion.LocalCancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+
+
+                //Album
+                obj_AperturaCancion.LocalCancion.Album = new Entidad.Album();
+                obj_AperturaCancion.LocalCancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] is DBNull ? null : (int?)obj_Row["Album_IdAlbum"];
+                obj_AperturaCancion.LocalCancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["Album_Titulo"].ToString();
+
+                //Artista
+                obj_AperturaCancion.LocalCancion.Artista = new Entidad.Artista();
+                obj_AperturaCancion.LocalCancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] is DBNull ? null : (int?)obj_Row["Artista_IdArtista"];
+                obj_AperturaCancion.LocalCancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+
+                //Genero
+                obj_AperturaCancion.LocalCancion.Genero = new Entidad.Genero();
+                obj_AperturaCancion.LocalCancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] is DBNull ? null : (int?)obj_Row["Genero_IdGenero"];
+                obj_AperturaCancion.LocalCancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+
+                //Idioma
+                obj_AperturaCancion.LocalCancion.Idioma = new Entidad.Idioma();
+                obj_AperturaCancion.LocalCancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] is DBNull ? null : (int?)obj_Row["Idioma_IdIdioma"];
+                obj_AperturaCancion.LocalCancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+
+
+
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+            }
+
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+
+        /// <summary>TOP 5 PARA Reporte de Apertura de Mesa</summary>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarAperturaCancionTop(
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaCancionTop");
+
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_AperturaCancion.Count == 0)
+                    obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+                obj_AperturaCancion.CantidadPedido = obj_Row["Cantidad"] is DBNull ? null : (int?)obj_Row["Cantidad"];
+
+                obj_AperturaCancion.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_AperturaCancion.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+            }
+
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+
+        /// <summary>TOP 5 ARTISTA</summary>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarArtistaTop(
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            string str_pDesArtista,
+            string str_pDesAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma
+            )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarArtistaTop");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(new Parameter("@pDesArtista", !string.IsNullOrEmpty(str_pDesArtista) ? str_pDesArtista : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pDesAlbum", !string.IsNullOrEmpty(str_pDesAlbum) ? str_pDesAlbum : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                //if (lst_AperturaCancion.Count == 0)
+                obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+                obj_AperturaCancion.CantidadPedido = obj_Row["cantidad"] is DBNull ? null : (int?)obj_Row["cantidad"];
+                //Local
+                obj_AperturaCancion.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_AperturaCancion.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                //Artista
+                obj_AperturaCancion.Artista = new Entidad.Artista();
+                obj_AperturaCancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] is DBNull ? null : (int?)obj_Row["Artista_IdArtista"];
+                obj_AperturaCancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+
+            }
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+        /// <summary>TOP 5 GENERO</summary>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarGeneroTop(
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            string str_pDesArtista,
+            string str_pDesAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma
+            )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarGeneroTop");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(new Parameter("@pDesArtista", !string.IsNullOrEmpty(str_pDesArtista) ? str_pDesArtista : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pDesAlbum", !string.IsNullOrEmpty(str_pDesAlbum) ? str_pDesAlbum : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                //if (lst_AperturaCancion.Count == 0)
+                obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+                obj_AperturaCancion.CantidadPedido = obj_Row["cantidad"] is DBNull ? null : (int?)obj_Row["cantidad"];
+                //Local
+                obj_AperturaCancion.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_AperturaCancion.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                //Artista
+                obj_AperturaCancion.Genero = new Entidad.Genero();
+                obj_AperturaCancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] is DBNull ? null : (int?)obj_Row["Genero_IdGenero"];
+                obj_AperturaCancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+
+            }
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+        /// <summary>TOP 5 IDIOMA</summary>
+        /// <returns>Lista de Apertura</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Vicente Gonzales Osorio</CreadoPor></item>
+        /// <item><FecCrea>09-03-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarIdiomaTop(
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            string str_pDesArtista,
+            string str_pDesAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma
+            )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarIdiomaTop");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dt_pFechaInicio.HasValue ? dt_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dt_pFechaFin.HasValue ? dt_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(new Parameter("@pDesArtista", !string.IsNullOrEmpty(str_pDesArtista) ? str_pDesArtista : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pDesAlbum", !string.IsNullOrEmpty(str_pDesAlbum) ? str_pDesAlbum : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                //if (lst_AperturaCancion.Count == 0)
+                obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+                obj_AperturaCancion.CantidadPedido = obj_Row["cantidad"] is DBNull ? null : (int?)obj_Row["cantidad"];
+                //Local
+                obj_AperturaCancion.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_AperturaCancion.Local.Direccion = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                //Idioma
+                obj_AperturaCancion.Idioma = new Entidad.Idioma();
+                obj_AperturaCancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] is DBNull ? null : (int?)obj_Row["Idioma_IdIdioma"];
+                obj_AperturaCancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+
+            }
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+
+
+        /// <summary>Listado de Apertura Cancion de Turno</summary>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+        /// <item><FecCrea>11-05-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarAperturaTurno(
+            int? int_pIdLocal,
+            int? int_pIdApertura,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaCancionTurno");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", int_pIdApertura.HasValue ? int_pIdApertura.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_AperturaCancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+
+                //AperturaCancion
+                obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+                obj_AperturaCancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_AperturaCancion.IdApertura = obj_Row["IdApertura"] is DBNull ? null : (int?)obj_Row["IdApertura"];
+                obj_AperturaCancion.IdAperturaCancion = obj_Row["IdAperturaCancion"] is DBNull ? null : (int?)obj_Row["IdAperturaCancion"];
+                obj_AperturaCancion.IdUsuario = obj_Row["IdUsuario"] is DBNull ? null : obj_Row["IdUsuario"].ToString();
+                obj_AperturaCancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_AperturaCancion.IdAperturaCancionTipo = obj_Row["IdAperturaCancionTipo"] is DBNull ? null : (int?)obj_Row["IdAperturaCancionTipo"];
+                obj_AperturaCancion.IdAperturaCancionSolicitud = obj_Row["IdAperturaCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdAperturaCancionSolicitud"];
+                obj_AperturaCancion.Orden = obj_Row["Orden"] is DBNull ? null : (int?)obj_Row["Orden"];
+                obj_AperturaCancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_AperturaCancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_AperturaCancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_AperturaCancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_AperturaCancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                //AperturaCancionTipo
+                obj_AperturaCancion.AperturaCancionTipo = new Entidad.AperturaCancionTipo();
+                obj_AperturaCancion.AperturaCancionTipo.IdAperturaCancionTipo = obj_Row["AperturaCancionTipo_IdAperturaCancionTipo"] is DBNull ? null : (int?)obj_Row["AperturaCancionTipo_IdAperturaCancionTipo"];
+                obj_AperturaCancion.AperturaCancionTipo.Descripcion = obj_Row["AperturaCancionTipo_Descripcion"] is DBNull ? null : obj_Row["AperturaCancionTipo_Descripcion"].ToString();
+
+                //Cancion
+                obj_AperturaCancion.LocalCancion = new Entidad.LocalCancion();
+                obj_AperturaCancion.LocalCancion.IdCancion = obj_Row["LocalCancion_IdLocalCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdLocalCancion"];
+                obj_AperturaCancion.LocalCancion.IdAlbum = obj_Row["LocalCancion_IdAlbum"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdAlbum"];
+                obj_AperturaCancion.LocalCancion.IdArtista = obj_Row["LocalCancion_IdArtista"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdArtista"];
+                obj_AperturaCancion.LocalCancion.IdCancion = obj_Row["LocalCancion_IdCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdCancion"];
+                obj_AperturaCancion.LocalCancion.Duracion = obj_Row["LocalCancion_Duracion"] is DBNull ? null : (int?)obj_Row["LocalCancion_Duracion"];
+
+                //CancionSimple
+                obj_AperturaCancion.LocalCancion.Cancion = new Entidad.Cancion();
+                obj_AperturaCancion.LocalCancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] is DBNull ? null : (int?)obj_Row["Cancion_IdCancion"];
+                obj_AperturaCancion.LocalCancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+
+                //Album
+                obj_AperturaCancion.LocalCancion.Album = new Entidad.Album();
+                obj_AperturaCancion.LocalCancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] is DBNull ? null : (int?)obj_Row["Album_IdAlbum"];
+                obj_AperturaCancion.LocalCancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["Album_Titulo"].ToString();
+
+                //Artista
+                obj_AperturaCancion.LocalCancion.Artista = new Entidad.Artista();
+                obj_AperturaCancion.LocalCancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] is DBNull ? null : (int?)obj_Row["Artista_IdArtista"];
+                obj_AperturaCancion.LocalCancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+
+                //Usuario
+                obj_AperturaCancion.Usuario = new Core.Security.Entity.Usuario();
+                obj_AperturaCancion.Usuario.IdUsuario = obj_Row["Usuario_IdUsuario"] is DBNull ? null : obj_Row["Usuario_IdUsuario"].ToString();
+
+                //Persona
+                obj_AperturaCancion.Usuario.Persona = new Core.Business.Entity.Persona();
+                obj_AperturaCancion.Usuario.Persona.IdPersona = obj_Row["Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Persona_IdPersona"];
+                obj_AperturaCancion.Usuario.Persona.Nombres = obj_Row["Persona_Nombres"] is DBNull ? null : obj_Row["Persona_Nombres"].ToString();
+                obj_AperturaCancion.Usuario.Persona.ApellidoPaterno = obj_Row["Persona_ApellidoPaterno"] is DBNull ? null : obj_Row["Persona_ApellidoPaterno"].ToString();
+                obj_AperturaCancion.Usuario.Persona.ApellidoMaterno = obj_Row["Persona_ApellidoMaterno"] is DBNull ? null : obj_Row["Persona_ApellidoMaterno"].ToString();
+                obj_AperturaCancion.Usuario.Persona.IdTipoDocumento = obj_Row["Persona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["Persona_IdTipoDocumento"];
+                obj_AperturaCancion.Usuario.Persona.NumeroDocumento = obj_Row["Persona_NumeroDocumento"] is DBNull ? null : obj_Row["Persona_NumeroDocumento"].ToString();
+
+                //TipoDocumento
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento = new Core.Business.Entity.TipoDocumento();
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento.IdTipoDocumento = obj_Row["TipoDocumento_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["TipoDocumento_IdTipoDocumento"];
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento.Descripcion = obj_Row["TipoDocumento_Descripcion"] is DBNull ? null : obj_Row["TipoDocumento_Descripcion"].ToString();
+
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+            }
+
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+
+        /// <summary>Listado de Apertura Cancion del Turno actual</summary>
+        /// <param name="int_pIdTurno">IdTurno</param>
+        /// <param name="int_pIdLocal">IdLocal</param>
+        /// <param name="int_pIdApertura">IdApertura</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de AperturaCancion</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Diego Mendoza</CreadoPor></item>
+        /// <item><FecCrea>11-05-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarAperturaTurnoActual(
+            int? int_pIdTurno,
+            int? int_pIdLocal,
+            int? int_pIdApertura,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarAperturaCancionTurnoActual");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdTurno", int_pIdTurno.HasValue ? int_pIdTurno.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdApertura", int_pIdApertura.HasValue ? int_pIdApertura.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_AperturaCancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+
+                //AperturaCancion
+                obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+                obj_AperturaCancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_AperturaCancion.IdApertura = obj_Row["IdApertura"] is DBNull ? null : (int?)obj_Row["IdApertura"];
+                obj_AperturaCancion.IdAperturaCancion = obj_Row["IdAperturaCancion"] is DBNull ? null : (int?)obj_Row["IdAperturaCancion"];
+                obj_AperturaCancion.IdUsuario = obj_Row["IdUsuario"] is DBNull ? null : obj_Row["IdUsuario"].ToString();
+                obj_AperturaCancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_AperturaCancion.IdAperturaCancionTipo = obj_Row["IdAperturaCancionTipo"] is DBNull ? null : (int?)obj_Row["IdAperturaCancionTipo"];
+                obj_AperturaCancion.IdAperturaCancionSolicitud = obj_Row["IdAperturaCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdAperturaCancionSolicitud"];
+                obj_AperturaCancion.Orden = obj_Row["Orden"] is DBNull ? null : (int?)obj_Row["Orden"];
+                obj_AperturaCancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_AperturaCancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_AperturaCancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_AperturaCancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_AperturaCancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                //AperturaCancionTipo
+                obj_AperturaCancion.AperturaCancionTipo = new Entidad.AperturaCancionTipo();
+                obj_AperturaCancion.AperturaCancionTipo.IdAperturaCancionTipo = obj_Row["AperturaCancionTipo_IdAperturaCancionTipo"] is DBNull ? null : (int?)obj_Row["AperturaCancionTipo_IdAperturaCancionTipo"];
+                obj_AperturaCancion.AperturaCancionTipo.Descripcion = obj_Row["AperturaCancionTipo_Descripcion"] is DBNull ? null : obj_Row["AperturaCancionTipo_Descripcion"].ToString();
+
+                //Cancion
+                obj_AperturaCancion.LocalCancion = new Entidad.LocalCancion();
+                obj_AperturaCancion.LocalCancion.IdCancion = obj_Row["LocalCancion_IdLocalCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdLocalCancion"];
+                obj_AperturaCancion.LocalCancion.IdAlbum = obj_Row["LocalCancion_IdAlbum"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdAlbum"];
+                obj_AperturaCancion.LocalCancion.IdArtista = obj_Row["LocalCancion_IdArtista"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdArtista"];
+                obj_AperturaCancion.LocalCancion.IdCancion = obj_Row["LocalCancion_IdCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdCancion"];
+                obj_AperturaCancion.LocalCancion.Duracion = obj_Row["LocalCancion_Duracion"] is DBNull ? null : (int?)obj_Row["LocalCancion_Duracion"];
+
+                //CancionSimple
+                obj_AperturaCancion.LocalCancion.Cancion = new Entidad.Cancion();
+                obj_AperturaCancion.LocalCancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] is DBNull ? null : (int?)obj_Row["Cancion_IdCancion"];
+                obj_AperturaCancion.LocalCancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+
+                //Album
+                obj_AperturaCancion.LocalCancion.Album = new Entidad.Album();
+                obj_AperturaCancion.LocalCancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] is DBNull ? null : (int?)obj_Row["Album_IdAlbum"];
+                obj_AperturaCancion.LocalCancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["Album_Titulo"].ToString();
+
+                //Artista
+                obj_AperturaCancion.LocalCancion.Artista = new Entidad.Artista();
+                obj_AperturaCancion.LocalCancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] is DBNull ? null : (int?)obj_Row["Artista_IdArtista"];
+                obj_AperturaCancion.LocalCancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+
+                //Usuario
+                obj_AperturaCancion.Usuario = new Core.Security.Entity.Usuario();
+                obj_AperturaCancion.Usuario.IdUsuario = obj_Row["Usuario_IdUsuario"] is DBNull ? null : obj_Row["Usuario_IdUsuario"].ToString();
+
+                //Persona
+                obj_AperturaCancion.Usuario.Persona = new Core.Business.Entity.Persona();
+                obj_AperturaCancion.Usuario.Persona.IdPersona = obj_Row["Persona_IdPersona"] is DBNull ? null : (int?)obj_Row["Persona_IdPersona"];
+                obj_AperturaCancion.Usuario.Persona.Nombres = obj_Row["Persona_Nombres"] is DBNull ? null : obj_Row["Persona_Nombres"].ToString();
+                obj_AperturaCancion.Usuario.Persona.ApellidoPaterno = obj_Row["Persona_ApellidoPaterno"] is DBNull ? null : obj_Row["Persona_ApellidoPaterno"].ToString();
+                obj_AperturaCancion.Usuario.Persona.ApellidoMaterno = obj_Row["Persona_ApellidoMaterno"] is DBNull ? null : obj_Row["Persona_ApellidoMaterno"].ToString();
+                obj_AperturaCancion.Usuario.Persona.IdTipoDocumento = obj_Row["Persona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["Persona_IdTipoDocumento"];
+                obj_AperturaCancion.Usuario.Persona.NumeroDocumento = obj_Row["Persona_NumeroDocumento"] is DBNull ? null : obj_Row["Persona_NumeroDocumento"].ToString();
+
+                //TipoDocumento
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento = new Core.Business.Entity.TipoDocumento();
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento.IdTipoDocumento = obj_Row["TipoDocumento_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["TipoDocumento_IdTipoDocumento"];
+                obj_AperturaCancion.Usuario.Persona.TipoDocumento.Descripcion = obj_Row["TipoDocumento_Descripcion"] is DBNull ? null : obj_Row["TipoDocumento_Descripcion"].ToString();
+
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+            }
+
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> ListarRanking()
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarRankiados");
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.AperturaCancion> lst_AperturaCancion = new List<Kruma.KantaPe.Entidad.AperturaCancion>();
+            Kruma.KantaPe.Entidad.AperturaCancion obj_AperturaCancion = new Kruma.KantaPe.Entidad.AperturaCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+
+                obj_AperturaCancion = new Entidad.AperturaCancion();
+                obj_AperturaCancion.IdLocalCancion = obj_Row["LocalCancion_IdLocalCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdLocalCancion"];
+
+                //Cancion
+                obj_AperturaCancion.LocalCancion = new Entidad.LocalCancion();
+                obj_AperturaCancion.LocalCancion.IdLocalCancion = obj_Row["LocalCancion_IdLocalCancion"] is DBNull ? null : (int?)obj_Row["LocalCancion_IdLocalCancion"];
+
+                //CancionSimple
+                obj_AperturaCancion.LocalCancion.Cancion = new Entidad.Cancion();
+                obj_AperturaCancion.LocalCancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] is DBNull ? null : (int?)obj_Row["Cancion_IdCancion"];
+                obj_AperturaCancion.LocalCancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+
+                //Album
+                obj_AperturaCancion.LocalCancion.Album = new Entidad.Album();
+                obj_AperturaCancion.LocalCancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] is DBNull ? null : (int?)obj_Row["Album_IdAlbum"];
+                obj_AperturaCancion.LocalCancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["Album_Titulo"].ToString();
+
+                //Artista
+                obj_AperturaCancion.LocalCancion.Artista = new Entidad.Artista();
+                obj_AperturaCancion.LocalCancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] is DBNull ? null : (int?)obj_Row["Artista_IdArtista"];
+                obj_AperturaCancion.LocalCancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+
+                lst_AperturaCancion.Add(obj_AperturaCancion);
+            }
+
+            obj_Lista.Result = lst_AperturaCancion;
+            return obj_Lista;
+        }
+        #endregion
+    }
+}

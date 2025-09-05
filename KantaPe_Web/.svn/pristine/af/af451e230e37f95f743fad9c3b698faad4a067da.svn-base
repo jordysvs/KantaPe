@@ -1,0 +1,142 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Portal.master" AutoEventWireup="true" CodeFile="Home.aspx.cs" Inherits="Forms_Portal_Home" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Forms/Portal/Home.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+    <cc:CssCombine ID="StyleCombiner" runat="server" CSSHandler="~/Ashx/Combine/CssHandler.ashx">
+        <CSSReferences>
+            <cc:CssReference Path="~/Style/Forms/Home.css" />
+        </CSSReferences>
+    </cc:CssCombine>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-2">
+            <img alt="Kanta-Logo" src="./Images/Textos/Logo.png" />
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-lg-12">
+            <img alt="Kanta" src="./Images/Forms/Banner.png" style="width: 100%;" />
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-lg-12">
+            <img alt="Ranking" src="./Images/Textos/LosMasRankiados.png" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12">
+            <div id="divRankiados">
+                <div id="listarRankiados">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12" style="display: table">
+            <div class="verMasRanking">
+                <img src="./Images/Textos/VerMas.png" onclick='IrRanking();return false;' />
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-lg-12">
+            <img alt="Karaoke" src="./Images/Textos/Karaoke.png" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12">
+            <div id="divKaraokes">
+                <div id="listarKaraokes">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12" style="display: table">
+            <div class="verMasKaraoke">
+                <img alt="Ver más ranking" src="./Images/Textos/VerMas.png" onclick='IrKaraoke();return false;' />
+            </div>
+        </div>
+    </div>
+    <div class="modal fade full-color success" id="mdKaraoke" style="display: none;">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>INFORMACION DEL KARAOKE</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8 col-sm-8">
+                                    <div class="form-group" style="text-align: center;">
+                                        <img style="max-height: 350px; max-width: 100%;" alt="" id="imgLocalImagen" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4" style="background-color: rgba(0, 0, 0, 0.1);">
+                                    <div class="row" style="padding-top: 10px;">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="txtLocal">KARAOKE:</label>
+                                                <span id="txtLocal"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="txtDireccion">DIRECCIÓN:</label>
+                                                <span id="txtDireccion"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="txtContacto">CONTACTO:</label>
+                                                <span id="txtContacto"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h3 style="letter-spacing: 3px; border-bottom-style: solid; font-weight: 400;">OFERTAS</h3>
+                        </div>
+                        <div class="col-lg-12">
+                            <div id="divOfertas" style="background-color: rgba(0, 0, 0, 0.1);">
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h3 style="letter-spacing: 3px; border-bottom-style: solid; font-weight: 400;">EVENTOS</h3>
+                        </div>
+                        <div class="col-lg-12">
+                            <div id="divEventos" style="background-color: rgba(0, 0, 0, 0.1);">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <asp:HiddenField ID="hdIdLocal" runat="server" ClientIDMode="Static" />
+</asp:Content>
+

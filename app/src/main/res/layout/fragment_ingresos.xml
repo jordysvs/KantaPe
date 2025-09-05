@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/cantando"
+    tools:context=".view.fragments.IngresosFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vHorizontal"
+        android:orientation="horizontal">
+
+        <ListView
+            android:id="@+id/lstCancion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            >
+
+        </ListView>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtFiltroGeneroIngresos"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp"
+
+        android:textColor="#ffffff"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="10sp"
+        android:hint="Genero  : Ninguno"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColorHint="@color/cardview_light_background" />
+
+    <TextView
+        android:id="@+id/txtFiltroIdiomaIngresos"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="180dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:hint="Idioma  : Ninguno"
+        android:textSize="10sp"
+        android:textColor="#ffffff"
+        android:textColorHint="@color/cardview_light_background"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+
+
+</RelativeLayout>

@@ -1,0 +1,63 @@
+﻿CREATE PROCEDURE [SecurityInsertarGrupo]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de inserción de SecurityGrupo
+'* Input :
+		@pIdModulo - IdModulo del SecurityGrupo
+		@pIdGrupo - IdGrupo del SecurityGrupo
+		@pDescripcion - Descripcion del SecurityGrupo
+		@pOrden - Orden del SecurityGrupo
+		@pEstado - Estado del SecurityGrupo
+		@pUsuarioCreacion - UsuarioCreacion del SecurityGrupo
+'* Output : 
+		@pIdGrupo - IdGrupo del SecurityGrupo
+'* Creado Por : Kruma
+'* Fecha Creación : 27-07-2015
+'**********************************************************************************
+*/
+(
+	@pIdModulo char(8) = null,
+	@pIdGrupo char(8) = null,
+	@pDescripcion varchar(50) = null, 
+	@pEstado varchar(1) = null, 
+	@pUsuarioCreacion varchar(20) = null,
+	@pIdImagen int out
+)
+AS
+BEGIN
+
+		declare 
+		@vOrden int = null,
+		@vIdImagen int = null
+
+		select @vOrden = IsNull(MAX(Orden),0)+1 from SecurityGrupo where Estado = 'A';
+		select @pIdImagen = IsNull(MAX(IdImagen),0)+1 from SecurityGrupo;
+
+		Insert Into SecurityGrupo
+		(
+			IdModulo,
+			IdGrupo,
+			Descripcion,
+			Orden,
+			IdImagen,
+			Estado,
+			UsuarioCreacion,
+			FechaCreacion,
+			UsuarioModificacion,
+			FechaModificacion
+		)
+		Values
+		(
+			@pIdModulo,
+			@pIdGrupo,
+			@pDescripcion,
+			@vOrden,
+			@pIdImagen,
+			@pEstado,
+			@pUsuarioCreacion,
+			getdate(),
+			@pUsuarioCreacion,
+			getdate()
+		)
+END
+

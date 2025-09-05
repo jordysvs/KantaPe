@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+using Kruma.KantaPe.Service.Interface;
+using System.ServiceModel.Activation;
+
+namespace Kruma.KantaPe.Service.Logical
+{
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
+    public class LocalProducto : ILocalProducto
+    {
+        //public Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Usuario> Obtener(string str_pIdUsuario)
+        //{
+        //    Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Usuario> obj_Resultado = null;
+
+        //    try
+        //    {
+        //        obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Usuario>
+        //            (Kruma.KantaPe.Negocio.Usuario.Obtener(str_pIdUsuario));
+        //    }
+        //    catch (Exception obj_pExcepcion)
+        //    {
+        //        obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.KantaPe.Entidad.Usuario>
+        //            (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+        //        Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Usuario/Obtener", obj_pExcepcion.Message);
+        //    }
+        //    return obj_Resultado;
+        //}
+
+        //public Entity.ServiceResult<Kruma.Core.Security.Entity.SecurityResult> Autenticar(string Usuario, string Clave)
+        //{
+        //    Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Security.Entity.SecurityResult> obj_Resultado = null;
+        //    try
+        //    {
+        //        obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Security.Entity.SecurityResult>
+        //            (Kruma.KantaPe.Negocio.Usuario.Autenticar(Usuario, Clave));
+        //    }
+        //    catch (Exception obj_pExcepcion)
+        //    {
+        //        obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Security.Entity.SecurityResult>
+        //            (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+        //        Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Usuario/Autenticar", obj_pExcepcion.Message);
+        //    }
+        //    return obj_Resultado;
+        //}
+
+        //public Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> Insertar(Kruma.KantaPe.Entidad.Usuario Usuario)
+        //{
+        //    Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+        //    try
+        //    {
+        //        obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+        //            (Kruma.KantaPe.Negocio.Usuario.Insertar(Usuario));
+        //    }
+        //    catch (Exception obj_pExcepcion)
+        //    {
+        //        obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+        //            (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+        //        Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Usuario/Insertar", obj_pExcepcion.Message);
+        //    }
+        //    return obj_Resultado;
+        //}
+
+        //public Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> Modificar(Kruma.KantaPe.Entidad.Usuario Usuario)
+        //{
+        //    Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult> obj_Resultado = null;
+        //    try
+        //    {
+        //        obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+        //            (Kruma.KantaPe.Negocio.Usuario.Modificar(Usuario));
+        //    }
+        //    catch (Exception obj_pExcepcion)
+        //    {
+        //        obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.ProcessResult>
+        //            (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+        //        Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.Usuario/Modificar", obj_pExcepcion.Message);
+        //    }
+        //    return obj_Resultado;
+        //}
+    }
+}

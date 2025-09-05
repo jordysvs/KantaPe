@@ -1,0 +1,63 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Portal.master" AutoEventWireup="true" CodeFile="Afiliate.aspx.cs" Inherits="Forms_Portal_Afiliate" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+    <cc:CssCombine ID="StyleCombiner" runat="server" CSSHandler="~/Ashx/Combine/CssHandler.ashx" Compress="false" AppCacheDuration="0" BrowserCacheDuration="0">
+        <CSSReferences>
+            <cc:CssReference Path="~/Style/Forms/Afiliate.css" />
+        </CSSReferences>
+    </cc:CssCombine>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+    <div class="row">
+        <div class="col-lg-12" style="text-align: center;">
+            <img src="Images/Forms/Afiliate/Funcionalidades.png" />
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-4 col-md-6 col-sm-6" style="text-align: center;">
+            <img src="Images/Forms/Afiliate/Administrador.png" />
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-6" style="text-align: center;">
+            <img src="Images/Forms/Afiliate/Cliente.png" />
+        </div>
+        <div class="col-lg-2"></div>
+    </div>
+    <br />
+    <br />
+    <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-4 col-md-6 col-sm-6" style="text-align: center;">
+            <img src="Images/Forms/Afiliate/DJ.png" />
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-6" style="text-align: center;">
+            <img src="Images/Forms/Afiliate/Mozo.png" />
+        </div>
+        <div class="col-lg-2"></div>
+    </div>
+    <br />
+    <br />
+    <hr />
+    <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-4 col-md-6 col-sm-6" style="text-align: center;">
+            <img src="Images/Forms/Afiliate/Planes.png" />
+        </div>
+        <div class="col-lg-4 col-md-6 col-sm-6" style="text-align: center;">
+            <div class="row">
+                <div class="col-lg-12">
+                    <img src="Images/Forms/Afiliate/Implementacion.png" />
+                </div>
+                <div class="col-lg-12">
+                    <img src="Images/Forms/Afiliate/Beneficios.png" />
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2"></div>
+    </div>
+</asp:Content>
+

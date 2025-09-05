@@ -1,0 +1,63 @@
+----------------------------------------------------------------------------------------------------
+Titulo:	Kruma.KantaPe.Service.Logical.Apertura/ListarCancion
+Fecha:	17/02/2017 15:49:01
+Mensaje:
+La cadena de entrada no tiene el formato correcto.
+
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Titulo:	Kruma.KantaPe.Service.Logical.Apertura/ListarCancion
+Fecha:	17/02/2017 15:49:21
+Mensaje:
+La cadena de entrada no tiene el formato correcto.
+
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Titulo:	Kruma.KantaPe.Service.Logical.Apertura/ListarCancion
+Fecha:	17/02/2017 15:49:47
+Mensaje:
+La cadena de entrada no tiene el formato correcto.
+
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Titulo:	Kruma.KantaPe.Service.Logical.Apertura/ListarCancion
+Fecha:	17/02/2017 15:50:05
+Mensaje:
+La cadena de entrada no tiene el formato correcto.
+
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Titulo:	Kruma.KantaPe.Service.Logical.Apertura/ListarCancion
+Fecha:	17/02/2017 15:50:19
+Mensaje:
+La cadena de entrada no tiene el formato correcto.
+
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Titulo:	Kruma.KantaPe.Service.Logical.Apertura/ListarCancion
+Fecha:	17/02/2017 15:50:30
+Mensaje:
+La cadena de entrada no tiene el formato correcto.
+
+
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+Titulo:	Kruma.KantaPe.Service.Logical.Apertura/ListarCancion
+Fecha:	19/02/2017 3:00:00
+Mensaje:
+La cadena de entrada no tiene el formato correcto.
+
+
+----------------------------------------------------------------------------------------------------
+

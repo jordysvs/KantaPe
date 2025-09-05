@@ -1,0 +1,60 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Externo.master" AutoEventWireup="true" CodeFile="Index.aspx.cs" Inherits="Index" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx" Combine="false" Minify="false" Compress="false">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Plugins/amcharts/amcharts.js" />
+            <cc:ScriptReference Path="~/Script/Plugins/amcharts/gauge.js" />
+            <cc:ScriptReference Path="~/Script/Forms/Index.js" />
+            <cc:ScriptReference Path="~/Script/Forms/Portal/Ranking.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+    <div id="divBotones"></div>
+   <%-- <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-warning" style="background-color: transparent!important; box-shadow: none!important;">
+                <div class="box-body" style="text-align: center;">
+                      <br />
+                    <br />
+                    <br />
+                    <br />
+                    <img src="<%= Page.ResolveClientUrl("~/Content/LogoCliente.png")%>" />
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <article class="widget">
+                                <header class="widget__header">
+                                    <h3>Box aperturadas</h3>
+                                </header>
+                                <div class="widget__content">
+                                    <p id="divGraficoComentario1"></p>
+                                    <figure>
+                                        <div id="divGrafico1" style="width: 100%; height: 250px;"></div>
+                                    </figure>
+                                </div>
+                            </article>
+                        </div>
+                         <div class="col-lg-6">
+                            <article class="widget">
+                                <header class="widget__header">
+                                    <h3>Mesas aperturadas</h3>
+                                </header>
+                                <div class="widget__content">
+                                    <p id="divGraficoComentario2"></p>
+                                    <figure>
+                                        <div id="divGrafico2" style="width: 100%; height: 250px;"></div>
+                                    </figure>
+                                </div>
+                            </article>
+                        </div>
+                         
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <asp:HiddenField ID="hdIdLocal" runat="server" ClientIDMode="Static" />--%>
+</asp:Content>
+

@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kruma.KantaPe.Entidad
+{
+    public class Constante
+    {
+        public const string Estado_Activo = "A";
+        public const string Estado_Pendiente = "P";
+        public const string Estado_Rechazado = "R";
+        public const string Estado_Cancelado = "C";
+        public const string Estado_Inactivo = "I";
+        public const string Condicion_Positivo = "S";
+        public const string Condicion_Negativo = "N";
+
+        public const int AlertaTipo_Apertura = 1;
+        public const int AlertaTipo_Carta = 2;
+        public const int AlertaTipo_Turno = 3;
+        public const int AlertaTipo_PerdidaTurno = 4;
+
+        public const int AperturaCancionTipo_Solicitada = 1;
+        public const int AperturaCancionTipo_Cancelada = 2;
+        public const int AperturaCancionTipo_Cantada = 3;
+
+        public const int Notificacion_Usuario = 1;
+        public const int Notificacion_SolicitudPerdido = 2;
+        public const int Notificacion_Cancion = 3;
+        public const int Notificacion_PerfilCancion = 4;
+        public const int Notificacion_Apertura = 5;
+
+        public class Parametro
+        {
+            public const string Modulo = "KANTAPE";
+            public const string Modulo_Movil = "KANTAPEM";
+            public const string TipoMail_Personal = "TIPOMAILPERSONAL";
+            public const string Almacen_Local = "ALMACENLOCAL";
+            public const string Almacen_Oferta = "ALMACENOFERTA";
+            public const string Almacen_Evento = "ALMACENEVENTO";
+            public const string Almacen_Album = "ALMACENALBUM";
+            public const string Almacen_Producto = "ALMACENPRODUCTO";
+            public const string Perfil_Usuario = "PERFILUSUARIO";
+            public const string AlertaTipo_Apertura = "ALERTATIPOAPERTURA";
+            public const string AlertaTipo_Producto = "ALERTATIPOPRODUCTO";
+            public const string AperturaCancion_Cancelada = "APECANCANCELADA";
+            public const string AperturaCancion_Cantada = "APECANCANTADA";
+            public const string AperturaCancion_Solicitada = "APECANSOLICITADA";
+            public const string CancionSolicitud_Aprobada = "CANSOLAPROBADA";
+            public const string CancionSolicitud_Rechazada = "CANSOLRECHAZADA";
+            public const string CancionSolicitud_Solicitada = "CANSOLSOLICITADA";
+            public const string Imagen_Microfono = "IMAGENMICROFONO";
+            public const string Perfil_Mozo = "PERFILMOZO";
+
+            public const string CantidadCancionesPorTurno = "CANTCANCIONES";
+            public const string CantidadSegundosTurno = "SEGUNDOSTURNO";
+            public const string TiempoVerificacionTurno = "TIEMPOVERIFICARTURNO";
+            public const string FireBaseAppID = "FIREBASEAPPID";
+            public const string FireBaseSenderID = "FIREBASESENDERID";
+            public const string FireBaseRestURL = "FIREBASERESTURL";
+
+        }
+
+    }
+}

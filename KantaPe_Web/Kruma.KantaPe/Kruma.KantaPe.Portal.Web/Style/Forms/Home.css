@@ -1,0 +1,116 @@
+﻿body {
+    background-image: url("../../Images/Forms/Home.png") !important;
+    background-color: #5EA41C !important;
+    background-size: cover;
+}
+
+.skin-red .wrapper, .skin-red .main-sidebar, .skin-red .left-side {
+    background-color: transparent !important;
+}
+
+.content-wrapper, .right-side {
+    background-color: transparent !important;
+}
+
+.btn {
+    margin-bottom: 0px !important;
+    margin-left: 0px !important;
+}
+
+.btn-info:hover {
+    background-color: #4E74D4;
+}
+
+.celdaRanking {
+    height: 150px;
+    width: 100%;
+}
+
+    .celdaRanking img {
+        /*background-color: black;*/
+        max-height: 150px;
+        max-width: 100%;
+    }
+
+.verMasRanking {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    height: 150px;
+    margin-top: 10px;
+}
+
+    .verMasRanking img {
+        cursor: pointer;
+    }
+
+.celdaKaraoke {
+    height: 250px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+    .celdaKaraoke img {
+        background-color: black;
+        max-height: 250px;
+        max-width: 100%;
+    }
+
+.verMasKaraoke {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    height: 250px;
+    margin-top: 10px;
+}
+
+    .verMasKaraoke img {
+        cursor: pointer;
+    }
+
+.celdaOferta {
+    background-color: #3B3B3B;
+    height: 150px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+    .celdaOferta img {
+        max-height: 150px;
+        max-width: 100%;
+    }
+
+.celdaEvento {
+    background-color: #3B3B3B;
+    height: 150px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+    .celdaEvento img {
+        max-height: 150px;
+        max-width: 100%;
+    }
+
+@media (min-width: 0px) and (max-width: 767px) {
+
+    .celdaKaraoke {
+        height: 150px;
+    }
+
+        .celdaKaraoke img {
+            background-color: black;
+            max-height: 150px;
+            max-width: 100%;
+        }
+
+    .verMasRanking {
+        height: 80px;
+    }
+
+    .verMasKaraoke {
+        height: 80px;
+    }
+}

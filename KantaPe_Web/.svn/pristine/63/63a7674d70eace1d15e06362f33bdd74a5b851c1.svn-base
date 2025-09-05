@@ -1,0 +1,60 @@
+﻿CREATE PROCEDURE [SecurityInsertarPerfilGrupoDetalleAcceso]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de inserción del acceso del perfil
+'* Input :
+		@pIdModulo - Id del modulo,
+		@pIdGrupo - Id del grupo,
+		@pIdDetalle - Id del detalle del grupo,
+		@pIdPerfil - Id del perfil,
+		@pEstado - Estado del perfil
+		@pUsuarioCreacion - UsuarioCreacion del perfil
+'* Creado Por : John Castillo
+'* Fecha Creación : 23-07-2015
+'**********************************************************************************
+*/
+(
+	@pIdModulo char(8) = null,
+	@pIdPerfil varchar(20) = null,
+
+	@pIdModuloGrupo char(8) = null,
+	@pIdGrupo char(8) = null,
+	@pIdDetalle char(8) = null,
+
+	@pEstado char(1) = null, 
+	@pUsuarioCreacion varchar(20) = null
+)
+AS
+BEGIN
+		Insert Into SecurityPerfilGrupoDetalleAcceso
+		(
+			IdModulo,
+			IdPerfil,
+			
+			IdModuloGrupo,
+			IdGrupo,
+			IdDetalle,
+		
+			Estado,
+			UsuarioCreacion,
+			FechaCreacion,
+			UsuarioModificacion,
+			FechaModificacion
+		)
+		Values
+		(
+			@pIdModulo,
+			@pIdPerfil,
+			
+			@pIdModuloGrupo,
+			@pIdGrupo,
+			@pIdDetalle,
+	
+			@pEstado,
+			@pUsuarioCreacion,
+			getdate(),
+			@pUsuarioCreacion,
+			getdate()
+		)
+END
+

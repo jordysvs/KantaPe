@@ -1,0 +1,163 @@
+﻿//Atributos
+var int_PagMostrarAlbum = 1;
+var int_TamPaginaAlbum = 5;
+var int_PagMostrarAlbum = 9;
+
+$(function () {
+
+    $(document).keypress(function (e) {
+        var blnMdBuscadorAlbum = ($("#mdBuscadorAlbum").data('bs.modal') || {}).isShown;
+        if (blnMdBuscadorAlbum == undefined)
+            blnMdBuscadorAlbum = false;
+
+        if (blnMdBuscadorAlbum)
+            if (e.which == 13) {
+                $("#btnBuscarBuscadorAlbum").click();
+                return false;
+            }
+    });
+
+    $("#btnBuscarBuscadorAlbum").click(function () {
+        ListarBusquedaAlbum(1);
+        return false;
+    });
+});
+
+function ObtenerFiltrosBuscadorAlbum() {
+    var obj_Filtro = new Object();
+    obj_Filtro.Nombre = $("#txtNombreBuscadorAlbum").val();
+    obj_Filtro.Titulo = $("#txtTituloBuscadorAlbum").val();
+    return obj_Filtro;
+}
+
+function ListarBusquedaAlbum(int_pNumPagina) {
+    int_PagMostrarAlbum = int_pNumPagina;
+    var obj_Filtro = ObtenerFiltrosBuscadorAlbum();
+    var obj_Data = {
+        "str_pNombre": obj_Filtro.Nombre,
+        "str_pTitulo": obj_Filtro.Titulo,
+        "int_pNumPagina": int_pNumPagina,
+        "int_pTamPagina": int_TamPaginaAlbum
+    };
+    AccionDefault(true, UrlPath + "Comun.aspx/ListarAlbum", obj_Data, CargarGrillaBuscadorAlbum, null, null, null, 1);
+}
+
+function CargarGrillaBuscadorAlbum(obj_pLista) {
+
+    var obj_TablaPrincipal = $("<table id='tblBuscadorAlbum' class='table table-bordered table-hover dt-responsive'></table>");
+    var obj_THead = $("<thead></thead>");
+    var obj_FilaPrincipal = $("<tr></tr>");
+    obj_FilaPrincipal.append($("<th style='width:40%;'>Artista</th>"));
+    obj_FilaPrincipal.append($("<th style='width:60%;'>Álbum</th>"));
+    obj_THead.append(obj_FilaPrincipal);
+    obj_TablaPrincipal.append(obj_THead);
+
+    var obj_TBody = $("<tbody></tbody>");
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+        obj_FilaPrincipal = $("<tr idalbum='" + obj_pLista.Result[i].IdAlbum + "' idartista='" + obj_pLista.Result[i].IdArtista + "' nombre='" + obj_pLista.Result[i].Artista.Nombre + "' titulo='" + obj_pLista.Result[i].Titulo + "'></tr>");
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Artista.Nombre + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Titulo + "</td>"));
+        obj_TBody.append(obj_FilaPrincipal);
+    }
+    obj_TablaPrincipal.append(obj_TBody);
+
+    $("#divPaginacionBuscadorAlbum").html('');
+    $("#divPaginacionBuscadorAlbum").append(CargarPaginacionBuscadorAlbum(obj_pLista));
+
+    $("#divGrillaBuscadorAlbum").html('');
+    $("#divGrillaBuscadorAlbum").append(obj_TablaPrincipal);
+
+    var obj_Tabla = $('#tblBuscadorAlbum').dataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Página _PAGE_ de _PAGES_",
+            "infoEmpty": "",
+            "infoFiltered": "(Filtrado hasta _MAX_ total registros)"
+        },
+        "processing": false,
+        "bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": true,
+        "bInfo": false,
+        "bAutoWidth": false
+    });
+
+    $('#tblBuscadorAlbum tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        }
+        else {
+            obj_Tabla.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+}
+
+function CargarPaginacionBuscadorAlbum(obj_pLista) {
+    var int_vNumPagina = int_PagMostrarAlbum;
+    var int_vPagMostrar = int_PagMostrarAlbum;
+    var int_TotalRegistros = obj_pLista.Total;
+
+    var obj_Ul = $("<ul class='pagination'></ul>");
+    var obj_Li = $("<li class='paginate_button'></li>");
+    obj_Ul.append(obj_Li);
+    obj_Li.append(CrearNumeroPaginaBuscadorAlbum(int_vNumPagina, int_vNumPagina));
+
+    while ((int_TotalRegistros - ((int_PagMostrarAlbum - 1) * int_TamPaginaAlbum) - int_TamPaginaAlbum) > 0) {
+        int_TotalRegistros = (int_TotalRegistros - int_TamPaginaAlbum);
+        int_vNumPagina++;
+        int_vPagMostrar--;
+        if (int_vPagMostrar > 0)
+            obj_Li.append(CrearNumeroPaginaBuscadorAlbum(int_vNumPagina, int_vNumPagina));
+        else {
+            if (int_TotalRegistros > 0) {
+                obj_Li.append(CrearNumeroPaginaBuscadorAlbum(int_vNumPagina, ">"));
+                break;
+            }
+        }
+    }
+
+    int_vNumPagina = int_PagMostrarAlbum;
+    while ((int_TotalRegistros - int_TamPaginaAlbum) > 0) {
+        int_TotalRegistros = (int_TotalRegistros - int_TamPaginaAlbum);
+        int_vNumPagina--;
+        int_vPagMostrar--;
+        if (int_vPagMostrar > 0)
+            obj_Li.prepend(CrearNumeroPaginaBuscadorAlbum(int_vNumPagina, int_vNumPagina));
+    }
+    if (int_vNumPagina > 1)
+        obj_Li.prepend(CrearNumeroPaginaBuscadorAlbum(int_vNumPagina, "<"));
+
+    var int_TotalPaginas = Math.ceil(obj_pLista.Total / int_TamPaginaAlbum);
+    int_TotalPaginas = int_TotalPaginas == 0 ? 1 : int_TotalPaginas;
+    $("#divPaginacionInfoBuscadorAlbum").html("Página " + int_PagMostrarAlbum + " de " + int_TotalPaginas);
+
+    return obj_Ul;
+}
+
+function CrearNumeroPaginaBuscadorAlbum(int_pNumPagina, str_pTexto) {
+    var obj_AnchorPag = $("<a></a>");
+    $(obj_AnchorPag).attr('href', '#');
+    $(obj_AnchorPag).attr('onclick', 'ListarBusquedaAlbum(' + (int_pNumPagina) + ');');
+    $(obj_AnchorPag).text(str_pTexto);
+    return obj_AnchorPag;
+}
+
+function ObtenerRegistroBuscadorAlbum() {
+    var obj_Registro = null;
+    var obj_Seleccion = $('#tblBuscadorAlbum').find('.selected');
+    if (obj_Seleccion.length > 0) {
+        obj_Registro = new Object();
+        obj_Registro.idArtista = $(obj_Seleccion[0]).attr('idartista');
+        obj_Registro.idAlbum = $(obj_Seleccion[0]).attr('idalbum');
+        obj_Registro.artista = $(obj_Seleccion[0]).attr('nombre');
+        obj_Registro.album = $(obj_Seleccion[0]).attr('titulo');
+        obj_Registro.artistaAlbum = obj_Registro.artista + ' - ' + obj_Registro.album;
+    }
+    else
+        AlertJQ(1, 'Seleccione un álbum.');
+    return obj_Registro;
+}
+

@@ -1,0 +1,802 @@
+﻿var obj_TimerDashboard = null;
+var lst_Usuario = [];
+
+$(function () {
+    CargarInicial();
+    CargarControles();
+});
+
+function CargarInicial() {
+
+}
+
+function CargarControles() {
+
+    $("#ddlEmpresa").change(function () {
+        CargarLocal();
+        return false;
+    });
+
+    $(".btnAperturaCerrar").click(function () {
+        if ($("#hdIdLocal").val() != null && $("#hdIdLocal").val() !="") {
+            CerrarApertura();
+        }
+        return false;
+    });
+
+    $("#btnCerrar").click(function () {
+        if ($("#hdIdLocal").val() != null && $("#hdIdLocal").val() !="") {
+        ConfirmJQ('¿Está seguro de cerrar todas las alertas pendientes y todas las aperturas abiertas?', function () {
+            CerrarAlertas();
+        });
+        }
+        return false;
+    });
+    if ($("#hdIdLocal").val() != null && $("#hdIdLocal").val() !="") {
+
+        var $ddlCancionBuscador =
+              $("#ddlCancionBuscador").select2({
+                  language: "es",
+                  multiple: true,
+                  width: '100%',
+                  minimumInputLength: 1,
+                  placeholder: "Ingrese el Título de la Canción / Nombre del Artista / Título del Album",
+                  escapeMarkup: function (markup) { return markup; },
+                  ajax: {
+                      url: "Apertura.aspx/ListarLocalCancion",
+                      contentType: "application/json; charset=utf-8",
+                      dataType: "json",
+                      delay: 250,
+                      type: "POST",
+                      data: function (params) {
+                          return JSON.stringify({
+                              int_pIdLocal: $("#hdIdLocal").val(),
+                              str_pPalabraClave: (params.term || '').trim(),
+                              int_pNumPagina: params.page || 1,
+                              int_pTamPagina: 10
+                          });
+                      },
+                      processResults: function (data, params) {
+                          var lst_Results = [];
+
+                          $.each(data.d.Result, function (i, v) {
+                              var obj_Resultado = {};
+                              obj_Resultado.id = v.IdLocalCancion;
+                              obj_Resultado.idlocal = v.IdLocal;
+                              obj_Resultado.titulo = v.Cancion == null ? '' : v.Cancion.Descripcion;
+                              obj_Resultado.album = v.Album == null ? '' : v.Album.Titulo;
+                              obj_Resultado.artista = v.Artista == null ? '' : v.Artista.Nombre;
+                              lst_Results.push(obj_Resultado);
+                          })
+
+                          params.page = params.page || 1;
+
+                          return {
+                              results: lst_Results,
+                              pagination: {
+                                  more: (params.page * 10) < data.d.Total
+                              }
+                          };
+                      },
+                      cache: true
+                  },
+                  templateResult: function (option) {
+                      if (option.loading) { return option.text; }
+                      return $("<span><b style='text-transform: uppercase;'>" + option.titulo + "</b>" + " (" + option.artista + " / " + option.album + ")</span>");
+
+                  },
+                  templateSelection: function (option) {
+                      if (option.id == '') { return option.text; }
+                      return option.titulo;
+                  }
+              });
+
+
+        $('#ddlCancionBuscador').on('select2:select', function (evt) {
+            AgregarAperturaCancion(evt.params.data.id);
+            $ddlCancionBuscador.val(null).trigger("change");
+        });
+
+        //$("#btnBuscar").click(function () {
+        //    ListarApertura();
+        //    return false;
+        //});
+
+        //KeyPressEnter("divFiltro",
+        //    function () {
+        //        $("#btnBuscar").click();
+        //    });
+
+        //$("#btnBuscar").focus();
+
+        $("#btnCriterio").click();
+
+        ListarApertura();
+    }
+}
+
+function ObtenerFiltrosDashBoard() {
+
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdLocal = null;
+    if ($("#hdIdLocal").val() != '')
+        obj_Filtro.IdLocal = $("#hdIdLocal").val();
+
+    obj_Filtro.IdUbicacionTipo = null;
+    if ($("#hdIdUbicacionTipo").val() != '')
+        obj_Filtro.IdUbicacionTipo = $("#hdIdUbicacionTipo").val();
+
+    return obj_Filtro;
+}
+
+function ObtenerFiltros() {
+
+    //$("#hdIdLocal").val('');
+    //$("#hdIdUbicacionTipo").val('');
+
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdLocal = null;
+    if ($("#hdIdLocal").val() != '') {
+        obj_Filtro.IdLocal = $("#hdIdLocal").val();
+        //$("#hdIdLocal").val($("#ddlLocal").val());
+    }
+
+    obj_Filtro.IdUbicacionTipo = null;
+    if ($("#hdIdUbicacionTipo").val() != '') {
+        obj_Filtro.IdUbicacionTipo = $("#hdIdUbicacionTipo").val();
+        //$("#hdIdUbicacionTipo").val($("#ddlUbicacionTipo").val());
+    }
+
+    return obj_Filtro;
+}
+
+function CargarLocal() {
+    var ddlLocal = $("#ddlLocal");
+    ddlLocal.html('');
+    ddlLocal.append($("<option value=''>--Todos--</option>"));
+
+    if ($("#ddlEmpresa").val() != '') {
+        var obj_Data = { "int_pIdEmpresa": $("#ddlEmpresa").val() };
+        AccionDefault(true, "Apertura.aspx/ListarLocal", obj_Data,
+        function (obj_pLista) {
+            for (var i = 0; i < obj_pLista.length; i++) {
+                ddlLocal.append($("<option value='" + obj_pLista[i].IdLocal + "'>" + obj_pLista[i].Nombre + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+function ListarAperturaDashboard() {
+    var obj_Filtro = ObtenerFiltrosDashBoard();
+    var obj_Data = {
+        "int_pIdLocal": obj_Filtro.IdLocal,
+        "int_pIdUbicacionTipo": obj_Filtro.IdUbicacionTipo
+    };
+    AccionDefault(true, "Apertura.aspx/ListarApertura", obj_Data,
+        function (obj_Lista) {
+            CargarGrilla(obj_Lista);
+            ListarApertura();
+        }
+        , null, null, null, 1, false, false);
+    //EstablecerTimer();
+}
+
+function ListarApertura() {
+    //Limpia el timer
+    if (obj_TimerDashboard != null)
+        clearTimeout(obj_TimerDashboard);
+
+    var obj_Filtro = ObtenerFiltros();
+    var obj_Data = {
+        "int_pIdLocal": obj_Filtro.IdLocal,
+        "int_pIdUbicacionTipo": obj_Filtro.IdUbicacionTipo
+    };
+    AccionDefault(true, "Apertura.aspx/ListarApertura", obj_Data, function (obj_Lista) {
+        CargarGrilla(obj_Lista);
+        setTimeout(ListarApertura, 1000);
+        //ListarApertura();
+    }, null, null, null, 1, false, false);
+
+    //Establece el timer
+    //EstablecerTimer();
+}
+
+function CerrarAlertas() {
+    Accion('Apertura.aspx/CerrarAlertas', {"int_pIdLocal" : $("#hdIdLocal").val() },
+        function () {
+
+        });
+}
+
+function EstablecerTimer() {
+    obj_TimerDashboard = setTimeout(ListarAperturaDashboard, 5000);
+}
+
+function CargarGrilla(obj_pLista) {
+
+    var int_Columnas = 4;
+    var obj_TablaPrincipal = $("#divContenido");
+    obj_TablaPrincipal.html('');
+
+    var obj_Row = null;
+    var obj_Celda = null;
+    var obj_FilaPrincipal = null;
+    var obj_CeldaPrincipal = null;
+    var obj_TablaApertura = null;
+    var obj_FilaAperturaPrincipal = null;
+    var j = 0;
+
+
+    var str_FechaApertura = '';
+    var str_Mozo = '';
+    var str_Administrador = '';
+    var str_TipoUbicacion = '';
+
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+        str_FechaApertura = '';
+        str_Mozo = '';
+        str_Administrador = '';
+        str_TipoUbicacion = '';
+
+        if (j == 0) {
+            obj_Row = $("<div class='row'></div>");
+            obj_TablaPrincipal.append(obj_Row);
+        }
+
+        //Contenedor
+        obj_Contenedor = $("<div class='col-md-3'></div>");
+        obj_CeldaUbicacion = $("<table class='mesa'></table>");
+        obj_Contenedor.append(obj_CeldaUbicacion);
+        obj_Row.append(obj_Contenedor);
+
+        //inicializa la identificacion de la celda
+        obj_CeldaUbicacion.attr('idlocal', obj_pLista.Result[i].IdLocal);
+        obj_CeldaUbicacion.attr('idubicacion', obj_pLista.Result[i].IdUbicacion);
+        obj_CeldaUbicacion.attr('idapertura', '');
+        obj_CeldaUbicacion.attr('idalerta', '');
+
+        //Se genera el cuadro de la ubicación
+        obj_FilaPrincipal = $("<tr></tr>");
+        obj_FilaPrincipal.append($("<td rowspan='2' class='imagen'>" + obj_pLista.Result[i].Numero + "</td>"));
+        obj_FilaPrincipal.append($("<td class='ubicacion'>" + obj_pLista.Result[i].UbicacionTipo.Descripcion + "</td>"));
+        obj_CeldaUbicacion.append(obj_FilaPrincipal);
+
+        if (obj_pLista.Result[i].Apertura != null) {
+            obj_CeldaUbicacion.attr('idapertura', obj_pLista.Result[i].Apertura.IdApertura);
+
+            obj_FilaPrincipal = $("<tr></tr>");
+            obj_CeldaPrincipal = $("<td class='apertura'></td>");
+            obj_FilaPrincipal.append(obj_CeldaPrincipal);
+            obj_CeldaUbicacion.append(obj_FilaPrincipal);
+
+            obj_TablaApertura = $("<table style='width:100%;'></table>");
+            obj_FilaAperturaPrincipal = $("<tr></tr>");
+            obj_FilaAperturaPrincipal.append($("<td class='titulo'>Fecha:</td>"));
+
+            if (obj_pLista.Result[i].Apertura != null)
+                str_FechaApertura = ToDateTimeString(obj_pLista.Result[i].Apertura.FechaApertura);
+            obj_FilaAperturaPrincipal.append($("<td class='descripcion'>" + str_FechaApertura + "</td>"));
+
+            obj_FilaAperturaPrincipal.append(obj_FilaAperturaPrincipal);
+            obj_TablaApertura.append(obj_FilaAperturaPrincipal);
+
+            obj_FilaAperturaPrincipal = $("<tr></tr>");
+            obj_FilaAperturaPrincipal.append($("<td class='titulo'>Mozo:</td>"));
+
+            if (obj_pLista.Result[i].Apertura != null)
+                str_Mozo = obj_pLista.Result[i].Apertura.Empleado.Persona.NombreCompleto;
+            obj_FilaAperturaPrincipal.append($("<td class='descripcion'>" + str_Mozo + "</td>"));
+
+            obj_FilaAperturaPrincipal.append(obj_FilaAperturaPrincipal);
+            obj_TablaApertura.append(obj_FilaAperturaPrincipal);
+
+            obj_FilaAperturaPrincipal = $("<tr></tr>");
+            obj_FilaAperturaPrincipal.append($("<td class='titulo'>Usuario:</td>"));
+
+            if (obj_pLista.Result[i].Apertura != null)
+                str_Administrador = obj_pLista.Result[i].Apertura.Usuarios[0].Usuario.Persona.NombreCompleto;
+            obj_FilaAperturaPrincipal.append($("<td class='descripcion'>" + str_Administrador + "</td>"));
+
+            obj_FilaAperturaPrincipal.append(obj_FilaAperturaPrincipal);
+            obj_TablaApertura.append(obj_FilaAperturaPrincipal);
+            ;
+
+            obj_CeldaPrincipal.append(obj_TablaApertura);
+        }
+        else {
+            obj_CeldaUbicacion.addClass("disponible");
+            obj_FilaPrincipal = $("<tr></tr>");
+            obj_FilaPrincipal.append($("<td class='mensaje'>Disponible</td>"));
+            obj_CeldaUbicacion.append(obj_FilaPrincipal);
+        }
+
+        //estilo
+        if (obj_pLista.Result[i].Alerta != null) {
+            obj_CeldaUbicacion.attr('idalerta', obj_pLista.Result[i].Alerta.IdAlerta);
+            if (obj_pLista.Result[i].Alerta.IdAlertaTipo == 1 && obj_pLista.Result[i].Apertura == null)
+                obj_CeldaUbicacion.addClass("alerta");
+            else if (obj_pLista.Result[i].Alerta.IdAlertaTipo == 2)
+                obj_CeldaUbicacion.addClass("pedido");
+        }
+
+        if (j == (int_Columnas - 1))
+            j = 0;
+        else
+            j += 1;
+    }
+
+    var str_Url = $('#hdAperturaImagen').val();
+    $(".mesa .imagen").css('background-image', 'url(' + str_Url + ')');
+
+    //Imagen
+    $(".mesa .imagen").click(function () {
+        UbicacionAccion(this);
+        return false;
+    });
+    $(".mesa .ubicacion").click(function () {
+        UbicacionAccion(this);
+        return false;
+    });
+    $(".mesa .mensaje").click(function () {
+        UbicacionAccion(this);
+        return false;
+    });
+    $(".mesa .apertura").click(function () {
+        UbicacionAccion(this);
+        return false;
+    });
+}
+
+function UbicacionAccion(obj_Nodo) {
+    var tbl_Ubicacion = $(obj_Nodo).parents('.mesa');
+
+    obj_Entidad = new Object();
+    obj_Entidad.IdLocal = tbl_Ubicacion.attr('idlocal');
+    obj_Entidad.IdUbicacion = tbl_Ubicacion.attr('idubicacion');
+    obj_Entidad.IdApertura = null;
+    if (tbl_Ubicacion.attr('idapertura') != '')
+        obj_Entidad.IdApertura = tbl_Ubicacion.attr('idapertura');
+    obj_Entidad.IdAlerta = null;
+    if (tbl_Ubicacion.attr('idalerta') != '')
+        obj_Entidad.IdAlerta = tbl_Ubicacion.attr('idalerta');
+
+    if (obj_Entidad.IdAlerta != null && obj_Entidad.IdApertura == null)
+        AlertaAtender(obj_Entidad.IdLocal, obj_Entidad.IdUbicacion, obj_Entidad.IdAlerta);
+    else if (obj_Entidad.IdAlerta != null && obj_Entidad.IdApertura != null)
+        AlertaAtender(obj_Entidad.IdLocal, obj_Entidad.IdUbicacion, obj_Entidad.IdAlerta);
+    else if (obj_Entidad.IdApertura != null)
+        AperturaModificar(obj_Entidad.IdLocal, obj_Entidad.IdApertura);
+    else
+        AperturaNuevo(obj_Entidad.IdLocal, obj_Entidad.IdUbicacion);
+
+}
+
+function AlertaAtender(int_pIdLocal, int_pIdUbicacion, int_pIdAlerta) {
+
+    var obj_Data = {
+        "int_pIdLocal": int_pIdLocal,
+        "int_pIdUbicacion": int_pIdUbicacion,
+        "int_pIdAlerta": int_pIdAlerta
+    };
+
+    AccionDefault(true, "Apertura.aspx/ObtenerAlerta", obj_Data,
+    function (obj_Alerta) {
+
+        if (obj_Alerta != null) {
+            $("#txtAlertaLocal").val(obj_Alerta.Local.Nombre);
+            $("#txtAlertaUbicacion").val(obj_Alerta.Ubicacion.UbicacionTipo.Descripcion);
+            $("#txtAlertaNumero").val(obj_Alerta.Ubicacion.Numero);
+            $("#txtFechaAlerta").val(ToDateTimeString(obj_Alerta.FechaAlerta));
+            $("#txtAlertaUsuario").val(obj_Alerta.Usuario.Persona.NombreCompleto);
+
+            var obj_modal = $("#mdAlerta").modal('show', {
+                backdrop: true,
+                keyboard: false,
+            });
+
+            obj_modal.find('.modal-header h3').text(obj_Alerta.AlertaTipo.Descripcion);
+
+            obj_modal.find('.modal-footer .btn-aceptar').unbind();
+            obj_modal.find('.modal-footer .btn-aceptar').click(function () {
+
+                if (obj_Alerta.IdAlertaTipo == 1) {//Apertura
+                    ConfirmJQ('¿Está seguro aceptar la solicitud de apertura?', function () {
+                        if (obj_Alerta.IdAlertaTipo == 1) {//Apertura
+                            AccionDefault(true, "Apertura.aspx/Aperturar", obj_Data, function (obj_pResultado) {
+                                if (obj_pResultado.OperationResult == 1) {
+                                    AlertJQ(2, obj_pResultado.Message, function () {
+                                        $("#mdAlerta").modal('hide');
+                                    });
+                                } else if (obj_pResultado.OperationResult == 2)
+                                    AlertJQ(4, obj_pResultado.Detail, function () {
+                                        $("#mdAlerta").modal('hide');
+                                    });
+                            }, null, null, null, 1);
+                        }
+                    });
+                }
+                else if (obj_Alerta.IdAlertaTipo == 2) {//Carta
+                    Accion("Apertura.aspx/AtenderAlerta", obj_Data, function () {
+                        $("#mdAlerta").modal('hide');
+                    });
+                }
+            });
+            obj_modal.find('.modal-footer .btn-cancelar').unbind();
+            obj_modal.find('.modal-footer .btn-cancelar').click(function () {
+                ConfirmJQ('¿Está seguro de rechazar la solicitud de apertura?', function () {
+                    AccionDefault(true, "Apertura.aspx/AtenderAlerta", obj_Data,
+                        function (obj_pResultado) {
+                            if (obj_pResultado.OperationResult == 1) {
+                                AlertJQ(2, obj_pResultado.Message, function () {
+                                    $("#mdAlerta").modal('hide');
+                                });
+                            } else if (obj_pResultado.OperationResult == 2)
+                                AlertJQ(4, obj_pResultado.Detail, function () {
+                                    $("#mdAlerta").modal('hide');
+                                });
+
+                        }, null, null, null, 1);
+                });
+            });
+        }
+    }, null, null, null, 1, true);
+}
+
+function AperturaNuevo(int_pIdLocal, int_pIdUbicacion) {
+
+    ConfirmJQ('¿Desea aperturar?', function () {
+        var obj_Data =
+            {
+                "int_pIdLocal": int_pIdLocal,
+                "int_pIdUbicacion": int_pIdUbicacion,
+                "int_pIdAlerta": null
+            };
+        AccionDefault(true, "Apertura.aspx/Aperturar", obj_Data, function (obj_pResultado) {
+            AperturaModificar(int_pIdLocal, obj_pResultado.ReturnId);
+        }, null, null, null, 0);
+    }, null);
+}
+
+function AperturaModificar(int_pIdLocal, int_pIdApertura) {
+
+    var obj_Data =
+       {
+           "int_pIdLocal": int_pIdLocal,
+           "int_pIdApertura": int_pIdApertura,
+       }
+
+    AccionDefault(true, "Apertura.aspx/ObtenerApertura", obj_Data,
+    function (obj_Apertura) {
+        if (obj_Apertura != null) {
+
+            $("#hdIdApertura").val(obj_Apertura.IdApertura);
+            $("#txtAperturaFecha").val(ToDateTimeString(obj_Apertura.FechaApertura));
+            $("#txtAperturaMozo").val(obj_Apertura.Empleado.Persona.NombreCompleto);
+            $("#txtAperturaUsuario").val(obj_Apertura.Usuario.Persona.NombreCompleto);
+
+            $("#lnkTabCancion").click();
+
+            var obj_modal = $("#mdApertura").modal('show', {
+                backdrop: true,
+                keyboard: false,
+            });
+
+            //<button class="btn btn-default btn-sm" data-widget="collapse"><i class="fa fa-plus"></i></button>
+
+            //Lista de cancion de apertura
+            ListarAperturaCancion(int_pIdLocal, int_pIdApertura);
+            //Lista de usuario de apertura
+            AccionDefault(true, "Apertura.aspx/ListarAperturaUsuario", obj_Data, CargarGrillaUsuario, null, null, null, 1);
+            //Lista de ubicacion de apertura
+            AccionDefault(true, "Apertura.aspx/ListarAperturaUbicacion", obj_Data, CargarGrillaUbicacion, null, null, null, 1);
+
+            obj_modal.find('.modal-footer .btn-aceptar').click(function () {
+                $("#mdApertura").modal('hide');
+            });
+        }
+    }, null, null, null, 1, true);
+}
+
+function CargarGrillaUsuario(obj_pLista) {
+
+    var obj_TablaPrincipal = $("<table id='tblUsuario' class='table table-bordered table-hover dt-responsive'></table>");
+    var obj_THead = $("<thead></thead>");
+    var obj_FilaPrincipal = $("<tr></tr>");
+    //obj_FilaPrincipal.append($("<th style='width:10%;'>Documento</th>"));
+    obj_FilaPrincipal.append($("<th style='width:45%;'>Nombre</th>"));
+    obj_FilaPrincipal.append($("<th style='width:20%;'>Fecha Ingreso</th>"));
+    obj_FilaPrincipal.append($("<th style='width:20%;'>Fecha Salida</th>"));
+    obj_FilaPrincipal.append($("<th style='width:5%;'>Adm.</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'></th>"));
+
+    obj_THead.append(obj_FilaPrincipal);
+    obj_TablaPrincipal.append(obj_THead);
+
+    var str_Administrador = '';
+    var int_IdTrContador =1;
+    var obj_TBody = $("<tbody></tbody>");
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+        obj_FilaPrincipal = $("<tr></tr>");
+        //obj_FilaPrincipal.append($("<td style='text-align:center;'>" + obj_pLista.Result[i].Usuario.Persona.TipoDocumento.Descripcion + " / " + obj_pLista.Result[i].Usuario.Persona.NumeroDocumento + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Usuario.Persona.NombreCompleto + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + ToDateTimeString(obj_pLista.Result[i].FechaIngreso) + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + ToDateTimeString(obj_pLista.Result[i].FechaFinal) + "</td>"));
+        str_Administrador = obj_pLista.Result[i].Administrador == 'S' ? "checked" : "";
+        obj_FilaPrincipal.append($("<td style='text-align:center'><input type='checkbox' disabled " + str_Administrador + " /></td>"));
+
+        //var str_pIdAperturaUsuario = obj_pLista.Result[i].IdAperturaUsuario;
+        //var str_pIdUsuario = obj_pLista.Result[i].IdUsuario;
+        //var str_pAdministrador = obj_pLista.Result[i].Administrador;
+        //var str_pEstado = obj_pLista.Result[i].Estado;
+
+        var obj_Usuario = null;
+        obj_Usuario = new Object();
+        obj_Usuario.TrContador = int_IdTrContador;
+        obj_Usuario.IdAperturaUsuario = obj_pLista.Result[i].IdAperturaUsuario;
+        obj_Usuario.IdUsuario = obj_pLista.Result[i].IdUsuario;
+        obj_Usuario.Administrador = obj_pLista.Result[i].Administrador;
+        obj_Usuario.Estado = obj_pLista.Result[i].Estado;
+        lst_Usuario.push(obj_Usuario);
+
+        obj_FilaPrincipal.append($("<td style='width:10%; text-align:center'><div class='btn-group'><button title='Cerrar Sesión' class='btn btn-default btn-sm' onclick='javascript:return CerrarSesion(" + int_IdTrContador + ");'><i class='fa fa-power-off' aria-hidden='true'></i></button></div></td>"));
+        int_IdTrContador++;
+        obj_TBody.append(obj_FilaPrincipal);
+
+    }
+    obj_TablaPrincipal.append(obj_TBody);
+
+    $("#divGrillaUsuario").html('');
+    $("#divGrillaUsuario").append(obj_TablaPrincipal);
+
+    var obj_Tabla = $('#tblUsuario').dataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Página _PAGE_ de _PAGES_",
+            "infoEmpty": "",
+            "infoFiltered": "(Filtrado hasta _MAX_ total registros)"
+        },
+        "processing": false,
+        "bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": true,
+        "bInfo": false,
+        "bAutoWidth": false
+    });
+
+    $('#tblUsuario tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        }
+        else {
+            obj_Tabla.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+}
+
+function CargarGrillaCancion(obj_pLista) {
+
+    var int_IdAperturaCancionTipoSolicitada = $("#hdIdAperturaCancionTipoSolicitada").val();
+
+    var obj_TablaPrincipal = $("<table id='tblCancion' class='table table-bordered table-hover dt-responsive'></table>");
+    var obj_THead = $("<thead></thead>");
+    var obj_FilaPrincipal = $("<tr></tr>");
+    obj_FilaPrincipal.append($("<th style='width:5%;'></th>"));
+    obj_FilaPrincipal.append($("<th style='width:20%;'>Artista</th>"));
+    obj_FilaPrincipal.append($("<th style='width:20%;'>Cancion</th>"));
+    obj_FilaPrincipal.append($("<th style='width:15%;'>Fecha</th>"));
+    //obj_FilaPrincipal.append($("<th style='width:10%;'>Documento</th>"));
+    obj_FilaPrincipal.append($("<th style='width:15%;'>Nombre</th>"));
+    obj_FilaPrincipal.append($("<th style='width:15%;'>Tipo</th>"));
+    obj_THead.append(obj_FilaPrincipal);
+    obj_TablaPrincipal.append(obj_THead);
+
+    var obj_TBody = $("<tbody></tbody>");
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+        obj_FilaPrincipal = $("<tr></tr>");
+        if (int_IdAperturaCancionTipoSolicitada == obj_pLista.Result[i].IdAperturaCancionTipo)
+            obj_FilaPrincipal.append($("<td><button onclick='EliminarAperturaCancion(" + obj_pLista.Result[i].IdAperturaCancion + ");return false;' title='Cancelar Cancion' class='btn btn-default btn-sm'><i class='fa fa-times'></i></button></td>"));
+        else
+            obj_FilaPrincipal.append($("<td></td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].LocalCancion.Artista.Nombre + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].LocalCancion.Cancion.Descripcion + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + ToDateTimeString(obj_pLista.Result[i].FechaCreacion) + "</td>"));
+        //obj_FilaPrincipal.append($("<td style='text-align:center;'>" + obj_pLista.Result[i].Usuario.Persona.TipoDocumento.Descripcion + " / " + obj_pLista.Result[i].Usuario.Persona.NumeroDocumento + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Usuario.Persona.NombreCompleto + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].AperturaCancionTipo.Descripcion + "</td>"));
+        obj_TBody.append(obj_FilaPrincipal);
+    }
+    obj_TablaPrincipal.append(obj_TBody);
+
+    $("#divGrillaCancion").html('');
+    $("#divGrillaCancion").append(obj_TablaPrincipal);
+
+    var obj_Tabla = $('#tblCancion').dataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Página _PAGE_ de _PAGES_",
+            "infoEmpty": "",
+            "infoFiltered": "(Filtrado hasta _MAX_ total registros)"
+        },
+        "processing": false,
+        "bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": false,
+        "bInfo": false,
+        "bAutoWidth": false
+    });
+
+    $('#tblCancion tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        }
+        else {
+            obj_Tabla.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+}
+
+function CargarGrillaUbicacion(obj_pLista) {
+
+    var obj_TablaPrincipal = $("<table id='tblUbicacion' class='table table-bordered table-hover dt-responsive'></table>");
+    var obj_THead = $("<thead></thead>");
+    var obj_FilaPrincipal = $("<tr></tr>");
+    obj_FilaPrincipal.append($("<th style='width:25%;'>Fecha</th>"));
+    obj_FilaPrincipal.append($("<th style='width:25%;'>Ubicación</th>"));
+    obj_FilaPrincipal.append($("<th style='width:25%;'>Número</th>"));
+    obj_FilaPrincipal.append($("<th style='width:25%;'>Capacidad</th>"));
+
+    obj_THead.append(obj_FilaPrincipal);
+    obj_TablaPrincipal.append(obj_THead);
+
+    var str_Estado = '';
+
+    var obj_TBody = $("<tbody></tbody>");
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+        obj_FilaPrincipal = $("<tr></tr>");
+        obj_FilaPrincipal.append($("<td>" + ToDateTimeString(obj_pLista.Result[i].FechaCreacion) + "</td>"));
+        obj_FilaPrincipal.append($("<td style='text-align:center;'>" + obj_pLista.Result[i].Ubicacion.UbicacionTipo.Descripcion + "</td>"));
+        obj_FilaPrincipal.append($("<td style='text-align:center;'>" + obj_pLista.Result[i].Ubicacion.Numero + "</td>"));
+        obj_FilaPrincipal.append($("<td style='text-align:center;'>" + obj_pLista.Result[i].Ubicacion.Capacidad + "</td>"));
+
+        obj_TBody.append(obj_FilaPrincipal);
+
+    }
+    obj_TablaPrincipal.append(obj_TBody);
+
+    $("#divGrillaUbicacion").html('');
+    $("#divGrillaUbicacion").append(obj_TablaPrincipal);
+
+    var obj_Tabla = $('#tblUbicacion').dataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Página _PAGE_ de _PAGES_",
+            "infoEmpty": "",
+            "infoFiltered": "(Filtrado hasta _MAX_ total registros)"
+        },
+        "processing": false,
+        "bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": true,
+        "bInfo": false,
+        "bAutoWidth": false
+    });
+
+    $('#tblUbicacion tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        }
+        else {
+            obj_Tabla.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+}
+
+function AgregarAperturaCancion(int_pIdCancion) {
+
+    var int_IdLocal = $("#hdIdLocal").val();
+    var int_IdApertura = $("#hdIdApertura").val();
+
+    AccionDefault(true, "Apertura.aspx/SolicitarCancion",
+        {
+            "int_pIdLocal": int_IdLocal,
+            "int_pIdApertura": int_IdApertura,
+            "int_pIdCancion": int_pIdCancion
+        },
+       function () {
+           ListarAperturaCancion(int_IdLocal, int_IdApertura)
+       }, null, null, null, 1);
+}
+
+function EliminarAperturaCancion(int_pIdAperturaCancion) {
+
+    var int_IdLocal = $("#hdIdLocal").val();
+    var int_IdApertura = $("#hdIdApertura").val();
+
+    AccionDefault(true, "Apertura.aspx/CancelarCancion",
+        {
+            "int_pIdLocal": int_IdLocal,
+            "int_pIdApertura": int_IdApertura,
+            "int_pIdAperturaCancion": int_pIdAperturaCancion
+        },
+       function () {
+           ListarAperturaCancion(int_IdLocal, int_IdApertura)
+       }, null, null, null, 1);
+}
+
+function ListarAperturaCancion(int_pIdLocal, int_pIdApertura) {
+    AccionDefault(true, "Apertura.aspx/ListarAperturaCancion", {
+        "int_pIdLocal": int_pIdLocal,
+        "int_pIdApertura": int_pIdApertura,
+    }, CargarGrillaCancion, null, null, null, 1);
+}
+
+function CerrarApertura() {
+
+    var int_IdLocal = $("#hdIdLocal").val();
+    var int_IdApertura = $("#hdIdApertura").val();
+
+    ConfirmJQ("¿Esta seguro de cerrar la apertura?",
+        function () {
+            Accion("Apertura.aspx/CerrarApertura",
+                {
+                    "int_pIdLocal": int_IdLocal,
+                    "int_pIdApertura": int_IdApertura
+                },
+               function () {
+                   $("#mdApertura").modal('hide');
+               }, null, null, null);
+        }, null, null, null);
+}
+function CerrarSesion(int_IdTrContador) {
+    var int_pIdLocal = $("#hdIdLocal").val();
+    var int_pIdApertura = $("#hdIdApertura").val();
+
+    var int_pIdAperturaUsuario = -1;
+    var str_pIdUsuario = "";
+    var str_pAdministrador = "";
+    var str_pEstado = "";
+
+    for (var i = 0; i < lst_Usuario.length; i++) {
+        if (lst_Usuario[i].TrContador == int_IdTrContador) {
+            int_pIdAperturaUsuario = lst_Usuario[i].IdAperturaUsuario;
+            str_pIdUsuario = lst_Usuario[i].IdUsuario;
+            str_pAdministrador = lst_Usuario[i].Administrador;
+            str_pEstado = lst_Usuario[i].Estado;
+            break;
+        }
+    }
+    lst_Usuario = [];
+
+    ConfirmJQ("¿Esta seguro de cerrar la sesión?",
+        function () {
+            Accion("Apertura.aspx/CerrarSesion",
+                {
+                    "int_pIdAperturaUsuario": int_pIdAperturaUsuario,
+                    "int_pIdLocal": int_pIdLocal,
+                    "int_pIdApertura": int_pIdApertura,
+                    "str_pIdUsuario": str_pIdUsuario,
+                    "str_pAdministrador": str_pAdministrador,
+                    "str_pEstado": str_pEstado
+
+                },
+               function () {
+                   $("#mdApertura").modal('hide');
+                   CargarControles();
+               }, null, null, null);
+    }, null, null, null);
+                   return false;
+}

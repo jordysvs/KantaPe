@@ -1,0 +1,274 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Default.master" AutoEventWireup="true" CodeFile="Apertura.aspx.cs" Inherits="Forms_Gestion_Apertura" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx" Minify="false" Combine="false" Compress="false">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Base/jquery.datatables/jquery.dataTables.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.datatables/jquery.datatables.responsive.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.datatables/bootstrap.datatables.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.datatables/bootstrap.datatables.responsive.js" />
+            <cc:ScriptReference Path="~/Script/Plugins/jquery.select2/select2.min.js" />
+            <cc:ScriptReference Path="~/Script/Plugins/jquery.select2/i18n/es.js" />
+            <cc:ScriptReference Path="~/Script/Forms/Gestion/Apertura.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+    <cc:CSSCombine ID="CSSCombiner" runat="server" CSSHandler="~/Ashx/Combine/CSSHandler.ashx" Compress="false">
+        <CSSReferences>
+            <cc:CSSReference Path="~/Style/Base/jquery.datatables/jquery.datatables.css" />
+            <cc:CSSReference Path="~/Style/Base/jquery.datatables/jquery.datatables.responsive.css" />
+            <cc:CSSReference Path="~/Style/Base/bootstrap.datatables/bootstrap.datatables.css" />
+            <cc:CSSReference Path="~/Style/Base/bootstrap.datetimepicker/bootstrap.datetimepicker.css" />
+            <cc:CSSReference Path="~/Style/Plugins/jquery.select2/select2.min.css" />
+            <cc:CSSReference Path="~/Style/Plugins/jquery.select2/select2-placeholder.css" />
+            <cc:CSSReference Path="~/Style/Plugins/jquery.select2/select2-bootstrap.min.css" />
+            <cc:CSSReference Path="~/Style/Forms/Gestion/Apertura.css" />
+        </CSSReferences>
+    </cc:CSSCombine>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+
+<%--    <div class="row">
+        <div id="divFiltro" class="col-xs-12">
+            <div class="box box-warning collapsed-box">
+                <div class="box-header">
+                    <h3 class="box-title">Criterios de Búsqueda</h3>
+                    <div class="box-tools pull-right">
+                        <button class="btn btn-default btn-sm"  id="btnCriterio" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="ddlEmpresa">Empresa:</label>
+                                <asp:DropDownList ID="ddlEmpresa" runat="server" CssClass="form-control" ClientIDMode="Static"></asp:DropDownList>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="ddlLocal">Local:</label>
+                                <asp:DropDownList ID="ddlLocal" runat="server" CssClass="form-control" ClientIDMode="Static"></asp:DropDownList>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="ddlUbicacionTipo">Tipo de Ubicación:</label>
+                                <asp:DropDownList ID="ddlUbicacionTipo" runat="server" CssClass="form-control" ClientIDMode="Static"></asp:DropDownList>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>--%>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-warning">
+                <div class="box-header">
+                    <button id="btnCerrar" title="Cerrar Alertas" class="btn btn-default btn-sm"><span  style='font-size: 15px;'>Cerrar Alertas</span><i class="fa fa-times-circle"></i></button>
+                </div>
+                <div id="divContenido" class="box-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade colored-header danger" id="mdAlerta" tabindex="-1" style="display: none;">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><span style="font-size: 20px; font-weight: bold" id="lblAlertaTipo" /></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="box box-warning">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label for="txtAlertaUbicacion">Ubicación:</label>
+                                                <input type="text" id="txtAlertaUbicacion" class="form-control" readonly="readonly" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label for="txtAlertaNumero">Número:</label>
+                                                <input type="text" id="txtAlertaNumero" class="form-control" readonly="readonly" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="txtFechaAlerta">Fecha Alerta:</label>
+                                                <input type="text" id="txtFechaAlerta" class="form-control" readonly="readonly" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="txtAlertaUsuario">Usuario:</label>
+                                                <input type="text" id="txtAlertaUsuario" class="form-control" readonly="readonly" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-flat btn-aceptar">Aceptar</button>
+                    <button type="button" class="btn btn-default btn-flat btn-cancelar">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade colored-header danger" id="mdApertura" tabindex="-1" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><span style="font-size: 20px; font-weight: bold" id="lblAperturaTitulo">Apertura</span></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box box-warning">
+                                <div class="box-header">
+                                    <div class="btn-group">
+                                        <button title="Cerrar Apertura" class="btnAperturaCerrar btn btn-default btn-sm checkbox-toggle"><i class="fa fa-sign-out"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="box box-warning">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label for="txtAperturaUsuario">Usuario:</label>
+                                                <input type="text" id="txtAperturaUsuario" class="form-control" readonly="readonly" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label for="txtAperturaMozo">Mozo:</label>
+                                                <input type="text" id="txtAperturaMozo" class="form-control" readonly="readonly" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label for="txtAperturaFecha">Fecha:</label>
+                                                <input type="text" id="txtAperturaFecha" class="form-control" readonly="readonly" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="smart-widget">
+                        <div class="smart-widget-inner">
+                            <ul class="nav nav-tabs tab-style1">
+                                <li class="active">
+                                    <a id="lnkTabCancion" href="#tabCancion" data-toggle="tab">
+                                        <span class="icon-wrapper"><i class="fa fa-music"></i></span>
+                                        Canciones
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="lnkTabUsuario" href="#tabUsuario" data-toggle="tab">
+                                        <span class="icon-wrapper"><i class="fa fa-user"></i></span>
+                                        Usuarios
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="lnkTabUbicacion" href="#tabUbicacion" data-toggle="tab">
+                                        <span class="icon-wrapper"><i class="fa fa-map-marker"></i></span>
+                                        Ubicaciones
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="smart-widget-body">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade in active" id="tabCancion">
+                                        <div class="col-lg-3">
+                                            <div class="block h4"><strong>Canciones</strong></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="box-body">
+                                                <div class="form-group">
+                                                    <select id="ddlCancionBuscador">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="box box-warning">
+                                                    <div class="box-body">
+                                                        <div id="divGrillaCancion" style="width: 100%">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade in" id="tabUsuario">
+                                        <div class="col-lg-3">
+                                            <div class="block h4"><strong>Usuarios</strong></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="box box-warning">
+                                                    <div class="box-body">
+                                                        <div id="divGrillaUsuario" style="width: 100%">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade in" id="tabUbicacion">
+                                        <div class="col-lg-3">
+                                            <div class="block h4"><strong>Ubicaciones</strong></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="box box-warning">
+                                                    <div class="box-body">
+                                                        <div id="divGrillaUbicacion" style="width: 100%">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-flat btn-aceptar">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <asp:HiddenField ID="hdAperturaImagen" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdIdLocal" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdIdUbicacionTipo" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdIdApertura" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdIdAperturaCancionTipoSolicitada" runat="server" ClientIDMode="Static" />
+</asp:Content>
+

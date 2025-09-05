@@ -1,0 +1,132 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Serialization;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Forms_Configuracion_RegistroUbicacion : System.Web.UI.Page
+{
+    #region Eventos
+
+    /// <summary>
+    /// Evento de carga de la pagina
+    /// </summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>12/07/2016</FecCrea></item></list></remarks>
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        CargaInicial();
+    }
+
+    #endregion
+
+    #region Metodos Privados
+
+    /// <summary>
+    /// Carga inicial del formulario
+    /// </summary>
+    private void CargaInicial()
+    {
+        Master_Default obj_MasterPage = (Master_Default)this.Master;
+        if (Request.QueryString["id"] == null)
+            obj_MasterPage.TituloPagina = "Agregar Ubicación";
+        else
+        {
+            obj_MasterPage.TituloPagina = "Modificar Ubicación";
+            hdIdLocal.Value = Request.QueryString["id"];
+            hdIdUbicacion.Value = Request.QueryString["id2"];
+        }
+
+        //Lista de empresa
+        List<Kruma.KantaPe.Entidad.Empresa> lst_Empresa = null;
+        if (Kruma.Core.Security.SecurityManager.Usuario.Sistema == Kruma.Core.Security.Entity.Constante.Condicion_Positivo)
+            lst_Empresa = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        else
+        {
+            List<Kruma.KantaPe.Entidad.Empleado> lst_Empleado = Kruma.KantaPe.Negocio.Empleado.Listar(null, null, Kruma.Core.Security.SecurityManager.Usuario.IdPersona.Value, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+            lst_Empresa = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+            lst_Empresa = (from obj_Empresa in lst_Empresa
+                           from obj_Empleado in lst_Empleado.Where(x => obj_Empresa.IdEmpresa == x.IdEmpresa).DefaultIfEmpty()
+                           select obj_Empresa).ToList();
+        }
+
+        //Empresa
+        ddlEmpresa.DataSource = Kruma.Core.Business.Logical.Persona.Listar(null, 2, null, null, null, null, null, null).Result;
+        ddlEmpresa.DataValueField = "IdPersona";
+        ddlEmpresa.DataTextField = "NombreComercial";
+        ddlEmpresa.DataBind();
+        ddlEmpresa.Items.Insert(0, new ListItem("--Seleccione--", string.Empty));
+
+        ddlLocal.Items.Insert(0, new ListItem("--Seleccione--", string.Empty));
+
+        //Tipo de ubicación
+        ddlUbicacionTipo.DataSource = Kruma.KantaPe.Negocio.UbicacionTipo.Listar(null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        ddlUbicacionTipo.DataValueField = "IdUbicacionTipo";
+        ddlUbicacionTipo.DataTextField = "Descripcion";
+        ddlUbicacionTipo.DataBind();
+        ddlUbicacionTipo.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+        //Estado
+        ddlEstado.DataSource = Kruma.Core.Util.CommonUtil.ListarEstado();
+        ddlEstado.DataValueField = "Code";
+        ddlEstado.DataTextField = "Description";
+        ddlEstado.DataBind();
+
+        ddlEstado.Items.Insert(0, new ListItem("--Seleccione--", string.Empty));
+    }
+
+    #endregion
+
+    #region Metodos Publicos
+
+    /// <summary>
+    /// Obtiene los datos de la ubicación
+    /// </summary>
+    /// <param name="int_pIdUbicacion">Id de la ubicación</param>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>03/08/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.KantaPe.Entidad.Ubicacion ObtenerUbicacion(
+        int int_pIdLocal, 
+        int int_pIdUbicacion)
+    {
+        return Kruma.KantaPe.Negocio.Ubicacion.Obtener(int_pIdLocal, int_pIdUbicacion);
+    }
+
+    /// <summary>
+    /// Guarda la informacion de la ubicación
+    /// </summary>
+    /// <param name="str_pUbicacion">Json Ubicación</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>John Castillo</CreadoPor></item>
+    /// <item><FecCrea>03/08/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult GuardarUbicacion(string str_pUbicacion)
+    {
+        JavaScriptSerializer obj_JsSerializer = new JavaScriptSerializer();
+        Kruma.KantaPe.Entidad.Ubicacion obj_Ubicacion = obj_JsSerializer.Deserialize<Kruma.KantaPe.Entidad.Ubicacion>(str_pUbicacion);
+        obj_Ubicacion.UsuarioCreacion = Kruma.Core.Security.SecurityManager.Usuario.IdUsuario;
+        obj_Ubicacion.UsuarioModificacion = obj_Ubicacion.UsuarioCreacion;
+
+        Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+        if (!obj_Ubicacion.IdUbicacion.HasValue)
+            obj_Resultado = Kruma.KantaPe.Negocio.Ubicacion.Insertar(obj_Ubicacion);
+        else
+            obj_Resultado = Kruma.KantaPe.Negocio.Ubicacion.Modificar(obj_Ubicacion);
+        return obj_Resultado;
+    }
+
+    [WebMethod]
+    public static object ListarLocal(int? int_pIdPersona)
+    {
+        return Kruma.Core.Business.Data.PersonaDireccion.Listar(int_pIdPersona, null, null, null, null, null, null, null, null, null, null);
+    }
+
+    #endregion
+}

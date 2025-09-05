@@ -1,0 +1,547 @@
+﻿//Atributos
+var int_NumPagina = 1;
+var int_TamPagina = 50;
+var int_PagMostrar = 9;
+
+$(function () {
+    CargarInicial();
+    CargarControles();
+});
+function CargarInicial() {
+
+    jQuery.validator.addMethod('selectLocal', function (value) {
+        return (value != '');
+    }, "Seleccione el local");
+
+    var settings = $('#frmContent').validate().settings;
+    $.extend(settings, {
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+}
+function CargarControles() {
+
+    $(".datetime").datetimepicker({
+        language: 'es',
+        format: 'dd/mm/yyyy',
+        pickerPosition: "bottom-left",
+        autoclose: true,
+        minView: 2,
+        maxView: 4,
+    });
+
+    $("#txtFecha").datetimepicker({
+        language: 'es',
+        format: 'dd/mm/yyyy',
+        pickerPosition: "bottom-left",
+        autoclose: true,
+        minView: 2,
+        maxView: 4,
+        startDate: new Date()
+    });
+    $('#btnExportar').click(function () {
+        Exportar();
+        return false;
+    });
+    KeyPressEnter("divFiltro",
+    function () {
+        $("#btnBuscar").click();
+    });
+
+    $("#btnBuscar").click(function () {
+        ListarReporte(1);
+        return false;
+    });
+    $('#ddlEmpresa').change(function () {
+        CargarLocal(true, null);
+    });
+    $('#ddlLocal').change(function () {
+        ObtenerFiltros();
+    });
+    //BLOQUEAR HORA INICIO Y HORA FIN
+    $('#txtHoraInicio').prop('disabled', true);
+    $('#txtHoraFin').prop('disabled', true);
+
+    $('#btnCriterios').click();
+       
+    
+    ListarReporte(1);
+}
+
+function CargarLocal(bln_pAsync, int_pIdDireccion) {
+
+    var ddlLocal = $("#ddlLocal");
+    ddlLocal.empty();
+    ddlLocal.html('');
+    ddlLocal.append($("<option value=''>--Seleccione--</option>"));
+
+    var int_IdPersona = $("#ddlEmpresa").val();
+    if (int_IdPersona != '') {
+        var obj_Data = { "int_pIdPersona": int_IdPersona };
+        AccionDefault(bln_pAsync, "ReporteUbicacionAperturaHora.aspx/ListarLocal", obj_Data,
+             function (obj_pLista) {
+                 //ddlNivel.prop("disabled", false);
+                 var str_Selected = '';
+                 for (var i = 0; i < obj_pLista.Result.length; i++) {
+                     if (int_pIdDireccion != null)
+                         str_Selected = (obj_pLista.Result[i].IdDireccion == int_pIdDireccion) ? 'selected' : '';
+                     ddlLocal.append($("<option value='" + obj_pLista.Result[i].IdDireccion + "' " + str_Selected + ">" + obj_pLista.Result[i].Nombre + "</option>"));
+
+
+                 }
+                 // ddlLocal.prop("disabled", true);
+             }, null, null, null, 1);
+    }
+    $("#txtHoraInicio").val('');
+    $("#txtHoraFin").val('');
+}
+
+function ValidacionLocal() {
+    var settings = $('#frmContent').validate().settings;
+    $('.form-group').removeClass('has-error').removeClass('has-success');
+    $.extend(settings, {
+        ignore: "",
+        rules: {
+            ctl00$cphBody$ddlLocal: { selectLocal: true }
+        },
+        messages: {
+        },
+    });
+}
+function Exportar() {
+    $('body').prepend("<form id='excelForm' method='post' action='../../Ashx/Reporte/ReporteUbicacionAperturaHoraExcel.ashx'></form>");
+    $('#excelForm').submit();
+    $("excelForm").remove();
+}
+
+function ObtenerFiltros() {
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdEmpresa = $("#ddlEmpresa").val();
+    obj_Filtro.IdLocal = $("#ddlLocal").val();
+    if ($("#txtFecha_input").val() != '') {
+        obj_Filtro.Fecha = $("#txtFecha").data("datetimepicker").getDate();
+    } else {
+        var date = new Date();
+        obj_Filtro.Fecha = null;
+    }
+
+    //VERIFICAR QUE NO SEA NULL
+    if ($("#ddlLocal").val() != '') {
+        var lst_pLocal = ObtenerData('ReporteUbicacionAperturaHora.aspx/ListarLocalFiltro', {
+            "int_IdPersona": $("#ddlEmpresa").val(),
+            "int_IdDirecion": $("#ddlLocal").val()
+        });
+
+        for (var w = 0; w < lst_pLocal.Result.length; w++) {
+            if (lst_pLocal.Result[w].HoraInicio != null && lst_pLocal.Result[w].HoraFin != null) {
+                $("#hdHoraInicio").val(lst_pLocal.Result[w].HoraInicio)
+                $("#hdHoraFin").val(lst_pLocal.Result[w].HoraFin)
+            } else {
+                $('#txtHoraInicio').prop('disabled', false);
+                $('#txtHoraFin').prop('disabled', false);
+
+                $("#hdHoraInicio").val('');
+                $("#hdHoraFin").val('');
+
+            }
+        }
+
+    }
+
+    obj_Filtro.HoraInicio = null;
+    if ($("#hdHoraInicio").val() != '') {
+        obj_Filtro.HoraInicio = $("#hdHoraInicio").val();
+        $('#txtHoraInicio').prop('disabled', true);
+        $("#txtHoraInicio").val(parseInt(obj_Filtro.HoraInicio));
+
+    } else {
+        obj_Filtro.HoraInicio = $("#txtHoraInicio").val();
+    }
+
+    obj_Filtro.HoraFin = null;
+    if ($("#hdHoraFin").val() != '') {
+        obj_Filtro.HoraFin = $("#hdHoraFin").val();
+        $('#txtHoraFin').prop('disabled', true);
+        $("#txtHoraFin").val(parseInt(obj_Filtro.HoraFin));
+
+    } else {
+        obj_Filtro.HoraFin = $("#txtHoraFin").val();
+    }
+
+    obj_Filtro.IdUbicacionTipo = $("#ddlUbicacionTipo").val();
+    obj_Filtro.NroUbicacion = $("#txtNroUbicacion").val();
+    obj_Filtro.NumPagina = int_NumPagina;
+    return obj_Filtro;
+}
+
+function ListarReporte() {
+    var obj_Filtro = ObtenerFiltros();
+    var obj_Data = {
+        "int_pIdEmpresa": obj_Filtro.IdEmpresa,
+        "int_pIdLocal": obj_Filtro.IdLocal,
+        "dt_pFecha": obj_Filtro.Fecha,
+        "int_pHoraInicio": obj_Filtro.HoraInicio,
+        "int_pHoraFin": obj_Filtro.HoraFin,
+        "int_pIdUbicacionTipo": obj_Filtro.IdUbicacionTipo,
+        "int_pNroUbicacion": obj_Filtro.NroUbicacion
+    };
+    AccionDefault(true, "ReporteUbicacionAperturaHora.aspx/ReporteUbicacionAperturaHora", obj_Data, CargarGrilla, null, null, null, 1);
+}
+
+function CargarGrilla(obj_pLista) {
+
+    var btn_Excel = $('#btnExportar');
+    btn_Excel.css('display', 'none');
+    if ($('#frmContent').valid()) {
+
+        ValidacionLocal();
+        //VARIABLES GLOBALES
+        var lst_Horas = [];
+        var str_pHora = 0;
+        var lst_HorasFiltro = [];
+
+        var obj_TablaPrincipal = $("<table id='tblReporte' class='table table-bordered' style='width:99%;'></table>");
+        var obj_THead = $("<thead></thead>");
+        var obj_FilaPrincipal = $("<tr></tr>");
+
+        //IMPRIMIR SIEMPRE LA PRIMERA CABECERA PARA DIVIDIR  LA FILA DE HORAS Y LA COLUMNA DE TIPO DE UBICACION
+        obj_FilaPrincipal.append($("<th style='width:10%'>" + "Hora / Mesa" + "</th>"));
+
+        //OBTENER LA LISTA DE HORAS PARA LA CABECERA
+        var obj_Filtro = ObtenerFiltros();
+        var lst_pHoras = ObtenerData('ReporteUbicacionAperturaHora.aspx/ListarHoraReporte', {
+            "int_pIdEmpresa": obj_Filtro.IdEmpresa,
+            "int_pIdLocal": obj_Filtro.IdLocal,
+            "dt_pFecha": obj_Filtro.Fecha,
+            "int_pHoraInicio": obj_Filtro.HoraInicio,
+            "int_pHoraFin": obj_Filtro.HoraFin,
+            "int_pIdUbicacionTipo": obj_Filtro.IdUbicacionTipo,
+            "int_pNroUbicacion": obj_Filtro.NroUbicacion
+        });
+        if (obj_Filtro.HoraInicio != "" && obj_Filtro.HoraFin != "") {
+            var inicio = parseInt(obj_Filtro.HoraInicio);
+            var fin = parseInt(obj_Filtro.HoraFin);
+            for (var p = inicio; p <= fin; p++) {
+                obj_FilaPrincipal.append($("<th style='width:10%'>" + p + "</th>"));
+                var obj_HorasFiltro = Object();
+                obj_HorasFiltro.Hora = p;
+                lst_HorasFiltro.push(obj_HorasFiltro);
+
+            }
+        }
+        obj_THead.append(obj_FilaPrincipal);
+        obj_TablaPrincipal.append(obj_THead);
+
+        if (obj_Filtro.IdLocal != '') {
+            //OBTENER LA LISTA DE TIPO DE UBICACION Y EL NUMERO PARA LA PRIMERA COLUMNA
+            var lst_pUbicaciones = ObtenerData('ReporteUbicacionAperturaHora.aspx/ListaUbicacionReporte', {
+                "int_pIdEmpresa": obj_Filtro.IdEmpresa,
+                "int_pIdLocal": obj_Filtro.IdLocal
+            });
+            var obj_TBody = $("<tbody></tbody>");
+            var bln_Existe = false;
+            var lstComparacionHoras = [];
+            for (var u = 0; u < lst_pUbicaciones.Result.length; u++) {
+                obj_FilaPrincipal = $("<tr></tr>");
+                //LA PRIMERA COLUMNA SIEMPRE TIENE QUE SER EL TIPO DE UBICACION Y EL NUMERO
+                obj_FilaPrincipal.append($("<td>" + (lst_pUbicaciones.Result[u].Ubicacion.UbicacionTipo.Descripcion + " " + lst_pUbicaciones.Result[u].Ubicacion.Numero) + "</td>"));
+                for (var f = 0; f < lst_HorasFiltro.length; f++) {
+                    bln_Existe = false;
+                    for (var i = 0; i < obj_pLista.Result.length; i++) {
+                        var HoraInicio = obj_pLista.Result[i].Hora;
+                        var HoraFinal = obj_pLista.Result[i].HoraFinal;
+
+
+                        if (obj_pLista.Result[i].Hora == lst_HorasFiltro[f].Hora && obj_pLista.Result[i].Ubicacion.IdUbicacion == lst_pUbicaciones.Result[u].Ubicacion.IdUbicacion) {
+                            bln_Existe = true;
+                            break;
+                        }
+                    }
+                    if (HoraInicio > HoraFinal) {
+                        var DiaCierre = $("#txtHoraFin").val();
+                        for (var HoraInicio ; HoraInicio <= DiaCierre ; HoraInicio++) {
+                            var obj_HorasComparacion = Object();
+                            obj_HorasComparacion.Hora = HoraInicio;
+                            lstComparacionHoras.push(obj_HorasComparacion);
+                        }
+                    } else {
+                        for (var HoraInicio ; HoraInicio <= HoraFinal ; HoraInicio++) {
+                            var obj_HorasComparacion = Object();
+                            obj_HorasComparacion.Hora = HoraInicio;
+                            lstComparacionHoras.push(obj_HorasComparacion);
+                        }
+                    }
+                    if (bln_Existe) {
+                        for (var c = 0; c < lstComparacionHoras.length; c++) {
+                            obj_FilaPrincipal.append($("<td>X</td>"));
+                            f++;
+                        }
+                        f--;
+                    }
+                    else {
+                        obj_FilaPrincipal.append($("<td></td>"))
+                    }
+                    lstComparacionHoras = [];
+                }
+
+                obj_TBody.append(obj_FilaPrincipal);
+            }
+        }
+        obj_TablaPrincipal.append(obj_TBody);
+
+        ListarGraficoUbicacionAperturaMesa(obj_pLista);
+        ListarGraficoUbicacionAperturaBox(obj_pLista);
+
+        $("#divGrilla").html('');
+        $("#divGrilla").append(obj_TablaPrincipal);
+
+        var obj_Tabla = $('#tblReporte').dataTable({
+            "scrollX": true,
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "No se encontraron registros",
+                "info": "Página _PAGE_ de _PAGES_",
+                "infoEmpty": "",
+                "infoFiltered": "(Filtrado hasta _MAX_ total registros)"
+            },
+            "processing": false,
+            "bPaginate": false,
+            "bLengthChange": false,
+            "bFilter": false,
+            "bSort": false,
+            "bInfo": false,
+            "bAutoWidth": false
+        });
+    }
+}
+
+function ListarGraficoUbicacionAperturaMesa(obj_pLista) {
+    var obj_data = [];
+    var obj_tick = [];
+
+    var int_pHoraInicio = parseInt($("#hdHoraInicio").val());
+    var int_pHoraFin = parseInt($("#hdHoraFin").val());
+
+    var str_pHora = 0;
+    var str_pUbicacionTipo = "";
+    var int_pNumeroUbicacion = 0;
+    var Cantidad = 0;
+    var Hora = 0;
+
+    var HoraInicio = 0;
+    var HoraFinal = 0;
+
+    var lst_HorasValidado = [];
+
+
+    for (var a = int_pHoraInicio; a <= int_pHoraFin; a++) {
+        for (var c = 0; c < obj_pLista.Result.length; c++) {
+            HoraInicio = obj_pLista.Result[c].Hora;
+            HoraFinal = obj_pLista.Result[c].HoraFinal;
+            str_pUbicacionTipo = obj_pLista.Result[c].Ubicacion.UbicacionTipo.IdUbicacionTipo;
+            //VALIDAR QUE SEA MESA
+            if (str_pUbicacionTipo == 1) {
+                //VALIDAR SI LA HORA INICIO ES MAYOR A LA HORA FIN
+                if (HoraInicio > HoraFinal) {              
+                    HoraInicio = obj_pLista.Result[c].Hora;
+                    HoraFinal = obj_pLista.Result[c].HoraFinal;
+                    
+                    var DiaCierre = 24;
+                    for (var d = HoraInicio; d <= DiaCierre; d++) {
+                        if (d == a) {
+                            Cantidad++;
+                        }
+                    }
+
+                } else {
+                    for (var d = HoraInicio; d <= HoraFinal; d++) {
+                        if (d == a) {
+                            Cantidad++;
+                        }
+                    }
+                }
+            }
+
+        }
+        Hora = a;
+        var obj_HorasValidado = Object();
+        obj_HorasValidado.Hora = Hora;
+        obj_HorasValidado.Cantidad = Cantidad;
+        lst_HorasValidado.push(obj_HorasValidado);
+        Hora = 0;
+        Cantidad = 0;
+
+    }
+
+    var int_pValidar = 0;
+    for (var s = 0; s < lst_HorasValidado.length; s++) {
+        obj_data.push([int_pValidar, lst_HorasValidado[s].Cantidad]);
+        obj_tick.push([int_pValidar, lst_HorasValidado[s].Hora]);
+        int_pValidar++;
+    }
+
+    var series = {
+        color: "#3c8dbc",
+        data: obj_data,
+        lines: { show: false },
+        bars: { show: true, barWidth: 0.5, align: 'center' }
+    }
+
+    somePlot = $.plot("#divGrafico1", [series], {
+        grid: {
+            hoverable: true,
+            borderWidth: 1,
+            borderColor: "#f3f3f3",
+            tickColor: "#f3f3f3"
+        },
+        series: {
+            bars: {
+                show: true,
+                barWidth: 0.5,
+                align: "center"
+            }
+        },
+        xaxis: {
+            mode: "categories",
+            ticks: obj_tick
+        },
+        tooltip: true,
+        tooltipOpts: {
+            content: "%y"
+        }
+    });
+
+    var ctx = somePlot.getCanvas().getContext("2d");
+    var data = somePlot.getData()[0].data;
+    var xaxis = somePlot.getXAxes()[0];
+    var yaxis = somePlot.getYAxes()[0];
+    var offset = somePlot.getPlotOffset();
+    ctx.font = "12px 'Segoe UI'";
+    ctx.fillStyle = "black";
+    for (var i = 0; i < data.length; i++) {
+        var text = data[i][1] + '';
+        var metrics = ctx.measureText(text);
+        var xPos = (xaxis.p2c(data[i][0]) + offset.left) - metrics.width / 2;
+        var yPos = yaxis.p2c(data[i][1]) + offset.top - 5;
+        ctx.fillText(text, xPos, yPos);
+    }
+
+}
+
+function ListarGraficoUbicacionAperturaBox(obj_pLista) {
+    var obj_data = [];
+    var obj_tick = [];
+
+    var int_pHoraInicio = parseInt($("#hdHoraInicio").val());
+    var int_pHoraFin = parseInt($("#hdHoraFin").val());
+
+    var str_pHora = 0;
+    var str_pUbicacionTipo = "";
+    var int_pNumeroUbicacion = 0;
+    var Cantidad = 0;
+    var Hora = 0;
+
+    var HoraInicio = 0;
+    var HoraFinal = 0;
+
+    var lst_HorasValidado = [];
+
+
+    for (var a = int_pHoraInicio; a <= int_pHoraFin; a++) {
+        for (var c = 0; c < obj_pLista.Result.length; c++) {
+            HoraInicio = obj_pLista.Result[c].Hora;
+            HoraFinal = obj_pLista.Result[c].HoraFinal;
+            str_pUbicacionTipo = obj_pLista.Result[c].Ubicacion.UbicacionTipo.IdUbicacionTipo;
+            //VALIDAR QUE SEA MESA
+            if (str_pUbicacionTipo == 2) {
+                //VALIDAR SI LA HORA INICIO ES MAYOR A LA HORA FIN
+                if (HoraInicio > HoraFinal) {
+                    HoraInicio = obj_pLista.Result[c].Hora;
+                    HoraFinal = obj_pLista.Result[c].HoraFinal;
+
+                    var DiaCierre = 24;
+                    for (var d = HoraInicio; d <= DiaCierre; d++) {
+                        if (d == a) {
+                            Cantidad++;
+                        }
+                    }
+
+                } else {
+                    for (var d = HoraInicio; d <= HoraFinal; d++) {
+                        if (d == a) {
+                            Cantidad++;
+                        }
+                    }
+                }
+            }
+
+        }
+        Hora = a;
+        var obj_HorasValidado = Object();
+        obj_HorasValidado.Hora = Hora;
+        obj_HorasValidado.Cantidad = Cantidad;
+        lst_HorasValidado.push(obj_HorasValidado);
+        Hora = 0;
+        Cantidad = 0;
+
+    }
+
+    var int_pValidar = 0;
+    for (var s = 0; s < lst_HorasValidado.length; s++) {
+        obj_data.push([int_pValidar, lst_HorasValidado[s].Cantidad]);
+        obj_tick.push([int_pValidar, lst_HorasValidado[s].Hora]);
+        int_pValidar++;
+    }
+
+    var series = {
+        color: "#3c8dbc",
+        data: obj_data,
+        lines: { show: false },
+        bars: { show: true, barWidth: 0.5, align: 'center' }
+    }
+
+    somePlot = $.plot("#divGrafico2", [series], {
+        grid: {
+            hoverable: true,
+            borderWidth: 1,
+            borderColor: "#f3f3f3",
+            tickColor: "#f3f3f3"
+        },
+        series: {
+            bars: {
+                show: true,
+                barWidth: 0.5,
+                align: "center"
+            }
+        },
+        xaxis: {
+            mode: "categories",
+            ticks: obj_tick
+        },
+        tooltip: true,
+        tooltipOpts: {
+            content: "%y"
+        }
+    });
+
+    var ctx = somePlot.getCanvas().getContext("2d");
+    var data = somePlot.getData()[0].data;
+    var xaxis = somePlot.getXAxes()[0];
+    var yaxis = somePlot.getYAxes()[0];
+    var offset = somePlot.getPlotOffset();
+    ctx.font = "12px 'Segoe UI'";
+    ctx.fillStyle = "black";
+    for (var i = 0; i < data.length; i++) {
+        var text = data[i][1] + '';
+        var metrics = ctx.measureText(text);
+        var xPos = (xaxis.p2c(data[i][0]) + offset.left) - metrics.width / 2;
+        var yPos = yaxis.p2c(data[i][1]) + offset.top - 5;
+        ctx.fillText(text, xPos, yPos);
+    }
+
+}

@@ -1,0 +1,278 @@
+﻿var urlPrincipal = 'Local.aspx';
+var urlEdicion = 'RegistroLocal.aspx';
+
+$(function () {
+    CargarInicial();
+    CargarControles();
+    ObtenerLocal();
+});
+
+function CargarInicial() {
+
+    jQuery.validator.addMethod('selectEmpresa', function (value) {
+        return (value != '');
+    }, "Seleccione la empresa");
+
+    jQuery.validator.addMethod('selectEstado', function (value) {
+        return (value != '');
+    }, "Seleccione el estado");
+
+    $('#frmContent').validate({
+        rules: {
+            ctl00$cphBody$ddlEmpresa: { selectEmpresa: true },
+            ctl00$cphBody$txtNombre: { required: true, },
+            ctl00$cphBody$txtDireccion: { required: true, },
+            ctl00$cphBody$ddlEstado: { selectEstado: true }
+        },
+        messages: {
+            ctl00$cphBody$txtNombre: { required: 'Ingrese el nombre' },
+            ctl00$cphBody$txtDireccion: { required: 'Ingrese la dirección' }
+        },
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+}
+
+function CargarControles() {
+
+    //controles
+    $("#fileUpload").fileserver(
+    {
+        idAlmacen: $("#hdIdAlmacen").val(),
+        idRegistro: -1,
+        autoUpload: true,
+        replace: true,
+        successMessage: false,
+        success: function (obj_pResultado) {
+            $("#lnkEliminarFoto").css('display', '');
+            $("#hdIdDocumento").val(obj_pResultado.ReturnId);
+            VerArchivoElemento('imgLocalImagen', $("#hdIdAlmacen").val(), -1, obj_pResultado.ReturnId);
+        }
+    });
+
+    //Eliminar Foto
+    $("#lnkEliminarFoto").click(function () { ConfirmJQ('¿Está seguro de eliminar la foto?', EliminarFoto); });
+    $("#lnkEliminarFoto").css('display', 'none');
+
+    $(".btnGrabar").click(function () {
+        GuardarLocal();
+        return false;
+    });
+
+    $(".btnCancelar").click(function () {
+        ConfirmJQ('¿Está seguro de regresar a la ventana anterior?', function () { document.location.href = urlPrincipal });
+        return false;
+    });
+
+    //Configuracion del ubigeo
+    $("#ddlPais").change(function () {
+        CargarDepartamento();
+        CargarProvincia();
+        CargarDistrito();
+        return false;
+    });
+
+    $("#ddlDepartamento").change(function () {
+        CargarProvincia();
+        CargarDistrito();
+        return false;
+    });
+
+    $("#ddlProvincia").change(function () {
+        CargarDistrito();
+        return false;
+    });
+
+    CargarPais(null);
+
+    $("#ddlEmpresa").focus();
+}
+
+function GuardarLocal() {
+
+    if ($('#frmContent').valid()) {
+        obj_Local = new Object();
+        obj_Local.IdLocal = $("#hdIdLocal").val();
+        obj_Local.IdEmpresa = $("#ddlEmpresa").val();
+        obj_Local.Nombre = $("#txtNombre").val();
+        obj_Local.Direccion = $("#txtDireccion").val();
+        obj_Local.Latitud = $("#txtLatitud").val();
+        obj_Local.Longitud = $("#txtLongitud").val();
+        obj_Local.Radio = $("#txtRadio").val();
+
+        obj_Local.Ubigeo = new Object();
+        obj_Local.Ubigeo.IdPais = null;
+        if ($("#ddlPais").val() != '-1')
+            obj_Local.Ubigeo.IdPais = $("#ddlPais").val();
+
+        obj_Local.Ubigeo.IdDepartamento = null;
+        if ($("#ddlDepartamento").val() != '-1')
+            obj_Local.Ubigeo.IdDepartamento = $("#ddlDepartamento").val();
+
+        obj_Local.Ubigeo.IdProvincia = null;
+        if ($("#ddlProvincia").val() != '-1')
+            obj_Local.Ubigeo.IdProvincia = $("#ddlProvincia").val();
+
+        obj_Local.Ubigeo.IdDistrito = null;
+        if ($("#ddlDistrito").val() != '-1')
+            obj_Local.Ubigeo.IdDistrito = $("#ddlDistrito").val();
+
+        obj_Local.HoraInicio = $("#txtHoraInicio").val();
+        obj_Local.HoraFin = $("#txtHoraFin").val();
+
+        obj_Local.Estado = $("#ddlEstado").val();
+
+        //Eliminacion de la imagen
+        var str_Ruta = $('#hdLocalImagen').val();
+        if (str_Ruta == $("#imgLocalImagen").attr('src')) {
+            obj_Local.Foto = new Object();
+            obj_Local.Foto.IdAlmacen = $("#hdIdAlmacen").val();
+            obj_Local.Foto.IdRegistro = -1;
+            obj_Local.Foto.IdDocumento = null;
+        }
+
+        //Anexar Imagen
+        if ($("#hdIdDocumento").val() != '') {
+            obj_Local.Foto = new Object();
+            obj_Local.Foto.IdAlmacen = $("#hdIdAlmacen").val();
+            obj_Local.Foto.IdRegistro = -1;
+            obj_Local.Foto.IdDocumento = $("#hdIdDocumento").val();
+        }
+
+        Accion('RegistroLocal.aspx/GuardarLocal', { "str_pLocal": JSON.stringify(obj_Local) },
+            function () { document.location.href = urlPrincipal; });
+    }
+}
+
+function ObtenerLocal() {
+    var int_IdLocal = $("#hdIdLocal").val();
+    if (int_IdLocal != '') {
+        var obj_Local = ObtenerData("RegistroLocal.aspx/ObtenerLocal", { "int_pIdLocal": int_IdLocal });
+        if (obj_Local != null) {
+
+            $("#txtNombre").val(obj_Local.Nombre);
+            $("#txtDireccion").val(obj_Local.Direccion);
+            $("#ddlEmpresa").val(obj_Local.IdEmpresa);
+            $("#txtLatitud").val(obj_Local.Latitud);
+            $("#txtLongitud").val(obj_Local.Longitud);
+            $("#txtHoraInicio").val(obj_Local.HoraInicio);
+            $("#txtHoraFin").val(obj_Local.HoraFin);
+            $("#txtRadio").val(obj_Local.Radio);
+            $("#ddlEstado").val(obj_Local.Estado);
+
+            //Ubigeo
+            if (obj_Local.Ubigeo != null) {
+                CargarPais(obj_Local.Ubigeo.IdPais);
+                CargarDepartamento(obj_Local.Ubigeo.IdDepartamento);
+                CargarProvincia(obj_Local.Ubigeo.IdProvincia);
+                CargarDistrito(obj_Local.Ubigeo.IdDistrito);
+            }
+            //Auditoria
+            $("#ddUsuarioCreacion").html(obj_Local.UsuarioCreacion);
+            $("#ddUsuarioModificacion").html(obj_Local.UsuarioModificacion);
+            $("#ddFechaCreacion").html(ToDateTimeString(obj_Local.FechaCreacion));
+            $("#ddFechaModificacion").html(ToDateTimeString(obj_Local.FechaModificacion));
+
+            $("#ddlEmpresa").prop('disabled', true);
+
+            //Foto
+            AccionValor('RegistroLocal.aspx/ObtenerImagenURL', { "int_pIdRegistro": obj_Local.IdLocal },
+            function (str_pUrl) {
+                $("#lnkEliminarFoto").css('display', '');
+
+                if (str_pUrl == '') {
+                    str_pUrl = $("#hdLocalImagen").val();
+                    $("#lnkEliminarFoto").css('display', 'none');
+                }
+                $("#imgLocalImagen").attr("src", str_pUrl);
+            });
+        }
+    }
+}
+
+function EliminarFoto() {
+    $("#hdIdDocumento").val('');
+    var str_Ruta = $('#hdLocalImagen').val();
+    $("#imgLocalImagen").attr('src', str_Ruta);
+    $("#lnkEliminarFoto").css('display', 'none');
+}
+
+function CargarPais(int_pIdPais) {
+    var ddlPais = $("#ddlPais");
+    ddlPais.html('');
+    ddlPais.append($("<option value='-1'>--Seleccione--</option>"));
+    AccionDefault((int_pIdPais == null), "RegistroLocal.aspx/ListarPais", {},
+    function (obj_pLista) {
+        var str_Selected = '';
+        for (var i = 0; i < obj_pLista.length; i++) {
+            str_Selected = (obj_pLista[i].Pais.IdPais == int_pIdPais) ? 'selected' : '';
+            ddlPais.append($("<option value='" + obj_pLista[i].Pais.IdPais + "' " + str_Selected + " >" + obj_pLista[i].Pais.Descripcion + "</option>"));
+        }
+    }, null, null, null, 1);
+}
+
+function CargarDepartamento(int_pIdDepartamento) {
+    var ddlDepartamento = $("#ddlDepartamento");
+    ddlDepartamento.html('');
+    ddlDepartamento.append($("<option value='-1'>--Seleccione--</option>"));
+
+    if ($("#ddlPais").val() != '-1') {
+        var obj_Data = { "int_pIdPais": $("#ddlPais").val() };
+        AccionDefault((int_pIdDepartamento == null), "RegistroLocal.aspx/ListarDepartamento", obj_Data,
+        function (obj_pLista) {
+            var str_Selected = '';
+            for (var i = 0; i < obj_pLista.length; i++) {
+                str_Selected = (obj_pLista[i].Departamento.IdDepartamento == int_pIdDepartamento) ? 'selected' : '';
+                ddlDepartamento.append($("<option value='" + obj_pLista[i].Departamento.IdDepartamento + "' " + str_Selected + " >" + obj_pLista[i].Departamento.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+function CargarProvincia(int_pIdProvincia) {
+    var ddlProvincia = $("#ddlProvincia");
+    ddlProvincia.html('');
+    ddlProvincia.append($("<option value='-1'>--Seleccione--</option>"));
+
+    if ($("#ddlDepartamento").val() != '-1') {
+        var obj_Data = {
+            "int_pIdPais": $("#ddlPais").val(),
+            "int_pIdDepartamento": $("#ddlDepartamento").val()
+        };
+        AccionDefault((int_pIdProvincia == null), "RegistroLocal.aspx/ListarProvincia", obj_Data,
+        function (obj_pLista) {
+            var str_Selected = '';
+            for (var i = 0; i < obj_pLista.length; i++) {
+                str_Selected = (obj_pLista[i].Provincia.IdProvincia == int_pIdProvincia) ? 'selected' : '';
+                ddlProvincia.append($("<option value='" + obj_pLista[i].Provincia.IdProvincia + "' " + str_Selected + " >" + obj_pLista[i].Provincia.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+
+function CargarDistrito(int_pIdDistrito) {
+    var ddlDistrito = $("#ddlDistrito");
+    ddlDistrito.html('');
+    ddlDistrito.append($("<option value='-1'>--Seleccione--</option>"));
+
+    if ($("#ddlProvincia").val() != '-1') {
+        var obj_Data = {
+            "int_pIdPais": $("#ddlPais").val(),
+            "int_pIdDepartamento": $("#ddlDepartamento").val(),
+            "int_pIdProvincia": $("#ddlProvincia").val()
+        };
+        AccionDefault((int_pIdDistrito == null), "RegistroLocal.aspx/ListarDistrito", obj_Data,
+        function (obj_pLista) {
+            var str_Selected = '';
+            for (var i = 0; i < obj_pLista.length; i++) {
+                str_Selected = (obj_pLista[i].Distrito.IdDistrito == int_pIdDistrito) ? 'selected' : '';
+                ddlDistrito.append($("<option value='" + obj_pLista[i].Distrito.IdDistrito + "' " + str_Selected + " >" + obj_pLista[i].Distrito.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}

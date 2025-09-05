@@ -1,0 +1,42 @@
+﻿create PROCEDURE [dbo].[SecurityActualizarPerfilGrupoDetalleAcceso]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de modificación del acceso del perfil
+'* Input :
+		@pIdModulo - Id del modulo
+		@pIdGrupo - Id del grupo
+		@pIdDetalle - Id del detalle del grupo
+		@pIdPerfil - IdPerfil del perfil
+		@pEstado - Estado del acceso del perfil
+		@pUsuarioModificacion - UsuarioModificacion del acceso del perfil
+'* Output : Ninguno
+'* Creado Por : John Castillo
+'* Fecha Creación : 23-07-2015
+'**********************************************************************************
+*/
+(
+	@pIdModulo char(8) = null,
+	@pIdPerfil varchar(20) = null, 
+	
+	@pIdModuloGrupo char(8) = null,
+	@pIdGrupo char(8) = null,
+	@pIdDetalle char(8) = null,
+	
+	@pEstado char(1) = null, 
+	@pUsuarioModificacion varchar(20) = null
+)
+AS
+BEGIN
+		Update SecurityPerfilGrupoDetalleAcceso
+		Set 
+			Estado = @pEstado, 
+			UsuarioModificacion = @pUsuarioModificacion,
+			FechaModificacion = getdate()
+		Where
+			(@pIdModulo is null OR IdModulo = @pIdModulo) AND
+			(@pIdPerfil is null OR IdPerfil = @pIdPerfil) AND
+			(@pIdModuloGrupo is null OR IdModuloGrupo = @pIdModuloGrupo) AND
+			(@pIdGrupo is null OR IdGrupo = @pIdGrupo) AND
+			(@pIdDetalle is null OR IdDetalle = @pIdDetalle) 
+			
+END

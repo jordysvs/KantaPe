@@ -1,0 +1,238 @@
+﻿//Atributos
+var urlPrincipal = 'Oferta.aspx';
+var urlEdicion = 'RegistroOferta.aspx';
+
+$(function () {
+    CargarInicial();
+    CargarControles();
+    ObtenerOferta();
+});
+
+function CargarInicial() {
+
+    $("#ddlEmpresa").change(function () {
+        CargarLocal(null);
+        return false;
+    });
+
+    jQuery.validator.addMethod('selectEmpresa', function (value) {
+        return (value != '');
+    }, "Seleccione la empresa");
+
+    jQuery.validator.addMethod('selectLocal', function (value) {
+        return (value != '');
+    }, "Seleccione el local");
+
+    jQuery.validator.addMethod('selectEstado', function (value) {
+        return (value != '');
+    }, "Seleccione el estado");
+
+    $('#frmContent').validate({
+        rules: {
+            ctl00$cphBody$ddlEmpresa: { selectEmpresa: true },
+            ctl00$cphBody$ddlLocal: { selectLocal: true },
+            ctl00$cphBody$txtNombre: { required: true },
+            ctl00$cphBody$txtDescripcion: { required: true },
+            txtFechaOferta_input: { required: true },
+            txtFechaVencimiento_input: { required: true },
+            ctl00$cphBody$ddlEstado: { selectEstado: true }
+        },
+        messages: {
+            ctl00$cphBody$txtNombre: { required: 'Ingrese el nombre' },
+            ctl00$cphBody$txtDescripcion: { required: 'Ingrese la descripción' },
+            txtFechaOferta_input: { required: 'Ingrese la oferta' },
+            txtFechaVencimiento_input: { required: 'Ingrese la fecha de vencimiento' },
+        },
+        highlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        },
+        success: function (element) {
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+}
+
+function CargarControles() {
+
+    $("#fileUpload").fileserver(
+    {
+        idAlmacen: $("#hdIdAlmacen").val(),
+        idRegistro: -1,
+        autoUpload: true,
+        replace: true,
+        successMessage: false,
+        success: function (obj_pResultado) {
+            $("#lnkEliminarFoto").css('display', '');
+            $("#hdIdDocumento").val(obj_pResultado.ReturnId);
+            VerArchivoElemento('imgOfertaImagen', $("#hdIdAlmacen").val(), -1, obj_pResultado.ReturnId);
+        }
+    });
+
+    $("#txtFechaOferta").datetimepicker({
+        language: 'es',
+        format: 'dd/mm/yyyy',
+        pickerPosition: "bottom-left",
+        autoclose: true,
+        minView: 0,
+        maxView: 4
+    });
+    $("#txtFechaOferta").data("datetimepicker").setDate(new Date());
+
+    $("#txtFechaVencimiento").datetimepicker({
+        language: 'es',
+        format: 'dd/mm/yyyy',
+        pickerPosition: "bottom-left",
+        autoclose: true,
+        minView: 0,
+        maxView: 4
+    });
+    $("#txtFechaVencimiento").data("datetimepicker").setDate(new Date());
+
+    $("#txtDescripcion").attr("maxlength", 100);
+
+    $(".btnGrabar").click(function () {
+        return GuardarOferta();
+    });
+
+    $(".btnCancelar").click(function () {
+        ConfirmJQ('¿Está seguro de regresar a la ventana anterior?',
+            function () {
+                document.location.href = urlPrincipal;
+            });
+        return false;
+    });
+
+    //Eliminar Foto
+    $("#lnkEliminarFoto").click(function () { ConfirmJQ('¿Está seguro de eliminar la foto?', EliminarFoto); });
+    $("#lnkEliminarFoto").css('display', 'none');
+
+    //Focus Inicial
+    $("#ddlEmpresa").focus();
+}
+
+function CargarLocal(int_pIdLocal) {
+    var ddlLocal = $("#ddlLocal");
+    ddlLocal.html('');
+    ddlLocal.append($("<option value=''>--Seleccione--</option>"));
+
+    if ($("#ddlEmpresa").val() != '') {
+        var obj_Data = { "int_pIdEmpresa": $("#ddlEmpresa").val() };
+        AccionDefault(int_pIdLocal == null, "RegistroOferta.aspx/ListarLocal", obj_Data,
+        function (obj_pLista) {
+            var str_Selected = '';
+            for (var i = 0; i < obj_pLista.length; i++) {
+                str_Selected = (obj_pLista[i].IdLocal == int_pIdLocal) ? 'selected' : '';
+                ddlLocal.append($("<option value='" + obj_pLista[i].IdLocal + "' " + str_Selected + " >" + obj_pLista[i].Nombre + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+function GuardarOferta() {
+
+    //validacion del formulario
+    if ($('#frmContent').valid()) {
+
+        //Obtiene los valores de la entidad
+        obj_Oferta = new Object();
+        obj_Oferta.IdOferta = $("#hdIdOferta").val();
+        obj_Oferta.IdLocal = $("#ddlLocal").val();
+        obj_Oferta.Nombre = $("#txtNombre").val();
+        obj_Oferta.Descripcion = $("#txtDescripcion").val();
+        obj_Oferta.FechaOferta = $("#txtFechaOferta").data("datetimepicker").getDate();
+        obj_Oferta.FechaVencimiento = $("#txtFechaVencimiento").data("datetimepicker").getDate();
+        obj_Oferta.Estado = $("#ddlEstado").val();
+
+        //Eliminacion de la imagen
+        var str_Ruta = $('#hdOfertaImagen').val();
+        if (str_Ruta == $("#imgOfertaImagen").attr('src')) {
+            obj_Oferta.Foto = new Object();
+            obj_Oferta.Foto.IdAlmacen = $("#hdIdAlmacen").val();
+            obj_Oferta.Foto.IdRegistro = -1;
+            obj_Oferta.Foto.IdDocumento = null;
+        }
+
+        //Anexar Imagen
+        if ($("#hdIdDocumento").val() != '') {
+            obj_Oferta.Foto = new Object();
+            obj_Oferta.Foto.IdAlmacen = $("#hdIdAlmacen").val();
+            obj_Oferta.Foto.IdRegistro = -1;
+            obj_Oferta.Foto.IdDocumento = $("#hdIdDocumento").val();
+        }
+
+        //Registro del evento
+        Accion('RegistroOferta.aspx/GuardarOferta',
+            {
+                "str_pOferta": JSON.stringify(obj_Oferta)
+            },
+            function () {
+                document.location.href = urlPrincipal;
+            });
+    }
+    return false;
+}
+
+function ObtenerOferta() {
+
+    //Se obtiene los valores key de la entidad
+    var int_IdLocal = $("#hdIdLocal").val();
+    var int_IdOferta = $("#hdIdOferta").val();
+
+    if (int_IdOferta != '') {
+
+        //Se obtiene la información de la entidad
+        var obj_Oferta = ObtenerData("RegistroOferta.aspx/ObtenerOferta", {
+            "int_pIdLocal": int_IdLocal,
+            "int_pIdOferta": int_IdOferta
+        });
+
+        if (obj_Oferta != null) {
+            $("#ddlEmpresa").val(obj_Oferta.Local.IdEmpresa);
+            CargarLocal(obj_Oferta.IdLocal);
+
+            $("#txtNombre").val(obj_Oferta.Nombre);
+            $("#txtDescripcion").val(obj_Oferta.Descripcion);
+
+            var obj_ParsedDate = null;
+            if (obj_Oferta.FechaOferta != null) {
+                obj_ParsedDate = new Date(parseInt(obj_Oferta.FechaOferta.substr(6)));
+                $("#txtFechaOferta").data("datetimepicker").setDate(new Date(obj_ParsedDate.getFullYear(), obj_ParsedDate.getMonth(), obj_ParsedDate.getDate(), obj_ParsedDate.getHours(), obj_ParsedDate.getMinutes()));
+            }
+
+            if (obj_Oferta.FechaVencimiento != null) {
+                obj_ParsedDate = new Date(parseInt(obj_Oferta.FechaVencimiento.substr(6)));
+                $("#txtFechaVencimiento").data("datetimepicker").setDate(new Date(obj_ParsedDate.getFullYear(), obj_ParsedDate.getMonth(), obj_ParsedDate.getDate(), obj_ParsedDate.getHours(), obj_ParsedDate.getMinutes()));
+            }
+
+            $("#ddlEstado").val(obj_Oferta.Estado);
+
+            //Auditoria
+            $("#ddUsuarioCreacion").html(obj_Oferta.UsuarioCreacion);
+            $("#ddUsuarioModificacion").html(obj_Oferta.UsuarioModificacion);
+            $("#ddFechaCreacion").html(ToDateTimeString(obj_Oferta.FechaCreacion));
+            $("#ddFechaModificacion").html(ToDateTimeString(obj_Oferta.FechaModificacion));
+
+            $("#ddlEmpresa").prop('disabled', true);
+            $("#ddlLocal").prop('disabled', true);
+
+            //Foto
+            AccionValor('RegistroOferta.aspx/ObtenerImagenURL', { "int_pIdRegistro": obj_Oferta.IdImagen },
+            function (str_pUrl) {
+                $("#lnkEliminarFoto").css('display', '');
+
+                if (str_pUrl == '') {
+                    str_pUrl = $("#hdOfertaImagen").val();
+                    $("#lnkEliminarFoto").css('display', 'none');
+                }
+                $("#imgOfertaImagen").attr("src", str_pUrl);
+            });
+        }
+    }
+}
+
+function EliminarFoto() {
+    $("#hdIdDocumento").val('');
+    var str_Ruta = $('#hdOfertaImagen').val();
+    $("#imgOfertaImagen").attr('src', str_Ruta);
+    $("#lnkEliminarFoto").css('display', 'none');
+}

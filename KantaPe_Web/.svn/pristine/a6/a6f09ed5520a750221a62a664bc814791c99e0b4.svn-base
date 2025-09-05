@@ -1,0 +1,1360 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kruma.KantaPe.Data
+{
+    /// <summary>Cancion</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por Carlos Gómez </CreadoPor></item>
+    /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+
+
+    public class LocalCancion
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Canciones</summary>
+        /// <param name="int_pIdCancion">Id de canción</param>
+        /// <param name="str_pTitulo">Título del canción</param>
+        /// <param name="int_pIdArtista">Id de artista</param>
+        /// <param name="int_pIdAlbum">Id de álbum</param>
+        /// <param name="int_pIdGenero">Id de género</param>
+        /// <param name="int_pIdIdioma">Id de idioma</param>
+        /// <param name="str_pDecada">Década de la canción</param>
+        /// <param name="int_pAnio">Versión de la canción</param>
+        /// <param name="str_pYoutube">Link de Youtube de la canción</param>
+        /// <param name="int_pIdCancionSolicitud">Id de canción solicitud</param>
+        /// <param name="str_pEstado">Estado del álbum</param>
+        /// <param name="int_pNumPagina" >Número de página</param>
+        /// <param name="int_pTamPagina" >Tamaño de página</param>
+        /// <returns>Lista del Canciones</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> Listar(
+            int? int_pIdLocalCancion,
+            int? int_pIdCancion,
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            int? int_pAnio,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave,
+            string str_pEstado,
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancion");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", int_pIdLocalCancion.HasValue ? int_pIdLocalCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", int_pIdArtista.HasValue ? int_pIdArtista.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pArtistaNombre", !string.IsNullOrEmpty(str_pArtistaNombre) ? str_pArtistaNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", int_pIdAlbum.HasValue ? int_pIdAlbum.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAlbumTitulo", !string.IsNullOrEmpty(str_pAlbumTitulo) ? str_pAlbumTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", !string.IsNullOrEmpty(str_pDecada) ? str_pDecada : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", int_pAnio.HasValue ? int_pAnio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnioFiltro", !string.IsNullOrEmpty(str_pAnioFiltro) ? str_pAnioFiltro : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", !string.IsNullOrEmpty(str_pYoutube) ? str_pYoutube : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", int_pIdCancionSolicitud.HasValue ? int_pIdCancionSolicitud.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave", !string.IsNullOrEmpty(str_pPalabraClave) ? str_pPalabraClave : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Cancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_Cancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_Cancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_Cancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_Cancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Cancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Cancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_Cancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_Cancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_Cancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_Cancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_Cancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_Cancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_Cancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_Cancion.IdCancionSolicitud = obj_Row["IdCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdCancionSolicitud"];
+                obj_Cancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Cancion.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                obj_Cancion.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_Cancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Cancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Cancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["ALbum_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["CancionSolicitud_IdCancionSolicitud"] is DBNull))
+                {
+                    obj_Cancion.CancionSolicitud = new Kruma.KantaPe.Entidad.CancionSolicitud();
+                    obj_Cancion.CancionSolicitud.IdCancionSolicitud = obj_Row["CancionSolicitud_IdCancionSolicitud"] == DBNull.Value ? null : (int?)obj_Row["CancionSolicitud_IdCancionSolicitud"];
+                    obj_Cancion.CancionSolicitud.Descripcion = obj_Row["CancionSolicitud_Descripcion"] is DBNull ? null : obj_Row["CancionSolicitud_Descripcion"].ToString();
+                }
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+        //ListarRanking
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarRanking(
+       int? int_pIdCancion,
+       string str_pTitulo,
+       int? int_pIdArtista,
+       string str_pArtistaNombre,
+       int? int_pIdAlbum,
+       string str_pAlbumTitulo,
+       int? int_pIdGenero,
+       int? int_pIdIdioma,
+       string str_pDecada,
+       int? int_pAnio,
+       string str_pAnioFiltro,
+       string str_pYoutube,
+       int? int_pIdCancionSolicitud,
+       string str_pPalabraClave,
+       string str_pEstado,
+       int? int_pIdEmpresa,
+       int? int_pIdLocal,
+       int? int_pNumPagina,
+       int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancionRanking");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", int_pIdArtista.HasValue ? int_pIdArtista.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pArtistaNombre", !string.IsNullOrEmpty(str_pArtistaNombre) ? str_pArtistaNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", int_pIdAlbum.HasValue ? int_pIdAlbum.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAlbumTitulo", !string.IsNullOrEmpty(str_pAlbumTitulo) ? str_pAlbumTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", !string.IsNullOrEmpty(str_pDecada) ? str_pDecada : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", int_pAnio.HasValue ? int_pAnio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnioFiltro", !string.IsNullOrEmpty(str_pAnioFiltro) ? str_pAnioFiltro : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", !string.IsNullOrEmpty(str_pYoutube) ? str_pYoutube : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", int_pIdCancionSolicitud.HasValue ? int_pIdCancionSolicitud.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave", !string.IsNullOrEmpty(str_pPalabraClave) ? str_pPalabraClave : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Cancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_Cancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_Cancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_Cancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_Cancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Cancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Cancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_Cancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_Cancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_Cancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_Cancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_Cancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_Cancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_Cancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_Cancion.IdCancionSolicitud = obj_Row["IdCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdCancionSolicitud"];
+                obj_Cancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Cancion.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                obj_Cancion.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_Cancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Cancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Cancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["ALbum_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["CancionSolicitud_IdCancionSolicitud"] is DBNull))
+                {
+                    obj_Cancion.CancionSolicitud = new Kruma.KantaPe.Entidad.CancionSolicitud();
+                    obj_Cancion.CancionSolicitud.IdCancionSolicitud = obj_Row["CancionSolicitud_IdCancionSolicitud"] == DBNull.Value ? null : (int?)obj_Row["CancionSolicitud_IdCancionSolicitud"];
+                    obj_Cancion.CancionSolicitud.Descripcion = obj_Row["CancionSolicitud_Descripcion"] is DBNull ? null : obj_Row["CancionSolicitud_Descripcion"].ToString();
+                }
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarLista(
+        int? int_pIdCancion,
+        string str_pTitulo,
+        int? int_pIdArtista,
+        string str_pArtistaNombre,
+        int? int_pIdAlbum,
+        string str_pAlbumTitulo,
+        int? int_pIdGenero,
+        int? int_pIdIdioma,
+        string str_pDecada,
+        int? int_pAnio,
+        string str_pAnioFiltro,
+        string str_pYoutube,
+        int? int_pIdCancionSolicitud,
+        string str_pPalabraClave,
+        string str_pEstado,
+        int? int_pIdEmpresa,
+        int? int_pIdLocal,
+        int? int_pNumPagina,
+        int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancion");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", int_pIdArtista.HasValue ? int_pIdArtista.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pArtistaNombre", !string.IsNullOrEmpty(str_pArtistaNombre) ? str_pArtistaNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", int_pIdAlbum.HasValue ? int_pIdAlbum.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAlbumTitulo", !string.IsNullOrEmpty(str_pAlbumTitulo) ? str_pAlbumTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", !string.IsNullOrEmpty(str_pDecada) ? str_pDecada : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", int_pAnio.HasValue ? int_pAnio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnioFiltro", !string.IsNullOrEmpty(str_pAnioFiltro) ? str_pAnioFiltro : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", !string.IsNullOrEmpty(str_pYoutube) ? str_pYoutube : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", int_pIdCancionSolicitud.HasValue ? int_pIdCancionSolicitud.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave", !string.IsNullOrEmpty(str_pPalabraClave) ? str_pPalabraClave : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Cancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_Cancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_Cancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_Cancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_Cancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Cancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Cancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_Cancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_Cancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_Cancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_Cancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_Cancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_Cancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_Cancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_Cancion.IdCancionSolicitud = obj_Row["IdCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdCancionSolicitud"];
+                obj_Cancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Cancion.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                obj_Cancion.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_Cancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Cancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Cancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["ALbum_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["CancionSolicitud_IdCancionSolicitud"] is DBNull))
+                {
+                    obj_Cancion.CancionSolicitud = new Kruma.KantaPe.Entidad.CancionSolicitud();
+                    obj_Cancion.CancionSolicitud.IdCancionSolicitud = obj_Row["CancionSolicitud_IdCancionSolicitud"] == DBNull.Value ? null : (int?)obj_Row["CancionSolicitud_IdCancionSolicitud"];
+                    obj_Cancion.CancionSolicitud.Descripcion = obj_Row["CancionSolicitud_Descripcion"] is DBNull ? null : obj_Row["CancionSolicitud_Descripcion"].ToString();
+                }
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+        //ListarNovedades
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarNovedades(
+       int? int_pIdCancion,
+       string str_pTitulo,
+       int? int_pIdArtista,
+       string str_pArtistaNombre,
+       int? int_pIdAlbum,
+       string str_pAlbumTitulo,
+       int? int_pIdGenero,
+       int? int_pIdIdioma,
+       string str_pDecada,
+       int? int_pAnio,
+       string str_pAnioFiltro,
+       string str_pYoutube,
+       int? int_pIdCancionSolicitud,
+       string str_pPalabraClave,
+       string str_pEstado,
+       int? int_pIdEmpresa,
+       int? int_pIdLocal,
+       int? int_pNumPagina,
+       int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancionNovedades");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", int_pIdArtista.HasValue ? int_pIdArtista.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pArtistaNombre", !string.IsNullOrEmpty(str_pArtistaNombre) ? str_pArtistaNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", int_pIdAlbum.HasValue ? int_pIdAlbum.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAlbumTitulo", !string.IsNullOrEmpty(str_pAlbumTitulo) ? str_pAlbumTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", !string.IsNullOrEmpty(str_pDecada) ? str_pDecada : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", int_pAnio.HasValue ? int_pAnio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnioFiltro", !string.IsNullOrEmpty(str_pAnioFiltro) ? str_pAnioFiltro : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", !string.IsNullOrEmpty(str_pYoutube) ? str_pYoutube : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", int_pIdCancionSolicitud.HasValue ? int_pIdCancionSolicitud.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave", !string.IsNullOrEmpty(str_pPalabraClave) ? str_pPalabraClave : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Cancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_Cancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_Cancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_Cancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_Cancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Cancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Cancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_Cancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_Cancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_Cancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_Cancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_Cancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_Cancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_Cancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_Cancion.IdCancionSolicitud = obj_Row["IdCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdCancionSolicitud"];
+                obj_Cancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Cancion.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                obj_Cancion.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_Cancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Cancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Cancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["ALbum_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["CancionSolicitud_IdCancionSolicitud"] is DBNull))
+                {
+                    obj_Cancion.CancionSolicitud = new Kruma.KantaPe.Entidad.CancionSolicitud();
+                    obj_Cancion.CancionSolicitud.IdCancionSolicitud = obj_Row["CancionSolicitud_IdCancionSolicitud"] == DBNull.Value ? null : (int?)obj_Row["CancionSolicitud_IdCancionSolicitud"];
+                    obj_Cancion.CancionSolicitud.Descripcion = obj_Row["CancionSolicitud_Descripcion"] is DBNull ? null : obj_Row["CancionSolicitud_Descripcion"].ToString();
+                }
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+        /// <summary>Obtener Canción</summary>
+        /// <param name="int_pIdCancion">Id de Cancion</param>
+        /// <returns>Objeto Canción</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.LocalCancion Obtener(int? int_pIdLocalCancion)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = Listar(int_pIdLocalCancion, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            return lst_Cancion.Result.Count > 0 ? lst_Cancion.Result[0] : null;
+        }
+
+        /// <summary>Insertar Canción</summary>
+        /// <param name="obj_pCancion">Cancion</param>
+        /// <returns>Id de la Canción</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static int Insertar(Kruma.KantaPe.Entidad.LocalCancion obj_pCancion)
+        {
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("InsertarLocalCancion");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancion", obj_pCancion.IdCancion));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", obj_pCancion.IdArtista));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", obj_pCancion.IdAlbum));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", obj_pCancion.IdGenero));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", obj_pCancion.IdIdioma));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", obj_pCancion.Decada));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pVersion", obj_pCancion.Version));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNombreArchivo", obj_pCancion.NombreArchivo));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", obj_pCancion.Anio));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pLetra", obj_pCancion.Letra));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDuracion", obj_pCancion.Duracion));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", obj_pCancion.Youtube));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", obj_pCancion.IdCancionSolicitud));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", obj_pCancion.Estado));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", obj_pCancion.IdEmpresa));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", obj_pCancion.IdLocal));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pUsuarioCreacion", obj_pCancion.UsuarioCreacion));
+
+            Kruma.Core.Data.Entity.Parameter obj_IdCancion = new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", DbType.Int32);
+            obj_IdCancion.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdCancion);
+
+            Kruma.Core.Data.DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdCancion = (int)obj_IdCancion.Value;
+            return int_IdCancion;
+        }
+
+        /// <summary>Modificar Canción</summary>
+        /// <param name="obj_pCancion">Canción</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>11-07-2016</FecCrea></item></list></remarks>
+        public static void Modificar(Kruma.KantaPe.Entidad.LocalCancion obj_pCancion)
+        {
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ActualizarLocalCancion");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", obj_pCancion.IdLocalCancion));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancion", obj_pCancion.IdCancion));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", obj_pCancion.IdArtista));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", obj_pCancion.IdAlbum));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", obj_pCancion.IdGenero));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", obj_pCancion.IdIdioma));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", obj_pCancion.Decada));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pVersion", obj_pCancion.Version));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNombreArchivo", obj_pCancion.NombreArchivo));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", obj_pCancion.Anio));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pLetra", obj_pCancion.Letra));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDuracion", obj_pCancion.Duracion));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", obj_pCancion.Youtube));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", obj_pCancion.IdCancionSolicitud));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", obj_pCancion.Estado));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", obj_pCancion.IdEmpresa));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", obj_pCancion.IdLocal));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pUsuarioModificacion", obj_pCancion.UsuarioModificacion));
+
+            Kruma.Core.Data.DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarCancionesUsuarioLogeado(
+            int? int_pIdLocal,
+            int? int_pIdCancion,
+            int? int_pIdEmpresa,
+            string str_pUsuarioLogeado,
+            string str_pTitulo,
+            string str_pArtista,
+            string str_pAlbum,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            Core.Data.Entity.DataOperation dop_Operacion = new Core.Data.Entity.DataOperation("ListarLocalCancionPorUsuarioLogeado");
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pIdCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pUsuarioLogeado", !string.IsNullOrEmpty(str_pUsuarioLogeado) ? str_pUsuarioLogeado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pArtista", !string.IsNullOrEmpty(str_pArtista) ? str_pArtista : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pAlbum", !string.IsNullOrEmpty(str_pAlbum) ? str_pAlbum : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_LocalCancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_LocalCancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_LocalCancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_LocalCancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_LocalCancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_LocalCancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_LocalCancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_LocalCancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_LocalCancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_LocalCancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_LocalCancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_LocalCancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_LocalCancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_LocalCancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_LocalCancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_LocalCancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_LocalCancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_LocalCancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_LocalCancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_LocalCancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_LocalCancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_LocalCancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_LocalCancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                obj_LocalCancion.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_LocalCancion.Local.IdLocal = obj_Row["Local_IdLocal"] is DBNull ? null : (int?)obj_Row["Local_IdLocal"];
+                obj_LocalCancion.Local.IdEmpresa = obj_Row["Local_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Local_IdEmpresa"];
+                obj_LocalCancion.Local.IdDireccion = obj_Row["Local_IdDireccion"] is DBNull ? null : (int?)obj_Row["Local_IdDireccion"];
+                obj_LocalCancion.Local.Nombre = obj_Row["CorePersonaDireccion_Nombre"] is DBNull ? null : obj_Row["CorePersonaDireccion_Nombre"].ToString();
+                obj_LocalCancion.Local.Direccion = obj_Row["CorePersonaDireccion_Direccion"] is DBNull ? null : obj_Row["CorePersonaDireccion_Direccion"].ToString();
+
+                obj_LocalCancion.Local.Empresa = new Kruma.KantaPe.Entidad.Empresa();
+                obj_LocalCancion.Local.Empresa.IdEmpresa = obj_Row["Empresa_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Empresa_IdEmpresa"];
+                obj_LocalCancion.Local.Empresa.IdPersona = obj_Row["CorePersona_IdPersona"] is DBNull ? null : (int?)obj_Row["CorePersona_IdPersona"];
+                obj_LocalCancion.Local.Empresa.RazonSocial = obj_Row["CorePersona_RazonSocial"] is DBNull ? null : obj_Row["CorePersona_RazonSocial"].ToString();
+                obj_LocalCancion.Local.Empresa.NombreComercial = obj_Row["CorePersona_NombreComercial"] is DBNull ? null : obj_Row["CorePersona_NombreComercial"].ToString();
+                obj_LocalCancion.Local.Empresa.IdTipoDocumento = obj_Row["CorePersona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["CorePersona_IdTipoDocumento"];
+                obj_LocalCancion.Local.Empresa.NumeroDocumento = obj_Row["CorePersona_NumeroDocumento"] is DBNull ? null : obj_Row["CorePersona_NumeroDocumento"].ToString();
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_LocalCancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_LocalCancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_LocalCancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_LocalCancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_LocalCancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_LocalCancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_LocalCancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_LocalCancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_LocalCancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["Album_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_LocalCancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_LocalCancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_LocalCancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_LocalCancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_LocalCancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["Idioma_IdIdioma"];
+                    obj_LocalCancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                lst_LocalCancion.Add(obj_LocalCancion);
+            }
+
+            obj_Lista.Result = lst_LocalCancion;
+            return obj_Lista;
+        }
+
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarRankingDoble(
+       int? int_pIdCancion,
+       string str_pTitulo,
+       int? int_pIdArtista,
+       string str_pArtistaNombre,
+       int? int_pIdAlbum,
+       string str_pAlbumTitulo,
+       int? int_pIdGenero,
+       int? int_pIdIdioma,
+       string str_pDecada,
+       int? int_pAnio,
+       string str_pAnioFiltro,
+       string str_pYoutube,
+       int? int_pIdCancionSolicitud,
+       string str_pPalabraClave1,
+       string str_pPalabraClave2,
+       string str_pEstado,
+       int? int_pIdEmpresa,
+       int? int_pIdLocal,
+       int? int_pNumPagina,
+       int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancionDobleRankingTOP");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", int_pIdArtista.HasValue ? int_pIdArtista.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pArtistaNombre", !string.IsNullOrEmpty(str_pArtistaNombre) ? str_pArtistaNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", int_pIdAlbum.HasValue ? int_pIdAlbum.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAlbumTitulo", !string.IsNullOrEmpty(str_pAlbumTitulo) ? str_pAlbumTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", !string.IsNullOrEmpty(str_pDecada) ? str_pDecada : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", int_pAnio.HasValue ? int_pAnio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnioFiltro", !string.IsNullOrEmpty(str_pAnioFiltro) ? str_pAnioFiltro : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", !string.IsNullOrEmpty(str_pYoutube) ? str_pYoutube : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", int_pIdCancionSolicitud.HasValue ? int_pIdCancionSolicitud.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave1", !string.IsNullOrEmpty(str_pPalabraClave1) ? str_pPalabraClave1 : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave2", !string.IsNullOrEmpty(str_pPalabraClave2) ? str_pPalabraClave2 : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Cancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_Cancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_Cancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_Cancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_Cancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Cancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Cancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_Cancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_Cancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_Cancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_Cancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_Cancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_Cancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_Cancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_Cancion.IdCancionSolicitud = obj_Row["IdCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdCancionSolicitud"];
+                obj_Cancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Cancion.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                obj_Cancion.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_Cancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Cancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Cancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["ALbum_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["CancionSolicitud_IdCancionSolicitud"] is DBNull))
+                {
+                    obj_Cancion.CancionSolicitud = new Kruma.KantaPe.Entidad.CancionSolicitud();
+                    obj_Cancion.CancionSolicitud.IdCancionSolicitud = obj_Row["CancionSolicitud_IdCancionSolicitud"] == DBNull.Value ? null : (int?)obj_Row["CancionSolicitud_IdCancionSolicitud"];
+                    obj_Cancion.CancionSolicitud.Descripcion = obj_Row["CancionSolicitud_Descripcion"] is DBNull ? null : obj_Row["CancionSolicitud_Descripcion"].ToString();
+                }
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarDoble(
+ int? int_pIdCancion,
+ string str_pTitulo,
+ int? int_pIdArtista,
+ string str_pArtistaNombre,
+ int? int_pIdAlbum,
+ string str_pAlbumTitulo,
+ int? int_pIdGenero,
+ int? int_pIdIdioma,
+ string str_pDecada,
+ int? int_pAnio,
+ string str_pAnioFiltro,
+ string str_pYoutube,
+ int? int_pIdCancionSolicitud,
+ string str_pPalabraClave1,
+ string str_pPalabraClave2,
+ string str_pEstado,
+ int? int_pIdEmpresa,
+ int? int_pIdLocal,
+ int? int_pNumPagina,
+ int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancionDoble");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", int_pIdArtista.HasValue ? int_pIdArtista.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pArtistaNombre", !string.IsNullOrEmpty(str_pArtistaNombre) ? str_pArtistaNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", int_pIdAlbum.HasValue ? int_pIdAlbum.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAlbumTitulo", !string.IsNullOrEmpty(str_pAlbumTitulo) ? str_pAlbumTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", !string.IsNullOrEmpty(str_pDecada) ? str_pDecada : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", int_pAnio.HasValue ? int_pAnio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnioFiltro", !string.IsNullOrEmpty(str_pAnioFiltro) ? str_pAnioFiltro : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", !string.IsNullOrEmpty(str_pYoutube) ? str_pYoutube : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", int_pIdCancionSolicitud.HasValue ? int_pIdCancionSolicitud.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave1", !string.IsNullOrEmpty(str_pPalabraClave1) ? str_pPalabraClave1 : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave2", !string.IsNullOrEmpty(str_pPalabraClave2) ? str_pPalabraClave2 : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Cancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_Cancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_Cancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_Cancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_Cancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Cancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Cancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_Cancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_Cancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_Cancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_Cancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_Cancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_Cancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_Cancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_Cancion.IdCancionSolicitud = obj_Row["IdCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdCancionSolicitud"];
+                obj_Cancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Cancion.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                obj_Cancion.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_Cancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Cancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Cancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["ALbum_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["CancionSolicitud_IdCancionSolicitud"] is DBNull))
+                {
+                    obj_Cancion.CancionSolicitud = new Kruma.KantaPe.Entidad.CancionSolicitud();
+                    obj_Cancion.CancionSolicitud.IdCancionSolicitud = obj_Row["CancionSolicitud_IdCancionSolicitud"] == DBNull.Value ? null : (int?)obj_Row["CancionSolicitud_IdCancionSolicitud"];
+                    obj_Cancion.CancionSolicitud.Descripcion = obj_Row["CancionSolicitud_Descripcion"] is DBNull ? null : obj_Row["CancionSolicitud_Descripcion"].ToString();
+                }
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarNovedadesDoble(
+       int? int_pIdCancion,
+       string str_pTitulo,
+       int? int_pIdArtista,
+       string str_pArtistaNombre,
+       int? int_pIdAlbum,
+       string str_pAlbumTitulo,
+       int? int_pIdGenero,
+       int? int_pIdIdioma,
+       string str_pDecada,
+       int? int_pAnio,
+       string str_pAnioFiltro,
+       string str_pYoutube,
+       int? int_pIdCancionSolicitud,
+       string str_pPalabraClave1,
+       string str_pPalabraClave2,
+       string str_pEstado,
+       int? int_pIdEmpresa,
+       int? int_pIdLocal,
+       int? int_pNumPagina,
+       int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancionNovedadesDoble");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdEmpresa", int_pIdEmpresa.HasValue ? int_pIdEmpresa.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", int_pIdArtista.HasValue ? int_pIdArtista.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pArtistaNombre", !string.IsNullOrEmpty(str_pArtistaNombre) ? str_pArtistaNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", int_pIdAlbum.HasValue ? int_pIdAlbum.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAlbumTitulo", !string.IsNullOrEmpty(str_pAlbumTitulo) ? str_pAlbumTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", !string.IsNullOrEmpty(str_pDecada) ? str_pDecada : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", int_pAnio.HasValue ? int_pAnio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnioFiltro", !string.IsNullOrEmpty(str_pAnioFiltro) ? str_pAnioFiltro : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", !string.IsNullOrEmpty(str_pYoutube) ? str_pYoutube : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", int_pIdCancionSolicitud.HasValue ? int_pIdCancionSolicitud.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave1", !string.IsNullOrEmpty(str_pPalabraClave1) ? str_pPalabraClave1 : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave2", !string.IsNullOrEmpty(str_pPalabraClave2) ? str_pPalabraClave2 : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Cancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_Cancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_Cancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_Cancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_Cancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Cancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Cancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_Cancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_Cancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_Cancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_Cancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_Cancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_Cancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_Cancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_Cancion.IdCancionSolicitud = obj_Row["IdCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdCancionSolicitud"];
+                obj_Cancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Cancion.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                obj_Cancion.DesEmpresa = obj_Row["Empresa_NombreComercial"] is DBNull ? null : obj_Row["Empresa_NombreComercial"].ToString();
+                obj_Cancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+                obj_Cancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Cancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Cancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["ALbum_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["CancionSolicitud_IdCancionSolicitud"] is DBNull))
+                {
+                    obj_Cancion.CancionSolicitud = new Kruma.KantaPe.Entidad.CancionSolicitud();
+                    obj_Cancion.CancionSolicitud.IdCancionSolicitud = obj_Row["CancionSolicitud_IdCancionSolicitud"] == DBNull.Value ? null : (int?)obj_Row["CancionSolicitud_IdCancionSolicitud"];
+                    obj_Cancion.CancionSolicitud.Descripcion = obj_Row["CancionSolicitud_Descripcion"] is DBNull ? null : obj_Row["CancionSolicitud_Descripcion"].ToString();
+                }
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarRanking(
+            int? int_pIdLocal,
+            int? int_pIdCancion,
+            string str_pTitulo,
+            int? int_pIdArtista,
+            string str_pArtistaNombre,
+            int? int_pIdAlbum,
+            string str_pAlbumTitulo,
+            int? int_pIdGenero,
+            int? int_pIdIdioma,
+            string str_pDecada,
+            int? int_pAnio,
+            string str_pAnioFiltro,
+            string str_pYoutube,
+            int? int_pIdCancionSolicitud,
+            string str_pPalabraClave,
+            string str_pEstado
+            )
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancionRanking2");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocalCancion", int_pIdCancion.HasValue ? int_pIdCancion.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTitulo", !string.IsNullOrEmpty(str_pTitulo) ? str_pTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdArtista", int_pIdArtista.HasValue ? int_pIdArtista.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pArtistaNombre", !string.IsNullOrEmpty(str_pArtistaNombre) ? str_pArtistaNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdAlbum", int_pIdAlbum.HasValue ? int_pIdAlbum.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAlbumTitulo", !string.IsNullOrEmpty(str_pAlbumTitulo) ? str_pAlbumTitulo : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDecada", !string.IsNullOrEmpty(str_pDecada) ? str_pDecada : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnio", int_pAnio.HasValue ? int_pAnio.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pAnioFiltro", !string.IsNullOrEmpty(str_pAnioFiltro) ? str_pAnioFiltro : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pYoutube", !string.IsNullOrEmpty(str_pYoutube) ? str_pYoutube : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdCancionSolicitud", int_pIdCancionSolicitud.HasValue ? int_pIdCancionSolicitud.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave", !string.IsNullOrEmpty(str_pPalabraClave) ? str_pPalabraClave : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                //if (lst_Cancion.Count == 0)
+                //    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["Cancion_IdLocalCancion"] is DBNull ? null : (int?)obj_Row["Cancion_IdLocalCancion"];
+                obj_Cancion.IdEmpresa = obj_Row["Cancion_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Cancion_IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["Cancion_IdLocal"] is DBNull ? null : (int?)obj_Row["Cancion_IdLocal"];
+
+
+                obj_Cancion.DesLocal = obj_Row["Local_Direccion"] is DBNull ? null : obj_Row["Local_Direccion"].ToString();
+
+                if (!(obj_Row["Cancion_Descripcion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_Nombre"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["Album_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["Idioma_IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> ListarTodos(
+           string str_pPalabraClave,
+           int? int_pIdGenero,
+           int? int_pIdIdioma,
+           int? int_pNumPagina,
+           int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarLocalCancionTodos");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pPalabraClave", !string.IsNullOrEmpty(str_pPalabraClave) ? str_pPalabraClave : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdGenero", int_pIdGenero.HasValue ? int_pIdGenero.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.LocalCancion> lst_Cancion = new List<Kruma.KantaPe.Entidad.LocalCancion>();
+            Kruma.KantaPe.Entidad.LocalCancion obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Cancion.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Cancion = new Kruma.KantaPe.Entidad.LocalCancion();
+                obj_Cancion.IdLocalCancion = obj_Row["IdLocalCancion"] is DBNull ? null : (int?)obj_Row["IdLocalCancion"];
+                obj_Cancion.IdCancion = obj_Row["IdCancion"] is DBNull ? null : (int?)obj_Row["IdCancion"];
+                obj_Cancion.IdArtista = obj_Row["IdArtista"] is DBNull ? null : (int?)obj_Row["IdArtista"];
+                obj_Cancion.IdAlbum = obj_Row["IdAlbum"] is DBNull ? null : (int?)obj_Row["IdAlbum"];
+                obj_Cancion.IdGenero = obj_Row["IdGenero"] is DBNull ? null : (int?)obj_Row["IdGenero"];
+                obj_Cancion.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Cancion.Decada = obj_Row["Decada"] is DBNull ? null : obj_Row["Decada"].ToString();
+                obj_Cancion.Version = obj_Row["Version"] is DBNull ? null : obj_Row["Version"].ToString();
+                obj_Cancion.NombreArchivo = obj_Row["NombreArchivo"] is DBNull ? null : obj_Row["NombreArchivo"].ToString();
+                obj_Cancion.FechaRegistro = obj_Row["FechaRegistro"] == DBNull.Value ? null : ((DateTime?)obj_Row["FechaRegistro"]);
+                obj_Cancion.Anio = obj_Row["Anio"] is DBNull ? null : (int?)obj_Row["Anio"];
+                obj_Cancion.Letra = obj_Row["Letra"] is DBNull ? null : obj_Row["Letra"].ToString();
+                obj_Cancion.Duracion = obj_Row["Duracion"] is DBNull ? null : (int?)obj_Row["Duracion"];
+                obj_Cancion.Youtube = obj_Row["Youtube"] is DBNull ? null : obj_Row["Youtube"].ToString();
+                obj_Cancion.IdCancionSolicitud = obj_Row["IdCancionSolicitud"] is DBNull ? null : (int?)obj_Row["IdCancionSolicitud"];
+                obj_Cancion.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Cancion.IdEmpresa = obj_Row["IdEmpresa"] is DBNull ? null : (int?)obj_Row["IdEmpresa"];
+                obj_Cancion.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+
+                obj_Cancion.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_Cancion.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Cancion.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Cancion.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                if (!(obj_Row["Cancion_IdCancion"] is DBNull))
+                {
+                    obj_Cancion.Cancion = new Kruma.KantaPe.Entidad.Cancion();
+                    obj_Cancion.Cancion.IdCancion = obj_Row["Cancion_IdCancion"] == DBNull.Value ? null : (int?)obj_Row["Cancion_IdCancion"];
+                    obj_Cancion.Cancion.Descripcion = obj_Row["Cancion_Descripcion"] is DBNull ? null : obj_Row["Cancion_Descripcion"].ToString();
+                }
+                if (!(obj_Row["Artista_IdArtista"] is DBNull))
+                {
+                    obj_Cancion.Artista = new Kruma.KantaPe.Entidad.Artista();
+                    obj_Cancion.Artista.IdArtista = obj_Row["Artista_IdArtista"] == DBNull.Value ? null : (int?)obj_Row["Artista_IdArtista"];
+                    obj_Cancion.Artista.Nombre = obj_Row["Artista_Nombre"] is DBNull ? null : obj_Row["Artista_Nombre"].ToString();
+                }
+
+                if (!(obj_Row["Album_IdAlbum"] is DBNull))
+                {
+                    obj_Cancion.Album = new Kruma.KantaPe.Entidad.Album();
+                    obj_Cancion.Album.IdAlbum = obj_Row["Album_IdAlbum"] == DBNull.Value ? null : (int?)obj_Row["Album_IdAlbum"];
+                    obj_Cancion.Album.Titulo = obj_Row["Album_Titulo"] is DBNull ? null : obj_Row["ALbum_Titulo"].ToString();
+                }
+
+                if (!(obj_Row["Genero_IdGenero"] is DBNull))
+                {
+                    obj_Cancion.Genero = new Kruma.KantaPe.Entidad.Genero();
+                    obj_Cancion.Genero.IdGenero = obj_Row["Genero_IdGenero"] == DBNull.Value ? null : (int?)obj_Row["Genero_IdGenero"];
+                    obj_Cancion.Genero.Descripcion = obj_Row["Genero_Descripcion"] is DBNull ? null : obj_Row["Genero_Descripcion"].ToString();
+                }
+
+                if (!(obj_Row["Idioma_IdIdioma"] is DBNull))
+                {
+                    obj_Cancion.Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                    obj_Cancion.Idioma.IdIdioma = obj_Row["Idioma_IdIdioma"] == DBNull.Value ? null : (int?)obj_Row["IdIdioma"];
+                    obj_Cancion.Idioma.Descripcion = obj_Row["Idioma_Descripcion"] is DBNull ? null : obj_Row["Idioma_Descripcion"].ToString();
+                }
+
+                lst_Cancion.Add(obj_Cancion);
+            }
+
+            obj_Lista.Result = lst_Cancion;
+            return obj_Lista;
+        }
+
+        #endregion
+    }
+}

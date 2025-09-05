@@ -1,0 +1,17 @@
+﻿CREATE TABLE [dbo].[SecurityPerfilGrupoDetalleProcesoAcceso]
+(
+	[IdModulo] [char](8) NOT NULL,
+	[IdPerfil] [varchar](20) NOT NULL,
+	[IdModuloGrupo] [char](8) NOT NULL,
+	[IdGrupo] [char](8) NOT NULL,
+	[IdDetalle] [char](8) NOT NULL,
+	[IdProceso] [int] NOT NULL,
+	[Estado] [char](1) NULL,
+	[UsuarioCreacion] [varchar](20) NULL,
+	[FechaCreacion] [datetime] NULL,
+	[UsuarioModificacion] [varchar](20) NULL,
+	[FechaModificacion] [datetime] NULL,
+	CONSTRAINT [PK_SecurityPerfilGrupoDetalleProcesoAcceso] PRIMARY KEY ([IdModulo],[IdPerfil],[IdModuloGrupo],[IdGrupo],[IdDetalle],[IdProceso]), 
+	CONSTRAINT [PK_SecurityPerfilGrupoDetalleProcesoAcceso_SecurityPerfil] FOREIGN KEY ([IdModulo],[IdPerfil]) REFERENCES [SecurityPerfil]([IdModulo],[IdPerfil]),
+	CONSTRAINT [PK_SecurityPerfilGrupoDetalleProcesoAcceso_SecurityGrupoDetalleAcceso] FOREIGN KEY ([IdModuloGrupo],[IdGrupo],[IdDetalle],[IdProceso]) REFERENCES [SecurityGrupoDetalleProceso]([IdModulo],[IdGrupo],[IdDetalle],[IdProceso])
+)

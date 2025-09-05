@@ -1,0 +1,358 @@
+﻿var int_NumPagina = 1;
+var int_TamPagina = 10;
+var int_PagMostrar = 9;
+var urlEdicion = 'RegistroLocal.aspx';
+
+$(function () {
+
+    //Configuracion del ubigeo
+    $("#ddlPais").change(function () {
+        CargarDepartamento();
+        CargarProvincia();
+        CargarDistrito();
+        return false;
+    });
+
+    $("#ddlDepartamento").change(function () {
+        CargarProvincia();
+        CargarDistrito();
+        return false;
+    });
+
+    $("#ddlProvincia").change(function () {
+        CargarDistrito();
+        return false;
+    });
+
+    CargarPais();
+
+    //Configuracion de los botones
+    $("#btnAgregar").click(function () {
+        MostrarMensajeCargando();
+        document.location.href = urlEdicion;
+        return false;
+    });
+
+    $("#btnModificar").click(function () {
+        Editar();
+        return false;
+    });
+
+    $("#btnActivar").click(function () {
+        Activar();
+        return false;
+    });
+
+    $("#btnInactivar").click(function () {
+        Inactivar();
+        return false;
+    });
+
+    $("#btnBuscar").click(function () {
+        ListarLocal(1);
+        return false;
+    });
+
+    KeyPressEnter("divFiltro",
+        function () {
+            $("#btnBuscar").click();
+        });
+
+    $("#btnBuscar").focus();
+
+    ListarLocal(1);
+});
+
+function ObtenerFiltros() {
+    var obj_Filtro = new Object();
+
+    obj_Filtro.IdEmpresa = null;
+    if ($("#ddlEmpresa").val() != '')
+        obj_Filtro.IdEmpresa = $("#ddlEmpresa").val();
+
+    obj_Filtro.Nombre = $("#txtNombre").val();
+
+    obj_Filtro.Estado = null;
+    if ($("#ddlEstado").val() != '')
+        obj_Filtro.Estado = $("#ddlEstado").val();
+
+    obj_Filtro.IdPais = null;
+    if ($("#ddlPais").val() != '-1')
+        obj_Filtro.IdPais = $("#ddlPais").val();
+
+    obj_Filtro.IdDepartamento = null;
+    if ($("#ddlDepartamento").val() != '-1')
+        obj_Filtro.IdDepartamento = $("#ddlDepartamento").val();
+
+    obj_Filtro.IdProvincia = null;
+    if ($("#ddlProvincia").val() != '-1')
+        obj_Filtro.IdProvincia = $("#ddlProvincia").val();
+
+    obj_Filtro.IdDistrito = null;
+    if ($("#ddlDistrito").val() != '-1')
+        obj_Filtro.IdDistrito = $("#ddlDistrito").val();
+
+    obj_Filtro.HoraInicio = null;
+    if ($("#txtHoraInicio").val() != '')
+        obj_Filtro.HoraInicio = $("#txtHoraInicio").val();
+
+    obj_Filtro.HoraFin = null;
+    if ($("#txtHoraFin").val() != '')
+        obj_Filtro.HoraFin = $("#txtHoraFin").val();
+
+
+    return obj_Filtro;
+}
+
+function CargarPais() {
+    var ddlPais = $("#ddlPais");
+    ddlPais.html('');
+    ddlPais.append($("<option value='-1'>--Todos--</option>"));
+    AccionDefault(true, "Local.aspx/ListarPais", {},
+    function (obj_pLista) {
+        for (var i = 0; i < obj_pLista.length; i++) {
+            ddlPais.append($("<option value='" + obj_pLista[i].Pais.IdPais + "'>" + obj_pLista[i].Pais.Descripcion + "</option>"));
+        }
+    }, null, null, null, 1);
+}
+
+function CargarDepartamento() {
+    var ddlDepartamento = $("#ddlDepartamento");
+    ddlDepartamento.html('');
+    ddlDepartamento.append($("<option value='-1'>--Todos--</option>"));
+
+    if ($("#ddlPais").val() != '-1') {
+        var obj_Data = { "int_pIdPais": $("#ddlPais").val() };
+        AccionDefault(true, "Local.aspx/ListarDepartamento", obj_Data,
+        function (obj_pLista) {
+            for (var i = 0; i < obj_pLista.length; i++) {
+                ddlDepartamento.append($("<option value='" + obj_pLista[i].Departamento.IdDepartamento + "'>" + obj_pLista[i].Departamento.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+function CargarProvincia() {
+    var ddlProvincia = $("#ddlProvincia");
+    ddlProvincia.html('');
+    ddlProvincia.append($("<option value='-1'>--Todos--</option>"));
+
+    if ($("#ddlDepartamento").val() != '-1') {
+        var obj_Data = {
+            "int_pIdPais": $("#ddlPais").val(),
+            "int_pIdDepartamento": $("#ddlDepartamento").val()
+        };
+        AccionDefault(true, "Local.aspx/ListarProvincia", obj_Data,
+        function (obj_pLista) {
+            for (var i = 0; i < obj_pLista.length; i++) {
+                ddlProvincia.append($("<option value='" + obj_pLista[i].Provincia.IdProvincia + "'>" + obj_pLista[i].Provincia.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+
+function CargarDistrito() {
+    var ddlDistrito = $("#ddlDistrito");
+    ddlDistrito.html('');
+    ddlDistrito.append($("<option value='-1'>--Todos--</option>"));
+
+    if ($("#ddlProvincia").val() != '-1') {
+        var obj_Data = {
+            "int_pIdPais": $("#ddlPais").val(),
+            "int_pIdDepartamento": $("#ddlDepartamento").val(),
+            "int_pIdProvincia": $("#ddlProvincia").val()
+        };
+        AccionDefault(true, "Local.aspx/ListarDistrito", obj_Data,
+        function (obj_pLista) {
+            for (var i = 0; i < obj_pLista.length; i++) {
+                ddlDistrito.append($("<option value='" + obj_pLista[i].Distrito.IdDistrito + "'>" + obj_pLista[i].Distrito.Descripcion + "</option>"));
+            }
+        }, null, null, null, 1);
+    }
+}
+
+
+function ListarLocal(int_pNumPagina) {
+    int_NumPagina = int_pNumPagina;
+    var obj_Filtro = ObtenerFiltros();
+    var obj_Data = {
+        "int_pIdEmpresa": obj_Filtro.IdEmpresa,
+        "str_pNombre": obj_Filtro.Nombre,
+        "str_pEstado": obj_Filtro.Estado,
+        "int_pHoraInicio": obj_Filtro.HoraInicio,
+        "int_pHoraFin": obj_Filtro.HoraFin,
+        "int_pIdPais": obj_Filtro.IdPais,
+        "int_pIdDepartamento": obj_Filtro.IdDepartamento,
+        "int_pIdProvincia": obj_Filtro.IdProvincia,
+        "int_pIdDistrito": obj_Filtro.IdDistrito,
+        "str_pFlagLocalizacion": null,
+        "int_pNumPagina": int_pNumPagina,
+        "int_pTamPagina": int_TamPagina
+    };
+    AccionDefault(true, "Local.aspx/ListarLocal", obj_Data, CargarGrilla, null, null, null, 1);
+}
+
+function CargarGrilla(obj_pLista) {
+
+    var obj_TablaPrincipal = $("<table id='tblLocal' class='table table-bordered table-hover dt-responsive'></table>");
+    var obj_THead = $("<thead></thead>");
+    var obj_FilaPrincipal = $("<tr></tr>");
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Empresa</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Local</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Dirección</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>País</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Departamento</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Provincia</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Distrito</th>"));
+    obj_FilaPrincipal.append($("<th style='width:5%;'>Hora de inicio de atención</th>"));
+    obj_FilaPrincipal.append($("<th style='width:5%;'>Hora fin de atención</th>"));
+    obj_FilaPrincipal.append($("<th style='width:5%;'>Radio en metros</th>"));
+    obj_FilaPrincipal.append($("<th style='width:5%;'>¿La Geolocalización esta activa?</th>"));
+    obj_FilaPrincipal.append($("<th style='width:10%;'>Estado</th>"));
+    obj_THead.append(obj_FilaPrincipal);
+    obj_TablaPrincipal.append(obj_THead);
+
+    var str_PaisDescripcion = '';
+    var str_DepartamentoDescripcion = '';
+    var str_ProvinciaDescripcion = '';
+    var str_DistritoDescripcion = '';
+    var int_HoraInicio = '';
+    var int_HoraFin = '';
+    var str_FlagLocalizacion = '';
+    var str_Estado = '';
+    var obj_TBody = $("<tbody></tbody>");
+    for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+        obj_FilaPrincipal = $("<tr value='" + obj_pLista.Result[i].IdLocal + "'></tr>");
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Empresa.NombreComercial + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Nombre + "</td>"));
+        obj_FilaPrincipal.append($("<td>" + obj_pLista.Result[i].Direccion + "</td>"));
+
+        str_PaisDescripcion = '';
+        if (obj_pLista.Result[i].Ubigeo.Pais != null)
+            str_PaisDescripcion = obj_pLista.Result[i].Ubigeo.Pais.Descripcion;
+        obj_FilaPrincipal.append($("<td>" + str_PaisDescripcion + "</td>"));
+
+        str_DepartamentoDescripcion = '';
+        if (obj_pLista.Result[i].Ubigeo.Departamento != null)
+            str_DepartamentoDescripcion = obj_pLista.Result[i].Ubigeo.Departamento.Descripcion;
+        obj_FilaPrincipal.append($("<td>" + str_DepartamentoDescripcion + "</td>"));
+
+        str_ProvinciaDescripcion = '';
+        if (obj_pLista.Result[i].Ubigeo.Provincia != null)
+            str_ProvinciaDescripcion = obj_pLista.Result[i].Ubigeo.Provincia.Descripcion;
+        obj_FilaPrincipal.append($("<td>" + str_ProvinciaDescripcion + "</td>"));
+
+        str_DistritoDescripcion = '';
+        if (obj_pLista.Result[i].Ubigeo.Distrito != null)
+            str_DistritoDescripcion = obj_pLista.Result[i].Ubigeo.Distrito.Descripcion;
+        obj_FilaPrincipal.append($("<td>" + str_DistritoDescripcion + "</td>"));
+
+        int_HoraInicio = '';
+        if (obj_pLista.Result[i].HoraInicio != null)
+            int_HoraInicio = obj_pLista.Result[i].HoraInicio;
+        obj_FilaPrincipal.append($("<td>" + int_HoraInicio + "</td>"));
+
+        int_HoraFin = '';
+        if (obj_pLista.Result[i].HoraFin != null)
+            int_HoraFin = obj_pLista.Result[i].HoraFin;
+        obj_FilaPrincipal.append($("<td>" + int_HoraFin + "</td>"));
+
+        dec_Radio = '';
+        if (obj_pLista.Result[i].Radio != null)
+            dec_Radio = obj_pLista.Result[i].Radio;
+        obj_FilaPrincipal.append($("<td>" + dec_Radio + "</td>"));
+
+        str_FlagLocalizacion = obj_pLista.Result[i].FlagLocalizacion == 'S' ? "Si" : "No";
+        obj_FilaPrincipal.append($("<td style='text-align:center'>" + str_FlagLocalizacion + "</td>"));
+
+        str_Estado = obj_pLista.Result[i].Estado == 'A' ? "Activo" : "Inactivo";
+        obj_FilaPrincipal.append($("<td style='text-align:center'>" + str_Estado + "</td>"));
+        obj_TBody.append(obj_FilaPrincipal);
+    }
+    obj_TablaPrincipal.append(obj_TBody);
+
+    var int_TotalPaginas = Math.ceil(obj_pLista.Total / int_TamPagina) == 0 ? 1 : Math.ceil(obj_pLista.Total / int_TamPagina);
+    $("#divPaginacionInfo").html("Página " + int_NumPagina + " de " + int_TotalPaginas);
+
+    $("#divPaginacion").unbind();
+    $("#divPaginacion").bootpag({
+        total: int_TotalPaginas,
+        page: int_NumPagina,
+        maxVisible: obj_pLista.Total == 0 ? 1 : int_PagMostrar
+    }).on('page', function (event, num) {
+        ListarLocal(num);
+    });
+
+    $("#divGrilla").html('');
+    $("#divGrilla").append(obj_TablaPrincipal);
+
+    var obj_Tabla = $('#tblLocal').dataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Página _PAGE_ de _PAGES_",
+            "infoEmpty": "",
+            "infoFiltered": "(Filtrado hasta _MAX_ total registros)"
+        },
+        "processing": false,
+        "bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": true,
+        "bInfo": false,
+        "bAutoWidth": false
+    });
+
+    $('#tblLocal tbody').on('click', 'tr', function () {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        }
+        else {
+            obj_Tabla.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+}
+
+function obtenerIdRegistro() {
+    var str_Id = null;
+    var obj_Seleccion = $('#tblLocal').find('.selected');
+    if (obj_Seleccion.length > 0)
+        str_Id = $(obj_Seleccion[0]).attr('value');
+    else
+        AlertJQ(1, 'Seleccione un local.');
+    return str_Id;
+}
+
+function Editar() {
+    var str_Id = obtenerIdRegistro();
+    if (str_Id != null) {
+        MostrarMensajeCargando();
+        document.location.href = urlEdicion + "?id=" + str_Id;
+    }
+}
+
+function Activar() {
+    var str_Id = obtenerIdRegistro();
+    if (str_Id != null) {
+        ConfirmJQ('¿Está seguro de activar el local?', ModificarEstado, [str_Id, 'A']);
+    }
+}
+
+function Inactivar(int_pId) {
+    var str_Id = obtenerIdRegistro();
+    if (str_Id != null) {
+        ConfirmJQ('¿Está seguro de inactivar el local?', ModificarEstado, [str_Id, 'I']);
+    }
+}
+
+function ModificarEstado(str_pId, str_pEstado) {
+    Accion('Local.aspx/ModificarEstado', {
+        "int_pIdLocal": str_pId,
+        "str_pEstado": str_pEstado
+    }, function () {
+        ListarLocal(1);
+    });
+}

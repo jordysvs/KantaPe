@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/microfono"
+    android:fitsSystemWindows="true"
+
+    tools:context="com.kruma.kanta.view.activity.RespuestaAperturaAdministradorActivity">
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:adjustViewBounds="true"
+        android:src="@drawable/logo"
+        android:id="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/txtEsperandorespuestaAdministrador"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:inputType="text"
+        android:hint="Esperando respuesta del administrador"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:textColorHint="@color/cardview_light_background"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+    <ImageView
+        android:id="@+id/loadingAdministrador"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/txtEsperandorespuestaAdministrador"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true" />
+
+
+    <Button
+        android:id="@+id/btnCancelarAperturaAdministrador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/mybutton"
+        android:text="CANCELAR APERTURA"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#76FF03"
+        android:elevation="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>

@@ -1,0 +1,243 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Serialization;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Kruma.Core.Security;
+
+public partial class Forms_Gestion_RegistroLocalCancion : System.Web.UI.Page
+{
+    #region Eventos
+
+    /// <summary>
+    /// Evento de carga de la pagina
+    /// </summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>12/07/2016</FecCrea></item></list></remarks>
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        CargaInicial();
+    }
+
+    #endregion
+
+    #region Metodos Privados
+
+    /// <summary>
+    /// Carga inicial del formulario
+    /// </summary>
+    private void CargaInicial()
+    {
+        Master_Default obj_MasterPage = (Master_Default)this.Master;
+        obj_MasterPage.TituloPagina = "Carga Masiva de Canciones";
+
+        //Lista de empresa
+        List<Kruma.KantaPe.Entidad.Empresa> lst_Empresa = null;
+        if (Kruma.Core.Security.SecurityManager.Usuario.Sistema == Kruma.Core.Security.Entity.Constante.Condicion_Positivo)
+            lst_Empresa = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        else
+        {
+            List<Kruma.KantaPe.Entidad.Empleado> lst_Empleado = Kruma.KantaPe.Negocio.Empleado.Listar(null, null, Kruma.Core.Security.SecurityManager.Usuario.IdPersona.Value, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+            lst_Empresa = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+            lst_Empresa = (from obj_Empresa in lst_Empresa
+                           from obj_Empleado in lst_Empleado.Where(x => obj_Empresa.IdEmpresa == x.IdEmpresa).DefaultIfEmpty()
+                           select obj_Empresa).ToList();
+        }
+
+        //Empresa
+        //ddlEmpresa.DataSource = Kruma.Core.Business.Logical.Persona.Listar(null, 2, null, null, null, null, null, null).Result;
+        ddlEmpresa.DataSource = Kruma.KantaPe.Negocio.Empresa.Listar(null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null).Result;
+        ddlEmpresa.DataValueField = "IdPersona";
+        ddlEmpresa.DataTextField = "NombreComercial";
+        ddlEmpresa.DataBind();
+        ddlEmpresa.Items.Insert(0, new ListItem("--Todos--", string.Empty));
+
+
+        //VALIDAR
+        List<Kruma.Core.Security.Entity.PerfilUsuario> lstPerfiles = Kruma.Core.Security.Data.PerfilUsuario.Listar(Kruma.Core.Security.SecurityManager.Usuario.IdUsuario, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo);
+        if (lstPerfiles.Count > 0)
+        {
+            Boolean bool_EsAdministrador = false;
+            hdEsAdministrador.Value = "N";
+            for (int i = 0; i < lstPerfiles.Count; i++)
+            {
+                if (lstPerfiles[i].IdPerfil == "ADMINISTRADOR")
+                {
+                    bool_EsAdministrador = true;
+                    hdEsAdministrador.Value = "S";
+                }
+            }
+            if (!bool_EsAdministrador)
+            {
+                List<Kruma.KantaPe.Entidad.Usuario> lst_Usuario = Kruma.KantaPe.Data.Usuario.Listar(SecurityManager.Usuario.IdUsuario, null, SecurityManager.Usuario.IdPersona, null, null, null, null, null, null, null, null, null).Result;
+                if (lst_Usuario.Count > 0)
+                {
+                    ddlEmpresa.SelectedValue = lst_Usuario[0].IdEmpresa.ToString();
+
+                    hdIdLocalValidar.Value = lst_Usuario[0].IdLocal.ToString();
+                    hdIdEmpresa.Value = lst_Usuario[0].IdEmpresa.ToString();
+                }
+            }
+        }
+
+        ddlLocal.Items.Insert(0, new ListItem("--Seleccione--", string.Empty));
+
+    }
+
+    #endregion
+
+    #region Inicializar - Agregar
+
+    //-----------------LISTAR---------------
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Cancion> ListarCancion(string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Cancion.Listar(str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Genero> ListarGenero(string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Genero.Listar(str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma> ListarIdioma(string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Idioma.Listar(str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Artista> ListarArtista(string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Artista.Listar(str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+    [WebMethod]
+    public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Album> ListarAlbum(int? int_IdArtista, string str_pDescripcion, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.Album.Listar(int_IdArtista, null, str_pDescripcion, Kruma.KantaPe.Entidad.Constante.Estado_Activo, int_pNumPagina, int_pTamPagina);
+    }
+
+
+    //-------------------------------------------------AGREGAR-----------------------------------------------
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarCancion(string str_pDescripcion)
+    {
+        Kruma.KantaPe.Entidad.Cancion obj_Cancion = new Kruma.KantaPe.Entidad.Cancion();
+        obj_Cancion.Descripcion = str_pDescripcion;
+        obj_Cancion.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Cancion.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Cancion.UsuarioModificacion = obj_Cancion.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Cancion.Insertar(obj_Cancion);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarGenero(string str_pDescripcion)
+    {
+        Kruma.KantaPe.Entidad.Genero obj_Genero = new Kruma.KantaPe.Entidad.Genero();
+        obj_Genero.Descripcion = str_pDescripcion;
+        obj_Genero.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Genero.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Genero.UsuarioModificacion = obj_Genero.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Genero.Insertar(obj_Genero);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarIdioma(string str_pDescripcion)
+    {
+        Kruma.KantaPe.Entidad.Idioma obj_Idioma = new Kruma.KantaPe.Entidad.Idioma();
+        obj_Idioma.Descripcion = str_pDescripcion;
+        obj_Idioma.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Idioma.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Idioma.UsuarioModificacion = obj_Idioma.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Idioma.Insertar(obj_Idioma);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarArtista(string str_pDescripcion)
+    {
+        Kruma.KantaPe.Entidad.Artista obj_Artista = new Kruma.KantaPe.Entidad.Artista();
+        obj_Artista.Nombre = str_pDescripcion;
+        obj_Artista.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Artista.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Artista.UsuarioModificacion = obj_Artista.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Artista.Insertar(obj_Artista);
+    }
+
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult AgregarAlbum(string str_pDescripcion, int? int_pIdArtista)
+    {
+        Kruma.KantaPe.Entidad.Album obj_Album = new Kruma.KantaPe.Entidad.Album();
+        obj_Album.IdArtista = int_pIdArtista;
+        obj_Album.Titulo = str_pDescripcion;
+        obj_Album.Estado = Kruma.KantaPe.Entidad.Constante.Estado_Activo;
+        obj_Album.UsuarioCreacion = SecurityManager.Usuario.IdUsuario;
+        obj_Album.UsuarioModificacion = obj_Album.UsuarioCreacion;
+        return Kruma.KantaPe.Negocio.Album.Insertar(obj_Album);
+    }
+    #endregion
+
+    #region Metodos Publicos
+
+    [WebMethod]
+    public static object ListarLocalCancionTemporal(
+        int? int_pIdEmpresa, int? int_pIdLocal, int? int_pNumPagina, int? int_pTamPagina)
+    {
+        return Kruma.KantaPe.Negocio.LocalCancionTemporal.Listar(int_pIdEmpresa, int_pIdLocal, int_pNumPagina, int_pTamPagina);
+    }
+    //Cargar Local
+    [WebMethod]
+    public static object ListarLocal(int? int_pIdPersona)
+    {
+        //return Kruma.Core.Business.Data.PersonaDireccion.Listar(int_pIdPersona, null, null, null, null, null, null, null, null, null, null);
+        return Kruma.KantaPe.Negocio.Local.Listar(null, int_pIdPersona, null, null, null, null, null, null, null, Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, null, null, null, null, null);
+    }
+    /// <summary>
+    /// Obtiene los datos de canción
+    /// </summary>
+    /// <param name="int_pIdCancion">Id de canción</param>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>12/07/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.KantaPe.Entidad.Cancion ObtenerCancion(int int_pIdCancion)
+    {
+        return Kruma.KantaPe.Negocio.Cancion.Obtener(int_pIdCancion);
+    }
+
+    /// <summary>
+    /// Guarda la informacion de canción
+    /// </summary>
+    /// <param name="str_pCancion">Json Cancion</param>
+    /// <returns>Resultado del proceso</returns>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>12/07/2016</FecCrea></item></list></remarks>
+    [WebMethod]
+    public static Kruma.Core.Util.Common.ProcessResult GuardarCargaMasiva(string str_pLocalCacion)
+    {
+
+        JavaScriptSerializer obj_JsSerializer = new JavaScriptSerializer();
+
+
+        System.Collections.Generic.List<Kruma.KantaPe.Entidad.LocalCancion> lst_LocalCancion = obj_JsSerializer.Deserialize<System.Collections.Generic.List<Kruma.KantaPe.Entidad.LocalCancion>>(str_pLocalCacion);
+        return Kruma.KantaPe.Negocio.LocalCancion.GuardarCargaMasiva(lst_LocalCancion);
+    }
+
+    [WebMethod]
+    public static string[] ListarMusicas(string str_Directorio)
+    {
+
+        string directorio = "C:\\Users\\usuario\\Desktop\\Musica";
+
+        string[] ficheros = Directory.GetFiles(directorio);
+        return ficheros;
+    }
+
+    #endregion
+
+}

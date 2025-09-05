@@ -1,0 +1,54 @@
+﻿create PROCEDURE [dbo].[CoreInsertarModulo]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de inserción de CoreModulo
+'* Input :
+		@pIdModulo - IdModulo del CoreModulo
+		@pDescripcion - Descripcion del CoreModulo
+		@pEstado - Estado del CoreModulo
+		@pUsuarioCreacion - UsuarioCreacion del CoreModulo
+'* Output : 
+		@pIdImagen - IdImagen del CoreModulo
+'* Creado Por : Kruma
+'* Fecha Creación : 14-04-2016
+'**********************************************************************************
+*/
+(
+	@pIdModulo char(8) = null,
+	@pDescripcion varchar(50) = null, 
+	@pEstado varchar(1) = null, 
+	@pUsuarioCreacion varchar(20) = null,
+	@pIdImagen int out
+)
+AS
+BEGIN
+
+		declare 
+		@vOrden int = null,
+		@vIdImagen int = null
+
+		select @pIdImagen = IsNull(MAX(IdImagen),0)+1 from CoreModulo;
+
+		Insert Into CoreModulo
+		(
+			IdModulo,
+			Descripcion,
+			IdImagen,
+			Estado,
+			UsuarioCreacion,
+			FechaCreacion,
+			UsuarioModificacion,
+			FechaModificacion
+		)
+		Values
+		(
+			@pIdModulo,
+			@pDescripcion,
+			@pIdImagen,
+			@pEstado,
+			@pUsuarioCreacion,
+			getdate(),
+			@pUsuarioCreacion,
+			getdate()
+		)
+END

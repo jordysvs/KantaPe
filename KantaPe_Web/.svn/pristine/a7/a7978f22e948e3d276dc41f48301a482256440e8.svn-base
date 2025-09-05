@@ -1,0 +1,623 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Default.master" AutoEventWireup="true" CodeFile="Turno.aspx.cs" Inherits="Forms_Gestion_Turno" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx" Minify="false" Combine="false" Compress="false">
+        <Scripts>
+             <cc:ScriptReference Path="~/Script/Base/jquery.ui/jquery.ui.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.ui.touch-punch/jquery.ui.touch-punch.js" />
+            <cc:ScriptReference Path="~/Script/Base/draganddrop/DragAndDrop.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.datatables/jquery.dataTables.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.datatables/jquery.datatables.responsive.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.datatables/bootstrap.datatables.js" />
+            <cc:ScriptReference Path="~/Script/Base/bootstrap.datatables/bootstrap.datatables.responsive.js" />
+            <cc:ScriptReference Path="~/Script/Forms/Gestion/Turno.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+    <cc:CSSCombine ID="CSSCombiner" runat="server" CSSHandler="~/Ashx/Combine/CSSHandler.ashx" Compress="false">
+        <CSSReferences>
+            <cc:CSSReference Path="~/Style/Base/jquery.datatables/jquery.datatables.css" />
+            <cc:CSSReference Path="~/Style/Base/jquery.datatables/jquery.datatables.responsive.css" />
+            <cc:CSSReference Path="~/Style/Base/bootstrap.datatables/bootstrap.datatables.css" />
+            <cc:CSSReference Path="~/Style/Base/bootstrap.datetimepicker/bootstrap.datetimepicker.css" />
+            <cc:CSSReference Path="~/Style/Forms/Gestion/Turno.css" />
+        </CSSReferences>
+    </cc:CSSCombine>
+     <style>
+        .ui-draggable-helper {
+            z-index: 999;
+        }
+    </style>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+<div class="row" >
+            <div style="align-content:center;">
+                 <div class="col-lg-12">
+                    <div style="background-color:#78E91B;border:solid;border-width: 2px;width:15px;height:15px;display:inline-block;"></div>
+                    <label>Sonando</label>
+                    <div style="background-color:#F9E502;border:solid;border-width: 2px;width:15px;height:15px;display:inline-block;"></div>
+                    <label>Reproducida</label>
+                    <div style="background-color:white;border:solid;border-width: 2px;width:15px;height:15px;display:inline-block;"></div>
+                    <label>Solicitada</label>
+                </div>
+            </div>
+    </div>
+    <br />
+    <div class="row" id="divTabs">
+        <div class="col-xs-12">
+            <div class="smart-widget-inner">
+                <ul class="nav nav-tabs tab-style1">
+                    <li class="active">
+                        <a id="lnkTabMesa" href="#tabMesa" data-toggle="tab">
+                            <span class="icon-wrapper"><i class="fa fa-music"></i></span>
+                            Mesas
+                        </a>
+                    </li>
+                    <li>
+                        <a id="lnkTabBox" href="#tabBox" data-toggle="tab">
+                            <span class="icon-wrapper"><i class="fa fa-music"></i></span>
+                            Box
+                        </a>
+                    </li>
+                </ul>
+                <div class="smart-widget-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="tabMesa">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="box box-warning">
+                                        <div class="box-body">
+                                            <div class="row" id="divContenido">
+                                                <div class="col-lg-6" style="text-align: -webkit-center; padding-bottom: 10px;">
+                                                    <table class="drop" style="width: 100%; border-style: solid; border-width: 2px; background-color: #6D7BEB;">
+                                                        <tr>
+                                                            <td style="text-align: center; padding: 10px 10px 10px 10px;">
+                                                                <img alt="" src="../../Content/iconocantar.png" style="height: 250px;" />
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                             <td style="text-align: center; padding: 10px 10px 10px 10px;">
+                                                               <strong id='spnTimerEspera' style='font-size: 14px;color:white;'></strong><br />
+                                                               <strong id='spnTimer' style='font-size: 18px;color:black;'></strong><br />
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                           
+                                                            <td style="padding: 10px 10px 10px 10px;">
+                                                                <table id="tblPrimeraMesa" class="agrupador" style="width: 100%;">
+                                                                  <%--  <tr>
+                                                                        <td class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold;"></td>
+                                                                        <td colspan="2" class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold; text-align: center;">MESA 1</td>
+                                                                    </tr>
+                                                                       <tr>
+                                                                        <td rowspan="3" style="vertical-align: middle; text-align: center; font-size: 16px; border-style: solid; width: 80px; border-width: 1px; border-color: black; background-color: #0E1969; color: white; font-weight: bold;">RONDA<br />
+                                                                            <span style="font-size: 60px;">1</span></td>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px; background-color: #78E91B">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 10:05 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Abrazando ausencias</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px; background-color: white">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 10:15 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Adiós</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px; background-color: white">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 10:35 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Mozo:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Algo termino mal</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>--%>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div  id="divSiguientesMesas"  class="col-lg-6 drag">
+                                                    <%--<divstyle="overflow-y: auto; overflow-x: hidden; height: 550px;">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <table class="agrupador" style="width: 100%;">
+                                                                    <tr>
+                                                                        <td class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold;"></td>
+                                                                        <td colspan="2" class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold; text-align: center;">MESA 2</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td rowspan="3" style="vertical-align: middle; text-align: center; font-size: 16px; border-style: solid; width: 80px; border-width: 1px; border-color: black; background-color: #0E1969; color: white; font-weight: bold;">RONDA<br />
+                                                                            <span style="font-size: 60px;">2</span></td>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 11:00 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Algún Tiempo Atras</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 10:15 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Adiós</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 11:15 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Mozo:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Alrededor de Mí</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <table class="agrupador" style="width: 100%;">
+                                                                    <tr>
+                                                                        <td class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold;"></td>
+                                                                        <td colspan="2" class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold; text-align: center;">MESA 4</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td rowspan="3" style="vertical-align: middle; text-align: center; font-size: 16px; border-style: solid; width: 80px; border-width: 1px; border-color: black; background-color: #0E1969; color: white; font-weight: bold;">RONDA<br />
+                                                                            <span style="font-size: 60px;">3</span></td>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 11:25 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Amigos</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconoescuchar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 11:35 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Amor callejero</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconoescuchar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 11:45 PM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Mozo:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Amor sangriento</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <table class="agrupador" style="width: 100%;">
+                                                                    <tr>
+                                                                        <td class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold;"></td>
+                                                                        <td colspan="2" class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold; text-align: center;">MESA 5</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td rowspan="3" style="vertical-align: middle; text-align: center; font-size: 16px; border-style: solid; width: 80px; border-width: 1px; border-color: black; background-color: #0E1969; color: white; font-weight: bold;">RONDA<br />
+                                                                            <span style="font-size: 60px;">4</span></td>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 12:00 AM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Amores lejanos</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 12:10 AM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Atrapado por tu corazón</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 12:20 AM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Mozo:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Aun Sigo Cantando</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <table class="agrupador" style="width: 100%;">
+                                                                    <tr>
+                                                                        <td class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold;"></td>
+                                                                        <td colspan="2" class="ubicacion" style="background-color: #0E1969; border-color: black; color: white; font-weight: bold; text-align: center;">MESA 3</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td rowspan="3" style="vertical-align: middle; text-align: center; font-size: 16px; border-style: solid; width: 80px; border-width: 1px; border-color: black; background-color: #0E1969; color: white; font-weight: bold;">RONDA<br />
+                                                                            <span style="font-size: 60px;">5</span></td>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconoescuchar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 12:25 AM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Ay Dolores</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconoescuchar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 12:30 AM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Canción:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Badass</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table class="mesa">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td class="imagen" style="border-style: solid; border-width: 1px; background-color: #0E1969; color: white; font-weight: bold; border-color: black; background-image: url(&quot;/Content/iconocantar.png&quot;);"></td>
+                                                                                        <td class="apertura" style="border-style: solid; border-width: 1px;">
+                                                                                            <table style="width: 100%;">
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Fecha:</td>
+                                                                                                        <td class="descripcion">19/9/2016 12:45 AM</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Mozo:</td>
+                                                                                                        <td class="descripcion">Enanitos Verdes - Bailarina</td>
+                                                                                                    </tr>
+                                                                                                    <tr>
+                                                                                                        <td class="titulo">Usuario:</td>
+                                                                                                        <td class="descripcion">ADMINISTRADOR GENERAL, KRUMA</td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>--%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade in" id="tabBox">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="box box box-warning">
+                                        <div id="divBox" class="box-body">
+                                            <div class="row">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <asp:HiddenField ID="hdLimiteCanciones" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdAperturaImagen" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdCancion" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdIdLocal" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdTiempoVerificar" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdTiempoSumar" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hdIdTurno" runat="server" ClientIDMode="Static" />
+</asp:Content>
+

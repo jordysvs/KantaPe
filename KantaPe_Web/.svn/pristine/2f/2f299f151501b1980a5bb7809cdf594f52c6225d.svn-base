@@ -1,0 +1,109 @@
+﻿<?xml version="1.0"?>
+<configuration>
+  <appSettings>
+    <add key="CoreConfig" value="Kruma.config"/>
+  </appSettings>
+  <!--
+    For a description of web.config changes see http://go.microsoft.com/fwlink/?LinkId=235367.
+
+    The following attributes can be set on the <httpRuntime> tag.
+      <system.Web>
+        <httpRuntime targetFramework="4.5" />
+      </system.Web>
+  -->
+  <system.web>
+    <compilation debug="true" targetFramework="4.5"/>
+    <httpRuntime/>
+    <pages controlRenderingCompatibilityVersion="4.0"/>
+    <customErrors mode="Off" defaultRedirect="~/Error.aspx" redirectMode="ResponseRewrite" >
+    </customErrors>
+  </system.web>
+  <system.serviceModel>
+    <services>
+      <service name="Kruma.KantaPe.Service.Logical.SolicitudCancion">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.ISolicitudCancion" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Apertura">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IApertura" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Cancion">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.ICancion" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Genero">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IGenero" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Local">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.ILocal" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.LocalCancion">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.ILocalCancion" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.LocalProducto">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.ILocalProducto" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Pedido">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IPedido" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Usuario">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IUsuario" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Oferta">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IOferta" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Evento">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IEvento" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Producto">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IProducto" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Idioma">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IIdioma" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.ProductoTipo">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IProductoTipo" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.AperturaCancionSolicitud">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IAperturaCancionSolicitud" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.Ubicacion">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IUbicacion" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+      <service name="Kruma.KantaPe.Service.Logical.AperturaUsuario">
+        <endpoint address="" binding="webHttpBinding" contract="Kruma.KantaPe.Service.Interface.IAperturaUsuario" bindingConfiguration="" behaviorConfiguration="web"/>
+      </service>
+    </services>
+    <behaviors>
+      <serviceBehaviors>
+        <behavior name="ServiceBehavior">
+          <dataContractSerializer maxItemsInObjectGraph="2147483647"/>
+          <serviceMetadata httpGetEnabled="true"/>
+          <serviceDebug includeExceptionDetailInFaults="false"/>
+        </behavior>
+        <behavior>
+          <dataContractSerializer maxItemsInObjectGraph="2147483647"/>
+          <!-- To avoid disclosing metadata information, set the values below to false before deployment -->
+          <serviceMetadata httpGetEnabled="true" httpsGetEnabled="true"/>
+          <!-- To receive exception details in faults for debugging purposes, set the value below to true.  Set to false before deployment to avoid disclosing exception information -->
+          <serviceDebug includeExceptionDetailInFaults="true"/>
+        </behavior> 
+      </serviceBehaviors>
+      <endpointBehaviors>
+        <behavior name="web">
+          <webHttp/>
+        </behavior>
+      </endpointBehaviors>
+    </behaviors>
+    <protocolMapping>
+      <add binding="basicHttpsBinding" scheme="https"/>
+    </protocolMapping>
+    <serviceHostingEnvironment aspNetCompatibilityEnabled="true" multipleSiteBindingsEnabled="true"/>
+  </system.serviceModel>
+  <system.webServer>
+    <modules runAllManagedModulesForAllRequests="true"/>
+    <!--
+        To browse web app root directory during debugging, set the value below to true.
+        Set to false before deployment to avoid disclosing web app folder information.
+      -->
+    <directoryBrowse enabled="true"/>
+  </system.webServer>
+</configuration>

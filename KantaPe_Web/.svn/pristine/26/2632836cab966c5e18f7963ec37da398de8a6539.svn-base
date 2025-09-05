@@ -1,0 +1,257 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Util.Common;
+using System.Transactions;
+
+namespace Kruma.KantaPe.Negocio
+{
+    /// <summary>Oferta</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo </CreadoPor></item>
+    /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+
+    public class Oferta
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Oferta</summary>
+        /// <param name="int_pIdEmpresa">Id de la empresa</param>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdOferta">Id de la oferta</param>
+        /// <param name="str_pNombre">Nombre</param>
+        /// <param name="str_pDescripcion">Descripcion</param>
+        /// <param name="dt_pFechaInicio">Fecha inicio de vencimiento de la oferta</param>
+        /// <param name="dt_pFechaFin">Fecha fin de vencimiento de la oferta</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Oferta</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Oferta> Listar(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pIdOferta,
+            string str_pNombre,
+            string str_pDescripcion,
+            DateTime? dt_pFechaInicio,
+            DateTime? dt_pFechaFin,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Oferta.Listar(
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pIdOferta,
+                str_pNombre,
+                str_pDescripcion,
+                dt_pFechaInicio,
+                dt_pFechaFin,
+                str_pEstado,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+
+
+        /// <summary>Listar Oferta Sin Vencer</summary>
+        ///  <param name="int_pIdEmpresa">Id de la empresa</param>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdOferta">Id de la oferta</param>
+        /// <param name="str_pNombre">Nombre</param>
+        /// <param name="str_pDescripcion">Descripcion</param>
+        /// <param name="dt_pFechaInicio">Fecha inicio de vencimiento de la oferta</param>
+        /// <param name="dt_pFechaFin">Fecha fin de vencimiento de la oferta</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Oferta sin Vencer</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Jordy Vilchez</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Oferta> ListarOfertaSinVencer(
+int? int_pIdEmpresa,
+int? int_pIdLocal,
+int? int_pIdOferta,
+string str_pNombre,
+string str_pDescripcion,
+DateTime? dt_pFechaInicio,
+DateTime? dt_pFechaFin,
+string str_pEstado,
+int? int_pNumPagina,
+int? int_pTamPagina)
+        {
+            return Kruma.KantaPe.Data.Oferta.ListarOfertaSinVencer(
+                int_pIdEmpresa,
+                int_pIdLocal,
+                int_pIdOferta,
+                str_pNombre,
+                str_pDescripcion,
+                dt_pFechaInicio,
+                dt_pFechaFin,
+                str_pEstado,
+                int_pNumPagina,
+                int_pTamPagina);
+        }
+
+        /// <summary>Obtener Oferta</summary>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdOferta">Id del oferta</param>
+        /// <returns>Objeto Oferta</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Oferta Obtener(int int_pIdLocal, int int_pIdOferta)
+        {
+            return Kruma.KantaPe.Data.Oferta.Obtener(int_pIdLocal, int_pIdOferta);
+        }
+
+        /// <summary>Insertar Oferta</summary>
+        /// <param name="obj_pOferta">Oferta</param>
+        /// <returns>Id de Oferta</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Insertar(Kruma.KantaPe.Entidad.Oferta obj_pOferta)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    //Inserción de la oferta
+                    obj_pOferta.IdOferta = Kruma.KantaPe.Data.Oferta.Insertar(obj_pOferta);
+
+                    //Actualización de la imagen
+                    Kruma.KantaPe.Entidad.Oferta obj_OfertaInsertado = Obtener(obj_pOferta.IdLocal.Value, obj_pOferta.IdOferta.Value);
+                    obj_OfertaInsertado.Foto = obj_pOferta.Foto;
+                    if (obj_OfertaInsertado.Foto != null)
+                    {
+                        if (obj_OfertaInsertado.Foto.IdDocumento.HasValue)
+                        {
+                            int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Oferta).Valor);
+
+                            new Kruma.Core.FileServer.FileServerManager().copyFile(
+                                obj_OfertaInsertado.Foto.IdAlmacen.Value,
+                                obj_OfertaInsertado.Foto.IdRegistro.Value,
+                                obj_OfertaInsertado.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_OfertaInsertado.IdImagen.Value,
+                                obj_OfertaInsertado.UsuarioCreacion);
+                        }
+                    }
+                    obj_Resultado = new ProcessResult(obj_OfertaInsertado.IdOferta);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Oferta</summary>
+        /// <param name="obj_pOferta">Oferta</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static ProcessResult Modificar(Kruma.KantaPe.Entidad.Oferta obj_pOferta)
+        {
+            ProcessResult obj_Resultado = null;
+            try
+            {
+                using (TransactionScope obj_Transaction = new TransactionScope())
+                {
+                    Kruma.KantaPe.Entidad.Oferta obj_OfertaAModificar = Obtener(obj_pOferta.IdLocal.Value, obj_pOferta.IdOferta.Value);
+                    obj_OfertaAModificar.Nombre = obj_pOferta.Nombre;
+                    obj_OfertaAModificar.Descripcion = obj_pOferta.Descripcion;
+                    obj_OfertaAModificar.FechaOferta = obj_pOferta.FechaOferta;
+                    obj_OfertaAModificar.FechaVencimiento = obj_pOferta.FechaVencimiento;
+                    obj_OfertaAModificar.Estado = obj_pOferta.Estado;
+                    obj_OfertaAModificar.UsuarioModificacion = obj_pOferta.UsuarioModificacion;
+
+                    //Actualización del evento
+                    Kruma.KantaPe.Data.Oferta.Modificar(obj_OfertaAModificar);
+
+                    //Actualización de la imagen
+                    if (obj_OfertaAModificar.Foto != null)
+                    {
+                        int int_IdAlmacenDestino = int.Parse(Kruma.Core.Business.Logical.Parametro.Obtener(
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Modulo,
+                                Kruma.KantaPe.Entidad.Constante.Parametro.Almacen_Oferta).Valor);
+
+                        Kruma.Core.FileServer.FileServerManager obj_FileServerManager = new Kruma.Core.FileServer.FileServerManager();
+                        System.Collections.Generic.List<Kruma.Core.FileServer.Entity.FileUpload> lstFotos = obj_FileServerManager.getFiles(int_IdAlmacenDestino, obj_OfertaAModificar.IdImagen.Value);
+                        foreach (Kruma.Core.FileServer.Entity.FileUpload obj_Foto in lstFotos)
+                            obj_FileServerManager.deleteFile(
+                                obj_Foto.IdDocumento.Value, obj_Foto.IdAlmacen.Value, obj_Foto.IdRegistro.Value, obj_OfertaAModificar.UsuarioModificacion);
+
+                        if (obj_OfertaAModificar.Foto.IdDocumento.HasValue)
+                            obj_FileServerManager.copyFile(
+                                obj_OfertaAModificar.Foto.IdAlmacen.Value,
+                                obj_OfertaAModificar.Foto.IdRegistro.Value,
+                                obj_OfertaAModificar.Foto.IdDocumento.Value,
+                                int_IdAlmacenDestino,
+                                obj_OfertaAModificar.IdImagen.Value,
+                                obj_OfertaAModificar.UsuarioModificacion);
+                    }
+
+                    obj_Resultado = new ProcessResult(obj_OfertaAModificar.IdOferta);
+                    obj_Transaction.Complete();
+                }
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new ProcessResult(obj_pExcepcion);
+            }
+            return obj_Resultado;
+        }
+
+        /// <summary>Modificar Estado Oferta</summary>
+        /// <param name="obj_pOferta">Oferta</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.ProcessResult ModificarEstado(Kruma.KantaPe.Entidad.Oferta obj_pOferta)
+        {
+            Kruma.Core.Util.Common.ProcessResult obj_Resultado = null;
+            try
+            {
+                Kruma.KantaPe.Entidad.Oferta obj_Oferta = Kruma.KantaPe.Data.Oferta.Obtener(
+                    obj_pOferta.IdLocal.Value,
+                    obj_pOferta.IdOferta.Value);
+
+                if (obj_Oferta.Estado == obj_pOferta.Estado)
+                {
+                    string str_Mensaje = obj_pOferta.Estado ==
+                        Kruma.KantaPe.Entidad.Constante.Estado_Activo ?
+                        "La oferta ya se encuentra activa." :
+                        "La oferta ya se encuentra inactiva.";
+                    return new Kruma.Core.Util.Common.ProcessResult(new Exception(str_Mensaje), str_Mensaje);
+                }
+                obj_Oferta.Estado = obj_pOferta.Estado;
+                obj_Oferta.UsuarioModificacion = obj_pOferta.UsuarioModificacion;
+                Kruma.KantaPe.Data.Oferta.Modificar(obj_Oferta);
+
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pOferta.IdLocal);
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.Core.Util.Common.ProcessResult(obj_pExcepcion);
+            }
+
+            return obj_Resultado;
+        }
+
+        #endregion
+    }
+}

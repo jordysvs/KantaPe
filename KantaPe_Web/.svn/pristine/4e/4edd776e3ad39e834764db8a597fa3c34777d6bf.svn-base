@@ -1,0 +1,63 @@
+﻿CREATE PROCEDURE [SecurityListarPerfil] 
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de listado de perfiles
+	para el usuario
+'*	Input			: @pIdModulo - Codigo del Modulo
+					  @pIdPerfil - Codigo del perfil
+					  @pDescripcion - Descripción del perfil
+					  @pEstado - Estado del usuario
+					  @pNumPagina - Número de pagina
+					  @pTamPagina - Cantidad de registros por pagina
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación		: 15/12/2014
+'**********************************************************************************
+*/
+(
+	@pIdModulo varchar(MAX) = null,
+	@pIdPerfil varchar(MAX) = null,
+	@pCodigo varchar(20) = null,
+	@pDescripcion varchar(50) = null,
+	@pSistema char(1) = null,
+	@pEstado char(1) = null,
+	@pNumPagina int = null,
+	@pTamPagina int = null
+)
+As
+Begin
+		Select tbl.*
+		from(
+		Select
+		ROW_NUMBER() OVER (ORDER BY P.IdPerfil ASC) AS Num_Fila,
+			P.IdModulo,
+			P.IdPerfil,
+			P.Descripcion,
+			P.Estado,
+			P.Sistema,
+			P.UsuarioCreacion,
+			P.FechaCreacion,
+			P.UsuarioModificacion,
+			P.FechaModificacion,
+			M.IdModulo as Modulo_IdModulo,
+			M.Descripcion as Modulo_Descripcion,
+			M.Estado as Modulo_Estado,
+			COUNT(*) OVER() Total_Filas
+			From SecurityPerfil P
+			inner join CoreModulo M on
+			M.IdModulo = P.IdModulo AND
+			M.Estado = 'A'
+			Where 
+			(@pIdModulo is null or P.IdModulo in 
+				(SELECT item FROM Split(',',@pIdModulo))) AND
+			(@pIdPerfil is null or P.IdPerfil in 
+					(SELECT item FROM Split(',',@pIdPerfil))) AND
+			(@pCodigo is null or P.IdPerfil like '%' + @pCodigo + '%') AND
+			(@pDescripcion is null or P.Descripcion like '%' + @pDescripcion + '%') AND
+			(@pSistema is null or P.Sistema = @pSistema) AND
+			(@pEstado is null or P.Estado = @pEstado) 
+		) tbl
+		WHERE (@pTamPagina IS NULL OR tbl.Num_Fila BETWEEN (@pNumPagina * @pTamPagina)- @pTamPagina + 1 AND (@pNumPagina * @pTamPagina));
+
+End
+

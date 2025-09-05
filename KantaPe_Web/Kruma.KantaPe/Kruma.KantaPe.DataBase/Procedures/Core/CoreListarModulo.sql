@@ -1,0 +1,49 @@
+﻿create Procedure [dbo].[CoreListarModulo] 
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de listado de modulos
+'*	Input			: 	@pIdModulo - Id del modulo,
+						@pDescripcion - Descripcion del modulo,
+						@pEstado - Estado del empleado,
+						@pNumPagina - Número de pagina
+						@pTamPagina - Cantidad de registros por pagina
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación	: 28/03/2016
+'**********************************************************************************
+*/
+(
+	@pIdModulo varchar(max) = null,
+	@pCodigo varchar(8) = null,
+	@pDescripcion varchar(100) = null,
+	@pEstado char(1) = null,
+	@pNumPagina int = null,
+	@pTamPagina int = null
+)
+As
+Begin
+		Select tbl.*
+		from(
+		Select
+		ROW_NUMBER() OVER (ORDER BY M.IdModulo ASC) AS Num_Fila,
+			M.IdModulo,
+			M.Descripcion,
+			M.IdImagen,
+			m.SitioWeb,
+			M.Estado,
+			M.UsuarioCreacion,
+			M.FechaCreacion,
+			M.UsuarioModificacion,
+			M.FechaModificacion,
+			COUNT(*) OVER() Total_Filas
+			From CoreModulo M
+			Where 
+			(@pIdModulo is null or M.IdModulo in 
+				(SELECT item FROM [dbo].Split(',',@pIdModulo))) AND
+			(@pCodigo is null or M.IdModulo like '%' + @pCodigo + '%') AND
+			(@pDescripcion is null or M.Descripcion like '&' + @pDescripcion + '%') AND
+			(@pEstado is null or M.Estado = @pEstado) 
+		) tbl
+		WHERE (@pTamPagina IS NULL OR tbl.Num_Fila BETWEEN (@pNumPagina * @pTamPagina)- @pTamPagina + 1 AND (@pNumPagina * @pTamPagina));
+
+End

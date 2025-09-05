@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+    /// <summary>Idioma</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+    /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+
+    public class Idioma
+    {
+
+        #region Metodos Públicos
+
+        /// <summary>Listado de Idioma</summary>
+        /// <param name="int_pIdIdioma">Id del idioma</param>
+        /// <param name="str_pDescripcion">Descripción del idioma</param>
+        /// <param name="str_pEstado">Estado del idioma</param>
+        /// <param name="int_pNumPagina" >Numero de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de idioma</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma> Listar(
+            int? int_pIdIdioma,
+            string str_pDescripcion,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ListarIdioma");
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", int_pIdIdioma.HasValue ? int_pIdIdioma.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDescripcion", !string.IsNullOrEmpty(str_pDescripcion) ? str_pDescripcion : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = Kruma.Core.Data.DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Idioma> lst_Idioma = new List<Kruma.KantaPe.Entidad.Idioma>();
+            Kruma.KantaPe.Entidad.Idioma obj_Idioma = new Kruma.KantaPe.Entidad.Idioma();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Idioma.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                obj_Idioma.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Idioma.Descripcion = obj_Row["Descripcion"] is DBNull ? null : obj_Row["Descripcion"].ToString();
+                obj_Idioma.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Idioma.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_Idioma.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Idioma.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Idioma.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+                lst_Idioma.Add(obj_Idioma);
+            }
+
+            obj_Lista.Result = lst_Idioma;
+            return obj_Lista;
+        }
+
+        /// <summary>Obtener Idioma</summary>
+        /// <param name="int_pIdIdioma">Id del idioma</param>
+        /// <returns>Objeto Idioma</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Idioma Obtener(int int_pIdIdioma)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma> lst_Idioma = Listar(int_pIdIdioma, null, null, null, null);
+            return lst_Idioma.Result.Count > 0 ? lst_Idioma.Result[0] : null;
+        }
+
+        /// <summary>Insertar Idioma</summary>
+        /// <param name="obj_pIdioma">Idioma</param>
+        /// <returns>Id de Idioma</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static int Insertar(Kruma.KantaPe.Entidad.Idioma obj_pIdioma)
+        {
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("InsertarIdioma");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDescripcion", obj_pIdioma.Descripcion));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", obj_pIdioma.Estado));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pUsuarioCreacion", obj_pIdioma.UsuarioCreacion));
+
+            Kruma.Core.Data.Entity.Parameter obj_IdIdioma = new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", DbType.Int32);
+            obj_IdIdioma.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdIdioma);
+
+            Kruma.Core.Data.DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdIdioma = (int)obj_IdIdioma.Value;
+            return int_IdIdioma;
+        }
+
+        /// <summary>Modificar Idioma</summary>
+        /// <param name="obj_pIdioma">Idioma</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Carlos Gómez</CreadoPor></item>
+        /// <item><FecCrea>01-07-2016</FecCrea></item></list></remarks>
+        public static void Modificar(Kruma.KantaPe.Entidad.Idioma obj_pIdioma)
+        {
+            Kruma.Core.Data.Entity.DataOperation dop_Operacion = new Kruma.Core.Data.Entity.DataOperation("ActualizarIdioma");
+
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pIdIdioma", obj_pIdioma.IdIdioma));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pDescripcion", obj_pIdioma.Descripcion));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pEstado", obj_pIdioma.Estado));
+            dop_Operacion.Parameters.Add(new Kruma.Core.Data.Entity.Parameter("@pUsuarioModificacion", obj_pIdioma.UsuarioModificacion));
+
+            Kruma.Core.Data.DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+        /// <summary>Listado de ListarIdiomaPorLocal</summary>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <returns>Lista de ListarIdiomaPorLocal</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por Jordy Vilchez</CreadoPor></item>
+        /// <item><FecCrea>01-09-2017</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma> ListarIdiomaPorLocal(
+            int? int_pIdLocal)
+        {
+
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Idioma>();
+
+            DataOperation dop_Operacion = new DataOperation("ListarIdiomaPorLocal");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Idioma> lst_Idioma = new List<Kruma.KantaPe.Entidad.Idioma>();
+
+            Kruma.KantaPe.Entidad.Idioma obj_Idioma = new Kruma.KantaPe.Entidad.Idioma();
+
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                
+                    obj_Idioma = new Kruma.KantaPe.Entidad.Idioma();
+                obj_Idioma.IdIdioma = obj_Row["IdIdioma"] is DBNull ? null : (int?)obj_Row["IdIdioma"];
+                obj_Idioma.Descripcion = obj_Row["Descripcion"] is DBNull ? null : obj_Row["Descripcion"].ToString();
+
+                lst_Idioma.Add(obj_Idioma);
+            }
+
+            obj_Lista.Result = lst_Idioma;
+
+            return obj_Lista;
+        }
+        #endregion
+
+    }
+}

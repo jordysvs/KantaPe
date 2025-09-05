@@ -1,0 +1,184 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using Kruma.Core.Data;
+using Kruma.Core.Data.Entity;
+
+namespace Kruma.KantaPe.Data
+{
+    /// <summary>Evento</summary>
+    /// <remarks><list type="bullet">
+    /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+    /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+
+    public class Evento
+    {
+        #region Metodos Públicos
+
+        /// <summary>Listado de Evento</summary>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdEvento">Id del evento</param>
+        /// <param name="str_pNombre">Nombre</param>
+        /// <param name="str_pDescripcion">Descripcion</param>
+        /// <param name="dtm_pFechaInicio">Fecha inicio del evento</param>
+        /// <param name="dtm_pFechaFin">Fecha fin del evento</param>
+        /// <param name="str_pEstado">Estado</param>
+        /// <param name="int_pNumPagina" >Número de pagina</param>
+        /// <param name="int_pTamPagina" >Tamaño de pagina</param>
+        /// <returns>Lista de Evento</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Evento> Listar(
+            int? int_pIdEmpresa,
+            int? int_pIdLocal,
+            int? int_pIdEvento,
+            string str_pNombre,
+            string str_pDescripcion,
+            DateTime? dtm_pFechaInicio,
+            DateTime? dtm_pFechaFin,
+            string str_pEstado,
+            int? int_pNumPagina,
+            int? int_pTamPagina)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Evento> obj_Lista = new Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Evento>();
+            obj_Lista.PageNumber = int_pNumPagina;
+            obj_Lista.Total = 0;
+
+            DataOperation dop_Operacion = new DataOperation("ListarEvento");
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", int_pIdLocal.HasValue ? int_pIdLocal.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEvento", int_pIdEvento.HasValue ? int_pIdEvento.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNombre", !string.IsNullOrEmpty(str_pNombre) ? str_pNombre : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pDescripcion", !string.IsNullOrEmpty(str_pDescripcion) ? str_pDescripcion : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", !string.IsNullOrEmpty(str_pEstado) ? str_pEstado : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pNumPagina", int_pNumPagina.HasValue ? int_pNumPagina.Value : (object)DBNull.Value));
+            dop_Operacion.Parameters.Add(new Parameter("@pTamPagina", int_pTamPagina.HasValue ? int_pTamPagina.Value : (object)DBNull.Value));
+
+            Parameter obj_FechaInicio = new Parameter("@pFechaInicio", DbType.DateTime);
+            obj_FechaInicio.Direction = ParameterDirection.Input;
+            obj_FechaInicio.Value = dtm_pFechaInicio.HasValue ? dtm_pFechaInicio.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaInicio);
+
+            Parameter obj_FechaFin = new Parameter("@pFechaFin", DbType.DateTime);
+            obj_FechaFin.Direction = ParameterDirection.Input;
+            obj_FechaFin.Value = dtm_pFechaFin.HasValue ? dtm_pFechaFin.Value : (object)DBNull.Value;
+            dop_Operacion.Parameters.Add(obj_FechaFin);
+
+            DataTable dt_Resultado = DataManager.ExecuteDataSet(Conexiones.CO_KantaPe, dop_Operacion).Tables[0];
+
+            List<Kruma.KantaPe.Entidad.Evento> lst_Evento = new List<Kruma.KantaPe.Entidad.Evento>();
+            Kruma.KantaPe.Entidad.Evento obj_Evento = new Kruma.KantaPe.Entidad.Evento();
+            foreach (DataRow obj_Row in dt_Resultado.Rows)
+            {
+                if (lst_Evento.Count == 0)
+                    obj_Lista.Total = (int)obj_Row["Total_Filas"];
+                obj_Evento = new Kruma.KantaPe.Entidad.Evento();
+                obj_Evento.IdLocal = obj_Row["IdLocal"] is DBNull ? null : (int?)obj_Row["IdLocal"];
+                obj_Evento.IdEvento = obj_Row["IdEvento"] is DBNull ? null : (int?)obj_Row["IdEvento"];
+                obj_Evento.Nombre = obj_Row["Nombre"] is DBNull ? null : obj_Row["Nombre"].ToString();
+                obj_Evento.Descripcion = obj_Row["Descripcion"] is DBNull ? null : obj_Row["Descripcion"].ToString();
+                obj_Evento.FechaEvento = obj_Row["FechaEvento"] is DBNull ? null : (DateTime?)obj_Row["FechaEvento"];
+                obj_Evento.IdImagen = obj_Row["IdImagen"] is DBNull ? null : (int?)obj_Row["IdImagen"];
+                obj_Evento.Estado = obj_Row["Estado"] is DBNull ? null : obj_Row["Estado"].ToString();
+                obj_Evento.UsuarioCreacion = obj_Row["UsuarioCreacion"] is DBNull ? null : obj_Row["UsuarioCreacion"].ToString();
+                obj_Evento.FechaCreacion = obj_Row["FechaCreacion"] is DBNull ? null : (DateTime?)obj_Row["FechaCreacion"];
+                obj_Evento.UsuarioModificacion = obj_Row["UsuarioModificacion"] is DBNull ? null : obj_Row["UsuarioModificacion"].ToString();
+                obj_Evento.FechaModificacion = obj_Row["FechaModificacion"] is DBNull ? null : (DateTime?)obj_Row["FechaModificacion"];
+
+                obj_Evento.Local = new Kruma.KantaPe.Entidad.Local();
+                obj_Evento.Local.IdLocal = obj_Row["Local_IdLocal"] is DBNull ? null : (int?)obj_Row["Local_IdLocal"];
+                obj_Evento.Local.IdEmpresa = obj_Row["Local_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Local_IdEmpresa"];
+                obj_Evento.Local.IdDireccion = obj_Row["Local_IdDireccion"] is DBNull ? null : (int?)obj_Row["Local_IdDireccion"];
+                obj_Evento.Local.Nombre = obj_Row["CorePersonaDireccion_Nombre"] is DBNull ? null : obj_Row["CorePersonaDireccion_Nombre"].ToString();
+                obj_Evento.Local.Direccion = obj_Row["CorePersonaDireccion_Direccion"] is DBNull ? null : obj_Row["CorePersonaDireccion_Direccion"].ToString();
+
+                obj_Evento.Local.Empresa = new Kruma.KantaPe.Entidad.Empresa();
+                obj_Evento.Local.Empresa.IdEmpresa = obj_Row["Empresa_IdEmpresa"] is DBNull ? null : (int?)obj_Row["Empresa_IdEmpresa"];
+                obj_Evento.Local.Empresa.IdPersona = obj_Row["CorePersona_IdPersona"] is DBNull ? null : (int?)obj_Row["CorePersona_IdPersona"];
+                obj_Evento.Local.Empresa.RazonSocial = obj_Row["CorePersona_RazonSocial"] is DBNull ? null : obj_Row["CorePersona_RazonSocial"].ToString();
+                obj_Evento.Local.Empresa.NombreComercial = obj_Row["CorePersona_NombreComercial"] is DBNull ? null : obj_Row["CorePersona_NombreComercial"].ToString();
+                obj_Evento.Local.Empresa.IdTipoDocumento = obj_Row["CorePersona_IdTipoDocumento"] is DBNull ? null : (int?)obj_Row["CorePersona_IdTipoDocumento"];
+                obj_Evento.Local.Empresa.NumeroDocumento = obj_Row["CorePersona_NumeroDocumento"] is DBNull ? null : obj_Row["CorePersona_NumeroDocumento"].ToString();
+
+                lst_Evento.Add(obj_Evento);
+            }
+
+            obj_Lista.Result = lst_Evento;
+            return obj_Lista;
+        }
+
+        /// <summary>Obtener Evento</summary>
+        /// <param name="int_pIdLocal">Id del local</param>
+        /// <param name="int_pIdEvento">Id del evento</param>
+        /// <returns>Objeto Evento</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static Kruma.KantaPe.Entidad.Evento Obtener(int int_pIdLocal, int int_pIdEvento)
+        {
+            Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.Evento> lst_Evento = Listar(null, int_pIdLocal, int_pIdEvento, null, null, null, null, null, null, null);
+            return lst_Evento.Result.Count > 0 ? lst_Evento.Result[0] : null;
+        }
+
+        /// <summary>Insertar Evento</summary>
+        /// <param name="obj_pEvento">Evento</param>
+        /// <returns>Id de Evento</returns>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static int Insertar(Kruma.KantaPe.Entidad.Evento obj_pEvento)
+        {
+            DataOperation dop_Operacion = new DataOperation("InsertarEvento");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pEvento.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pNombre", obj_pEvento.Nombre));
+            dop_Operacion.Parameters.Add(new Parameter("@pDescripcion", obj_pEvento.Descripcion));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdImagen", obj_pEvento.IdImagen));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pEvento.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioCreacion", obj_pEvento.UsuarioCreacion));
+
+            Parameter obj_FechaEvento = new Parameter("@pFechaEvento", DbType.DateTime);
+            obj_FechaEvento.Direction = ParameterDirection.Input;
+            obj_FechaEvento.Value = obj_pEvento.FechaEvento;
+            dop_Operacion.Parameters.Add(obj_FechaEvento);
+
+            Parameter obj_IdEvento = new Parameter("@pIdEvento", DbType.Int32);
+            obj_IdEvento.Direction = ParameterDirection.Output;
+            dop_Operacion.Parameters.Add(obj_IdEvento);
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+            int int_IdEvento = (int)obj_IdEvento.Value;
+            return int_IdEvento;
+        }
+
+        /// <summary>Modificar Evento</summary>
+        /// <param name="obj_pEvento">Evento</param>
+        /// <remarks><list type="bullet">
+        /// <item><CreadoPor>Creado por John Castillo</CreadoPor></item>
+        /// <item><FecCrea>12-07-2016</FecCrea></item></list></remarks>
+        public static void Modificar(Kruma.KantaPe.Entidad.Evento obj_pEvento)
+        {
+            DataOperation dop_Operacion = new DataOperation("ActualizarEvento");
+
+            dop_Operacion.Parameters.Add(new Parameter("@pIdLocal", obj_pEvento.IdLocal));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdEvento", obj_pEvento.IdEvento));
+            dop_Operacion.Parameters.Add(new Parameter("@pNombre", obj_pEvento.Nombre));
+            dop_Operacion.Parameters.Add(new Parameter("@pDescripcion", obj_pEvento.Descripcion));
+            dop_Operacion.Parameters.Add(new Parameter("@pIdImagen", obj_pEvento.IdImagen));
+            dop_Operacion.Parameters.Add(new Parameter("@pEstado", obj_pEvento.Estado));
+            dop_Operacion.Parameters.Add(new Parameter("@pUsuarioModificacion", obj_pEvento.UsuarioModificacion));
+
+            Parameter obj_FechaEvento = new Parameter("@pFechaEvento", DbType.DateTime);
+            obj_FechaEvento.Direction = ParameterDirection.Input;
+            obj_FechaEvento.Value = obj_pEvento.FechaEvento;
+            dop_Operacion.Parameters.Add(obj_FechaEvento);
+
+            DataManager.ExecuteNonQuery(Conexiones.CO_KantaPe, dop_Operacion, false);
+        }
+
+        #endregion
+    }
+}

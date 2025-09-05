@@ -1,0 +1,68 @@
+﻿CREATE PROCEDURE [CoreInsertarPersona]
+/*
+'**********************************************************************************
+'*	Procedimiento almacenado de inserción de la persona
+	para el usuario
+'*	Input			:	@pIdPersona - Id de la persona,
+						@pApellidoPaterno - Apellido paterno de la persona,
+						@pApellidoMaterno - Apellido materno de la persona,
+						@pNombres - Nombre de la persona,
+						@pMail - Mail de la persona,
+						@pCelular - Celular de la persona,
+						@pEstado - Estado de la persona,
+						@pUsuarioCreacion - Usuario creacion
+'*	Output			: <Ninguno>
+'*	Creado Por		: John Castillo
+'*	Fec Creación		: 09/08/2015
+'**********************************************************************************
+*/
+(
+@pIdPersona				int out,
+@pApellidoPaterno		varchar(50),
+@pApellidoMaterno		varchar(50),
+@pNombres				varchar(50),
+@pMail					varchar(50),
+@pIdTipoDocumento		int,
+@pNumeroDocumento		varchar(20),
+@pCelular				varchar(20),
+@pEstado				char(1),
+@pUsuarioCreacion		varchar(20)
+)
+AS
+
+select @pIdPersona = ISNULL(MAX(IdPersona),0)+1 from CorePersona Where IdPersona > 0
+
+Insert into CorePersona(
+IdPersona,
+ApellidoPaterno,
+ApellidoMaterno,
+Nombres,
+Mail,
+IdTipoDocumento,
+NumeroDocumento,
+Celular,
+Sistema,
+Estado,
+UsuarioCreacion,
+FechaCreacion,
+UsuarioModificacion,
+FechaModificacion
+)
+Values
+(
+@pIdPersona,
+@pApellidoPaterno,
+@pApellidoMaterno,
+@pNombres,
+@pMail,
+@pIdTipoDocumento,
+@pNumeroDocumento,
+@pCelular,
+'N',
+@pEstado,
+@pUsuarioCreacion,
+GETDATE(),
+@pUsuarioCreacion,
+GETDATE()
+)
+

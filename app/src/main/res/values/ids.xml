@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="btnTutorial" type="id"/>
+
+    <item name="btnOfertas" type="id"/>
+    <item name="btnEventos" type="id"/>
+
+    <item name="btnRanking" type="id" />
+    <item name="btnIngresos" type="id" />
+    <item name="btnLista" type="id" />
+
+    <item name="btnTragos" type="id"/>
+    <item name="btnPiqueos" type="id"/>
+
+    <item name="btnTurnos" type="id"/>
+    <item name="btnPlano" type="id"/>
+
+    <item name="btnMesas" type="id"/>
+    <item name="btnConsumo" type="id"/>
+
+    <item name="btnDatosPerfil" type="id"/>
+    <item name="btnCancionesPerfil" type="id"/>
+    <item name="btnConsumoPerfil" type="id"/>
+
+    <item name="btnUsuariosMesa" type="id" />
+    <item name="btnMiListaMesa" type="id" />
+    <item name="btnMiListaCantadasMesa" type="id" />
+    <item name="btnConsumoMesa" type="id" />
+
+    //Ids
+    <item name="btnCerrarSession" type="id" />
+
+    <item name="btnAperturaMiMesa" type="id" />
+
+    // --- KARAOKES
+    <item name="btnOfertasKaraoke" type="id"/>
+    <item name="btnEventosKaraoke" type="id"/>
+    <item name="btnCartaKaraoke" type="id"/>
+    <item name="btnCancionesKaraoke" type="id"/>
+
+
+    <item name="btnBuscarCancion" type="id"/>
+
+    <item name="btnListarCancionKaraoke" type="id"/>
+
+
+</resources>

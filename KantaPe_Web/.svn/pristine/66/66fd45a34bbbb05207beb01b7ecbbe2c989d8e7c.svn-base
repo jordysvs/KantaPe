@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Kruma.Core.Security;
+
+public partial class Index : System.Web.UI.Page
+{
+    #region Eventos
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        CargaInicial();
+    }
+
+    #endregion
+
+    #region Metodos Publicos
+
+    //[WebMethod]
+    //public static Ugel.TraDoc.Entidad.DashBoard ObtenerDashBoard()
+    //{
+    //    return Ugel.TraDoc.Negocio.DashBoard.ListarDashBoard(Kruma.Core.Security.SecurityManager.Usuario.IdEmpleado);
+    //}
+
+    private void CargaInicial()
+    {
+        //Master_Externo obj_MasterPage = (Master_Externo)this.Master;
+        //obj_MasterPage.TituloPagina = "Inicio";
+
+        //int int_pIdPersona = SecurityManager.Usuario.IdPersona.Value;
+        //Kruma.KantaPe.Entidad.Empleado obj_pEmpleado = Kruma.KantaPe.Negocio.Empleado.Listar(null, null, int_pIdPersona, null, null, null, null, null, null, null).Result[0];
+        //hdIdLocal.Value = obj_pEmpleado.IdLocal.Value.ToString();
+
+    }
+    #endregion
+
+
+}

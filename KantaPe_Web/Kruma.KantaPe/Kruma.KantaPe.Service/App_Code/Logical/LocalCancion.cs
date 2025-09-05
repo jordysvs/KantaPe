@@ -1,0 +1,411 @@
+﻿using System;
+using Kruma.KantaPe.Service.Interface;
+using System.ServiceModel.Activation;
+using Kruma.Core.Util.Common;
+using Kruma.KantaPe.Entidad;
+using Kruma.KantaPe.Service.Entity;
+
+namespace Kruma.KantaPe.Service.Logical
+{
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
+    public class LocalCancion : ILocalCancion
+    {
+        public Entity.ServiceResult<Core.Util.Common.List<Entidad.LocalCancion>> Listar(
+            string IdLocal,
+            string IdCancion,
+            string PalabraClave,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            int? int_IdCancion = IdCancion == Constante.NULLTYPE ? null : (int?)int.Parse(IdCancion);
+            string str_PalabraClave = PalabraClave == Constante.NULLTYPE ? null : PalabraClave;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.Listar
+                    (
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, str_PalabraClave,
+                    Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, int_IdLocal,
+                    int_NumPagina,
+                    int_TamPagina)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/Listar", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Core.Util.Common.List<Entidad.LocalCancion>> ListarRanking(
+            string IdLocal,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarRanking(
+                    int_IdLocal, null, null, null, null, null, null, null, null, null, null, null, null)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarRanking2", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Core.Util.Common.List<Entidad.LocalCancion>> ListarNovedades(
+            string IdLocal,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                 Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarNovedades
+                    (
+                    null, null, null, null, null, null, null, null, null, null, null, null,
+                    Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, int_IdLocal,
+                    int_NumPagina,
+                    int_TamPagina)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarNovedades", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Core.Util.Common.List<Entidad.LocalCancion>> ListarRankingFiltro(
+            string IdLocal,
+            string IdGenero,
+            string IdIdioma,
+            string PalabraClave,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            int? int_IdGenero = IdGenero == Constante.NULLTYPE ? null : (int?)int.Parse(IdGenero);
+            int? int_IdIdioma = IdIdioma == Constante.NULLTYPE ? null : (int?)int.Parse(IdIdioma);
+            string str_PalabraClave = PalabraClave == Constante.NULLTYPE ? null : PalabraClave;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarRanking
+                    (
+                    int_IdLocal, null, null, null, null, null, int_IdGenero, int_IdIdioma, null, null, null, null, str_PalabraClave)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarRankingFiltro", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public ServiceResult<List<Entidad.LocalCancion>> ListarCancionesPorUsuario(
+          string IdLocal,
+          string UsuarioLogeado,
+          string NumPagina,
+          string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            string str_UsuarioLogeado = UsuarioLogeado == Constante.NULLTYPE ? null : UsuarioLogeado;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarCancionesUsuarioLogeado
+                    (
+                    int_IdLocal, null, null, UsuarioLogeado, null, null, null, null, null,
+                    Kruma.KantaPe.Entidad.Constante.Estado_Activo,
+                    int_NumPagina,
+                    int_TamPagina)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarRanking", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public ServiceResult<List<Entidad.LocalCancion>> ListarNovedadesFiltro(
+            string IdLocal,
+            string IdGenero,
+            string IdIdioma,
+            string PalabraClave,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            int? int_IdGenero = IdGenero == Constante.NULLTYPE ? null : (int?)int.Parse(IdGenero);
+            int? int_IdIdioma = IdIdioma == Constante.NULLTYPE ? null : (int?)int.Parse(IdIdioma);
+            string str_PalabraClave = PalabraClave == Constante.NULLTYPE ? null : PalabraClave;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarNovedades
+                    (
+                    null, null, null, null, null, int_IdGenero, int_IdIdioma, null, null, null, null, str_PalabraClave,
+                    Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, int_IdLocal,
+                    int_NumPagina,
+                    int_TamPagina)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarNovedades", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public ServiceResult<List<Entidad.LocalCancion>> ListarNovedadesFiltroDoble(
+             string IdLocal,
+             string PalabraClave1,
+             string PalabraClave2,
+             string NumPagina,
+             string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            string str_PalabraClave1 = PalabraClave1 == Constante.NULLTYPE ? null : PalabraClave1;
+            string str_PalabraClave2 = PalabraClave2 == Constante.NULLTYPE ? null : PalabraClave2;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarNovedadesDoble
+                    (
+                    null, null, null, null, null, null, null, null, null, null, null, str_PalabraClave1, str_PalabraClave2,
+                    Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, int_IdLocal,
+                    int_NumPagina,
+                    int_TamPagina)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarNovedadesFiltroDoble", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public Entity.ServiceResult<Core.Util.Common.List<Entidad.LocalCancion>> ListarLista(
+            string IdLocal,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarLista
+                    (
+                    null, null, null, null, null, null, null, null, null, null, null, null,
+                    Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, int_IdLocal,
+                    int_NumPagina,
+                    int_TamPagina)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarRanking", obj_pExcepcion.Message);
+            }
+            return obj_Resultado;
+        }
+
+        public ServiceResult<List<Entidad.LocalCancion>> ListarListaFiltro(
+            string IdLocal,
+            string IdGenero,
+            string IdIdioma,
+            string PalabraClave,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            int? int_IdGenero = IdGenero == Constante.NULLTYPE ? null : (int?)int.Parse(IdGenero);
+            int? int_IdIdioma = IdIdioma == Constante.NULLTYPE ? null : (int?)int.Parse(IdIdioma);
+            string str_PalabraClave = PalabraClave == Constante.NULLTYPE ? null : PalabraClave;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarLista
+                    (
+                    null, null, null, null, null, int_IdGenero, int_IdIdioma, null, null, null, null, str_PalabraClave,
+                    Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, int_IdLocal,
+                    int_NumPagina,
+                    int_TamPagina)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarListaFiltro", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public ServiceResult<List<Entidad.LocalCancion>> ListarListaFiltroDoble(
+            string IdLocal,
+            string PalabraClave1,
+            string PalabraClave2,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdLocal = IdLocal == Constante.NULLTYPE ? null : (int?)int.Parse(IdLocal);
+            string str_PalabraClave1 = PalabraClave1 == Constante.NULLTYPE ? null : PalabraClave1;
+            string str_PalabraClave2 = PalabraClave2 == Constante.NULLTYPE ? null : PalabraClave2;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarDoble
+                    (
+                    null, null, null, null, null, null, null, null, null, null, null, str_PalabraClave1, str_PalabraClave2,
+                    Kruma.KantaPe.Entidad.Constante.Estado_Activo, null, int_IdLocal,
+                    int_NumPagina,
+                    int_TamPagina)
+                    );
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarDoble", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+        public ServiceResult<List<Entidad.LocalCancion>> ListarTodos(
+            string IdGenero,
+            string IdIdioma,
+            string PalabraClave,
+            string NumPagina,
+            string TamPagina)
+        {
+            Kruma.KantaPe.Service.Entity.ServiceResult<
+                Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>> obj_Resultado = null;
+
+            int? int_IdGenero = IdGenero == Constante.NULLTYPE ? null : (int?)int.Parse(IdGenero);
+            int? int_IdIdioma = IdIdioma == Constante.NULLTYPE ? null : (int?)int.Parse(IdIdioma);
+            string str_PalabraClave = PalabraClave == Constante.NULLTYPE ? null : PalabraClave;
+            int? int_NumPagina = NumPagina == Constante.NULLTYPE ? null : (int?)int.Parse(NumPagina);
+            int? int_TamPagina = TamPagina == Constante.NULLTYPE ? null : (int?)int.Parse(TamPagina);
+
+            try
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<
+                    Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                    (Kruma.KantaPe.Negocio.LocalCancion.ListarTodos(
+                    str_PalabraClave,
+                    int_IdGenero,
+                    int_IdIdioma,
+                    int_NumPagina,
+                    int_TamPagina));
+            }
+            catch (Exception obj_pExcepcion)
+            {
+                obj_Resultado = new Kruma.KantaPe.Service.Entity.ServiceResult<Kruma.Core.Util.Common.List<Kruma.KantaPe.Entidad.LocalCancion>>
+                                   (Kruma.Core.Configuration.ConfigurationManager.Default.ApplicationManager["MensajeError"].Value);
+                Kruma.Core.Log.LogManager.Write("Exceptions", "Kruma.KantaPe.Service.Logical.LocalCancion/ListarTodos", obj_pExcepcion.Message);
+            }
+
+            return obj_Resultado;
+        }
+
+    }
+
+}

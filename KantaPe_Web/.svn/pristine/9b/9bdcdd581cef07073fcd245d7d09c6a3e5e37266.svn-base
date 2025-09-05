@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[CoreTipoDocumento]
+(
+	[IdTipoDocumento] [int] NOT NULL,
+	[Codigo] [varchar](20) NULL,
+	[Descripcion] [varchar](100) NULL,
+	[Estado] [char](1) NULL,
+	[UsuarioCreacion] [varchar](20) NULL,
+	[FechaCreacion] [datetime] NULL,
+	[UsuarioModificacion] [varchar](20) NULL,
+	[FechaModificacion] [datetime] NULL,
+	CONSTRAINT [PK_CoreTipoDocumento] PRIMARY KEY ([IdTipoDocumento])
+)

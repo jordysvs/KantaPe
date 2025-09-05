@@ -1,0 +1,59 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Master/Externo.master" AutoEventWireup="true" CodeFile="Ranking.aspx.cs" Inherits="Forms_Portal_Ranking" %>
+
+<%@ Register TagPrefix="cc" Namespace="Kruma.Core.Util.Web.Combine.Controls" Assembly="Kruma.Core.Util.Web" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="cphHeader" runat="Server">
+    <cc:ScriptCombine ID="ScriptCombiner" runat="server" ScriptHandler="~/Ashx/Combine/ScriptHandler.ashx" Combine="false" Compress="false">
+        <Scripts>
+            <cc:ScriptReference Path="~/Script/Base/jquery.validate/jquery.validate.js" />
+            <cc:ScriptReference Path="~/Script/Base/jquery.validate/additional-methods.js" />
+            <cc:ScriptReference Path="~/Script/Forms/FileServer/FileServer.js" />
+            <cc:ScriptReference Path="~/Script/Forms/Portal/Ranking.js" />
+        </Scripts>
+    </cc:ScriptCombine>
+    <style type="text/css">
+        body {
+            background-image: url("../../Images/Forms/Fondo.png") !important;
+            background-color: transparent !important;
+        }
+
+        .skin-red .wrapper, .skin-red .main-sidebar, .skin-red .left-side {
+            background-color: transparent !important;
+        }
+
+        .content-wrapper, .right-side {
+            background-color: transparent !important;
+        }
+
+        /*.box {
+            background: none !important;
+        }*/
+    </style>
+    <style>
+        .btn {
+            margin-bottom: 0px !important;
+            margin-left: 0px !important;
+        }
+
+        .btn-info:hover {
+            background-color: #4E74D4;
+        }
+    </style>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cphBody" runat="Server">
+    <div class="col-xs-12">
+            <div class="box box-warning">
+                <div id="divBotones"></div>
+            </div>
+        </div>
+    <div class="row">
+        <div class="col-xs-12">
+<%--            <div class="box box-warning">--%>
+                <div id="divRankiados" class="box-body">
+                    <div id="listarRankiados">
+                    </div>
+                </div>
+<%--            </div>--%>
+        </div>
+    </div>
+</asp:Content>

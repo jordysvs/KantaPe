@@ -1,0 +1,318 @@
+﻿var int_NumPagina = 1;
+var int_TamPagina = 10;
+
+var urlHome = '/Forms/Portal/Home.aspx';
+var urlRanking = '/Forms/Portal/Ranking.aspx';
+var urlKaraoke = '/Forms/Portal/Karaoke.aspx';
+var urlEventos = '/Forms/Portal/Eventos.aspx';
+$(function () {
+    CargarControles();
+    CargarCabecera();
+    
+});
+function CargarControles() {
+    ListarKaraokes();
+    $("#mdBuscador").find('.modal-footer .btn-cancelar').click(function () {
+        $("#mdBuscador").modal('hide');
+    });
+
+    //BLOQUEAR DIRECCION Y CONTACTO
+    $('#txtDireccion').prop('disabled', true);
+    $('#txtContacto').prop('disabled', true);
+}
+function CargarCabecera() {
+    var divRowCategorias = $("#divBotones");
+    divRowCategorias.append("<button onclick= 'IrHome();return false;' style='border-style: solid;border-width:0px; color: white; padding: 30px 360px 10px 20px;' class='btn btn-sm btn-info'> " + "HOME" + "</button>");
+    divRowCategorias.append("<button onclick= 'IrRanking();return false;' style='border-style: solid;border-width:0px; color: white; padding: 30px 360px 10px 20px;' class='btn btn-sm btn-info'>" + "RANKING" + "</button>");
+    divRowCategorias.append("<button onclick= 'IrKaraoke();return false;' style='border-style: solid;border-width:0px; color: white; padding: 30px 360px 10px 20px;' class='btn btn-sm btn-info'>" + "KARAOKE" + "</button>");
+}
+//Lista de Rankiados
+function ListarKaraokes() {
+    AccionDefault(true, "Karaoke.aspx/ListarKaraokes", {}, CargarGrilla, null, null, null, 1);
+}
+
+//Carga la grilla de cursos
+function CargarGrilla(obj_pLista) {
+
+    var urlContador = 1;
+    var int_Indice = 0;
+    var int_Columnas = 3;
+    var str_HTML = "";
+
+    var div_Karaokes = $("#divKaraokes");
+    div_Karaokes.html('');
+
+    if (obj_pLista.Result.length <= 0) {
+        str_HTML += "<div class='col-lg-12' align='center' style='margin-top: 25px;'>No tiene cursos registrados en el sistema.</div>";
+        $("#divKaraokes").append(str_HTML);
+    }
+    else {
+        var str_Titulo = '';
+        var str_Descripcion = '';
+        var str_ImagenURL = '';
+        var str_Telefono = '';
+        var str_Email = '';
+        var str_Direccion = '';
+
+        for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+            str_Titulo = '';
+            str_Descripcion = '';
+            str_Telefono = '';
+            str_Email = '';
+            str_Direccion = '';
+            str_URL = '';
+
+            if (int_Indice == 0) {
+                div_Row = $("<div class='row'></div>");
+                div_Karaokes.append(div_Row);
+            }
+
+            if (obj_pLista.Result[i].IdLocal != null) {
+
+                str_Titulo = obj_pLista.Result[i].Nombre;
+
+                if (obj_pLista.Result[i].Direccion != null) {
+                    str_Direccion = obj_pLista.Result[i].Direccion;
+                }
+                if (obj_pLista.Result[i].Telefono != null) {
+                    str_Telefono = " / " + obj_pLista.Result[i].Telefono;
+                }
+                if (obj_pLista.Result[i].Mail != null) {
+                    str_Email = obj_pLista.Result[i].Mail;
+                }
+
+                str_ImagenURL = obj_pLista.Result[i].ImagenURL;
+            }
+                str_HTML = '';
+                str_HTML += "<div class='col-lg-6' align='center' style='margin-top: 10px;'>";
+                str_HTML += "<table style='height: 200px; width: 100px; border-color: white; border-style: solid; border-width: thin; color: black;'>";
+                str_HTML += "<tbody>";
+                str_HTML += "<tr>";
+                str_HTML += "<td align='center' style='padding: 5px 5px 5px 5px;'>";
+                str_HTML += "<img alt='' style='max-height: 250px;min-height: 250px;max-width:420px;200px;min-width:420px;' src='" + str_ImagenURL + "'  /></td>";
+                str_HTML += "</tr>";
+                str_HTML += "<tr>";
+                str_HTML += "<td align='center'>";
+                str_HTML += "<h2><strong>" + str_Titulo + "</strong></h2>";
+                str_HTML += "</td>";
+                str_HTML += "</tr>";
+                str_HTML += "<tr>";
+                str_HTML += "<td style='background-color:#1F3C83;' align='center'>";
+                str_HTML += "<button class='btnLocal btn btn-info' Onclick='return VerLocal(" + obj_pLista.Result[i].IdLocal + ")' style='width:100%;'>";
+                str_HTML += "<strong>Ver Detalle</strong></button>";
+                str_HTML += "</td>";
+                str_HTML += "</tr>";
+                str_HTML += "</tbody>";
+                str_HTML += "</table>";
+                str_HTML += "<h2><strong>" + str_Direccion + "</strong></h2>";
+                str_HTML += "<h2><strong>" + str_Email + str_Telefono + "</strong></h2>";
+                str_HTML += "</div>";
+            
+            div_Row.append($(str_HTML));
+
+            int_Indice += 1;
+            urlContador++;
+            if (int_Indice == int_Columnas)
+                int_Indice = 0;
+        }
+    }
+}
+
+function VerLocal(int_pIdLocal) {
+    var obj_modal = $("#mdBuscador").modal('show', {
+        backdrop: true,
+        keyboard: false,
+    });
+    if (int_pIdLocal != '') {
+        var obj_Local = ObtenerData("Karaoke.aspx/ObtenerLocal", { "int_pIdLocal": int_pIdLocal });
+        if (obj_Local != null) {
+
+            //$("#txtNombre").val(obj_Local.Nombre);
+            //$("#txtDireccion").val(obj_Local.Direccion);
+            var str_Direccion = "";
+            if (obj_Local.Direccion != null) {
+                str_Direccion = obj_Local.Direccion;
+            }
+            $("#txtDireccion").html(str_Direccion);
+            var str_Mail = "";
+            if (obj_Local.Mail != null) {
+                str_Mail = obj_Local.Mail;
+            }
+            var str_Telefono= "";
+            if (obj_Local.Telefono != null) {
+                str_Telefono = " / " + obj_Local.Telefono;
+            }
+            $("#txtContacto").html(str_Mail + str_Telefono);
+
+            //Foto
+            AccionValor('Karaoke.aspx/ObtenerImagenURLGrilla', { "int_pIdRegistro": obj_Local.IdLocal },
+            function (str_pUrl) {
+                $("#imgLocalImagen").attr("src", str_pUrl);
+            });
+        }
+    }
+    ListarEventos(int_pIdLocal);
+    ListarOfertas(int_pIdLocal);
+    return false;
+}
+
+//***********************************MOSTRAR OFERTAS**********************************
+//Lista de Ofertas
+function ListarOfertas(int_pIdLocal) {
+    AccionDefault(true, "Karaoke.aspx/ListarOfertas", { "int_pIdLocal": int_pIdLocal }, CargarGrillaOfertas, null, null, null, 1);
+}
+
+//Carga la grilla de cursos
+function CargarGrillaOfertas(obj_pLista) {
+
+    var int_Indice = 0;
+    var int_Columnas = 3;
+    var str_HTML = "";
+    var int_Puesto = 1;
+
+    var div_Eventos = $("#divOfertas");
+    div_Eventos.html('');
+
+    if (obj_pLista.Result.length <= 0) {
+        str_HTML += "<div class='col-lg-12' align='center' style='margin-top: 25px;'>No tiene ofertas.</div>";
+        $("#divOfertas").append(str_HTML);
+    }
+    else {
+        var str_Titulo = '';
+        var str_Descripcion = '';
+        var str_ImagenURL = '';
+        for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+            str_Titulo = '';
+            str_Descripcion = '';
+            str_URL = '';
+
+            if (int_Indice == 0) {
+                div_Row = $("<div class='row'></div>");
+                div_Eventos.append(div_Row);
+            }
+
+            if (obj_pLista.Result[i].IdOferta != null) {
+                str_Titulo = obj_pLista.Result[i].Nombre;
+                str_ImagenURL = obj_pLista.Result[i].ImagenURL;
+            }
+
+            str_HTML = '';
+            str_HTML += "<div class='col-lg-4' align='center' style='margin-top: 15px;'>";
+            str_HTML += "<table style='height: 200px; width: 100px; border-color: white; border-style: solid; border-width: thin; color: black;'>";
+            str_HTML += "<tbody>";
+            str_HTML += "<tr>";
+            str_HTML += "<td align='center' style='padding: 5px 5px 5px 5px;'>";
+            str_HTML += "<img alt='' style='max-height: 200px;min-height: 200px;max-width:200px;200px;min-width:200px;' src='" + str_ImagenURL + "'  /></td>";
+            str_HTML += "</tr>";
+            str_HTML += "<tr>";
+            str_HTML += "<td align='center'>";
+            str_HTML += "<h3><strong>" + str_Titulo + "</strong></h3>";
+            str_HTML += "</td>";
+            str_HTML += "</tr>";
+            //str_HTML += "<tr>";
+            //str_HTML += "<td style='background-color:#1F3C83;' align='center'>";
+            //str_HTML += "<button class='btnLocal btn btn-info' Onclick='return VerLocal(" + obj_pLista.Result[i].IdLocal + ")' style='width:100%;'>";
+            //str_HTML += "<strong>Ver Detalle</strong></button>";
+            //str_HTML += "</td>";
+            //str_HTML += "</tr>";
+            str_HTML += "</tbody>";
+            str_HTML += "</table>";
+            str_HTML += "</div>";
+            div_Row.append($(str_HTML));
+
+            int_Indice += 1;
+
+            if (int_Indice == int_Columnas)
+                int_Indice = 0;
+        }
+    }
+}
+//***********************************MOSTRAR EVENTOS**********************************
+//Lista de Rankiados
+function ListarEventos(int_pIdLocal) {
+    AccionDefault(true, "Karaoke.aspx/ListarEventos", { "int_pIdLocal": int_pIdLocal }, CargarGrillaEventos, null, null, null, 1);
+}
+
+//Carga la grilla de cursos
+function CargarGrillaEventos(obj_pLista) {
+
+    var int_Indice = 0;
+    var int_Columnas = 3;
+    var str_HTML = "";
+
+    var div_Eventos = $("#divEventos");
+    div_Eventos.html('');
+
+    if (obj_pLista.Result.length <= 0) {
+        str_HTML += "<div class='col-lg-12' align='center' style='margin-top: 25px;'>No tiene eventos.</div>";
+        $("#divEventos").append(str_HTML);
+    }
+    else {
+        var str_Titulo = '';
+        var str_Descripcion = '';
+        var str_ImagenURL = '';
+        for (var i = 0; i < obj_pLista.Result.length; i++) {
+
+            str_Titulo = '';
+            str_Descripcion = '';
+            str_URL = '';
+
+            if (int_Indice == 0) {
+                div_Row = $("<div class='row'></div>");
+                div_Eventos.append(div_Row);
+            }
+
+            if (obj_pLista.Result[i].IdEvento != null) {
+                str_Titulo = obj_pLista.Result[i].Nombre;
+                str_ImagenURL = obj_pLista.Result[i].ImagenURL;
+            }
+
+            str_HTML = '';
+            str_HTML += "<div class='col-lg-4' align='center' style='margin-top: 15px;'>";
+            str_HTML += "<table style='height: 200px; width: 100px; border-color: white; border-style: solid; border-width: thin; color: black;'>";
+            str_HTML += "<tbody>";
+            str_HTML += "<tr>";
+            str_HTML += "<td align='center' style='padding: 5px 5px 5px 5px;'>";
+            str_HTML += "<img alt='' style='max-height: 200px;min-height: 200px;max-width:200px;200px;min-width:200px;' src='" + str_ImagenURL + "'  /></td>";
+            str_HTML += "</tr>";
+            str_HTML += "<tr>";
+            str_HTML += "<td align='center'>";
+            str_HTML += "<h3><strong>" + str_Titulo + "</strong></h3>";
+            str_HTML += "</td>";
+            str_HTML += "</tr>";
+            //str_HTML += "<tr>";
+            //str_HTML += "<td style='background-color:#1F3C83;' align='center'>";
+            //str_HTML += "<button class='btnLocal btn btn-info' Onclick='return VerLocal(" + obj_pLista.Result[i].IdLocal + ")' style='width:100%;'>";
+            //str_HTML += "<strong>Ver Detalle</strong></button>";
+            //str_HTML += "</td>";
+            //str_HTML += "</tr>";
+            str_HTML += "</tbody>";
+            str_HTML += "</table>";
+            str_HTML += "</div>";
+            div_Row.append($(str_HTML));
+
+            int_Indice += 1;
+
+            if (int_Indice == int_Columnas)
+                int_Indice = 0;
+        }
+    }
+}
+function IrHome() {
+    MostrarMensajeCargando();
+    document.location.href = urlHome;
+}
+
+
+function IrRanking() {
+    MostrarMensajeCargando();
+    document.location.href = urlRanking;
+}
+function IrKaraoke() {
+    MostrarMensajeCargando();
+    document.location.href = urlKaraoke;
+}
+
+

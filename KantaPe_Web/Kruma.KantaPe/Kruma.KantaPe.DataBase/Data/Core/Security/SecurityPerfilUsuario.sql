@@ -1,0 +1,4 @@
+﻿INSERT [SecurityPerfilUsuario] ([IdModulo], [IdPerfil], [IdUsuario], [FlagExpiracion], [FechaExpiracion], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (N'CORE    ', N'ADMINISTRADOR', N'ADMIN', N'N', NULL, N'A', N'ADMIN', CAST(0x0000A54A017E54E4 AS DateTime), N'SYSTEM', CAST(0x0000A5E80157DEC0 AS DateTime))
+GO
+INSERT [SecurityPerfilUsuario] ([IdModulo], [IdPerfil], [IdUsuario], [FlagExpiracion], [FechaExpiracion], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (N'CORE    ', N'SYSTEM', N'SYSTEM', N'N', NULL, N'A', N'ADMIN', CAST(0x0000A5CA014BBCA1 AS DateTime), N'ADMIN', CAST(0x0000A5CA014BBCA1 AS DateTime))
+GO

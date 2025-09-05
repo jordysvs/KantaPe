@@ -1,0 +1,53 @@
+﻿CREATE PROCEDURE [SecurityListarDispositivo]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de listado de dispositivo
+'* Input :
+		@pIdDispositivo - IdDispositivo del dispositivo
+		@pIp - Ip del dispositivo
+		@pNombre - Nombre del dispositivo
+		@pEstado - Estado del dispositivo
+		@pUsuarioCreacion - UsuarioCreacion del dispositivo
+		@pFechaCreacion - FechaCreacion del dispositivo
+		@pUsuarioModificacion - UsuarioModificacion del dispositivo
+		@pFechaModificacion - FechaModificacion del dispositivo
+		@pNumPagina - Número de pagina
+		@pTamPagina - Cantidad de registros por pagina
+'* Output : Lista de dispositivo
+'* Creado Por : John Castillo
+'* Fecha Creación : 23-07-2015
+'**********************************************************************************
+*/
+(
+	@pIdDispositivo int = null, 
+	@pIp varchar(15) = null, 
+	@pNombre varchar(100) = null, 
+	@pEstado char(1) = null, 
+	@pNumPagina int = null, 
+	@pTamPagina int = null
+)
+AS
+BEGIN
+		Select TBL.*
+		From(
+			Select
+				ROW_NUMBER() OVER (ORDER BY T.IdDispositivo ASC) AS Num_Fila,
+				T.IdDispositivo,
+				T.Ip,
+				T.Nombre,
+				T.Estado,
+				T.UsuarioCreacion,
+				T.FechaCreacion,
+				T.UsuarioModificacion,
+				T.FechaModificacion,
+				COUNT(*) OVER() Total_Filas
+			From SecurityDispositivo T
+			Where 
+				(@pIdDispositivo is null or T.IdDispositivo = @pIdDispositivo) AND
+				(@pIp is null or T.Ip like '%' + @pIp + '%') AND
+				(@pNombre is null or T.Nombre like '%' + @pNombre + '%') AND
+				(@pEstado is null or T.Estado  = @pEstado) 
+		) TBL
+		Where (@pTamPagina IS NULL OR TBL.Num_Fila BETWEEN (@pNumPagina * @pTamPagina)- @pTamPagina + 1 AND (@pNumPagina * @pTamPagina));
+END
+

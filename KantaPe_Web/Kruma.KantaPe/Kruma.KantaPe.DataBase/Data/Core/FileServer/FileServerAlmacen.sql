@@ -1,0 +1,10 @@
+﻿INSERT [FileServerAlmacen] ([IdAlmacen], [IdModulo], [Descripcion], [Ruta], [TipoAlmacen], [Usuario], [Clave], [Dominio], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (2, N'CORE    ', N'Empleado', N'ftp://app.kruma.net/Empleado', 2, N'KrumaBaseContentDE', N'Kruma.2016', N'', N'A', N'ADMIN', NULL, N'ADMIN', CAST(0x0000A5F0015E639E AS DateTime))
+GO
+INSERT [FileServerAlmacen] ([IdAlmacen], [IdModulo], [Descripcion], [Ruta], [TipoAlmacen], [Usuario], [Clave], [Dominio], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (3, N'CORE    ', N'Menu (Grupo)', N'ftp://app.kruma.net/Menu', 2, N'KrumaBaseContentDE', N'Kruma.2016', N'', N'A', N'ADMIN', CAST(0x0000A4DF00F13008 AS DateTime), N'ADMIN', CAST(0x0000A5F0015D25FD AS DateTime))
+GO
+INSERT [FileServerAlmacen] ([IdAlmacen], [IdModulo], [Descripcion], [Ruta], [TipoAlmacen], [Usuario], [Clave], [Dominio], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (4, N'CORE    ', N'Menu (Grupo Detalle)', N'ftp://app.kruma.net/Menu', 2, N'KrumaBaseContentDE', N'Kruma.2016', N'', N'A', N'ADMIN', CAST(0x0000A5CA00C45456 AS DateTime), N'ADMIN', CAST(0x0000A5F0015E5052 AS DateTime))
+GO
+INSERT [FileServerAlmacen] ([IdAlmacen], [IdModulo], [Descripcion], [Ruta], [TipoAlmacen], [Usuario], [Clave], [Dominio], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (5, N'CORE    ', N'Archivos Temporales', N'ftp://app.kruma.net/Temp', 2, N'KrumaBaseDE', N'Kruma.2016', N'', N'A', N'ADMIN', NULL, N'ADMIN', CAST(0x0000A5C2007EA7CA AS DateTime))
+GO
+INSERT [FileServerAlmacen] ([IdAlmacen], [IdModulo], [Descripcion], [Ruta], [TipoAlmacen], [Usuario], [Clave], [Dominio], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (6, N'CORE    ', N'Modulo', N'ftp://app.kruma.net/Modulo', 2, N'KrumaBaseContentDE', N'Kruma.2016', N'', N'A', N'SYSTEM', CAST(0x0000A5E8012618A1 AS DateTime), N'ADMIN', CAST(0x0000A5F0015E725C AS DateTime))
+GO

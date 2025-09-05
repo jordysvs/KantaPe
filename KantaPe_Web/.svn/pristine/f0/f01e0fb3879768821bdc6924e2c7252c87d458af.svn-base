@@ -1,0 +1,58 @@
+﻿CREATE PROCEDURE [SecurityListarGrupoDetalleProceso]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de listado de SecurityGrupoDetalleProceso
+'* Input :
+		@pIdModulo - IdModulo del SecurityGrupoDetalleProceso
+		@pIdGrupo - IdGrupo del SecurityGrupoDetalleProceso
+		@pIdDetalle - IdDetalle del SecurityGrupoDetalleProceso
+		@pIdProceso - IdProceso del SecurityGrupoDetalleProceso
+		@pDescripcion - Descripcion del SecurityGrupoDetalleProceso
+		@pEstado - Estado del SecurityGrupoDetalleProceso
+		@pNumPagina - Número de pagina
+		@pTamPagina - Cantidad de registros por pagina
+'* Output : Lista de SecurityGrupoDetalleProceso
+'* Creado Por : Kruma
+'* Fecha Creación : 27-07-2015
+'**********************************************************************************
+*/
+(
+	@pIdModulo varchar(8) = null,
+	@pIdGrupo varchar(8) = null, 
+	@pIdDetalle varchar(8) = null, 
+	@pIdProceso int = null, 
+	@pDescripcion varchar(50) = null, 
+	@pEstado varchar(1) = null, 
+	@pNumPagina int = null, 
+	@pTamPagina int = null
+)
+AS
+BEGIN
+		Select TBL.*
+		From(
+			Select
+				ROW_NUMBER() OVER (ORDER BY T.IdGrupo,T.IdDetalle,T.IdProceso ASC) AS Num_Fila,
+				T.IdModulo,
+				T.IdGrupo,
+				T.IdDetalle,
+				T.IdProceso,
+				T.Descripcion,
+				T.NombreControl,
+				T.Estado,
+				T.UsuarioCreacion,
+				T.FechaCreacion,
+				T.UsuarioModificacion,
+				T.FechaModificacion,
+				COUNT(*) OVER() Total_Filas
+			From SecurityGrupoDetalleProceso T
+			Where 
+				(@pIdModulo is null or T.IdModulo like '%' + @pIdModulo + '%') AND
+				(@pIdGrupo is null or T.IdGrupo like '%' + @pIdGrupo + '%') AND
+				(@pIdDetalle is null or T.IdDetalle like '%' + @pIdDetalle + '%') AND
+				(@pIdProceso is null or T.IdProceso = @pIdProceso) AND
+				(@pDescripcion is null or T.Descripcion like '%' + @pDescripcion + '%') AND
+				(@pEstado is null or T.Estado like '%' + @pEstado + '%')
+		) TBL
+		Where (@pTamPagina IS NULL OR TBL.Num_Fila BETWEEN (@pNumPagina * @pTamPagina)- @pTamPagina + 1 AND (@pNumPagina * @pTamPagina));
+END
+

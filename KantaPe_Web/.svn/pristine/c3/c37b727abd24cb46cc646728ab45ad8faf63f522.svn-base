@@ -1,0 +1,4 @@
+﻿INSERT [CorePersona] ([IdPersona], [ApellidoPaterno], [ApellidoMaterno], [Nombres], [IdTipoDocumento], [NumeroDocumento], [Mail], [Celular], [Sistema], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (4, N'ADMINISTRADOR', N'GENERAL', N'KRUMA', 1, N'123456789', N'carlosescobarc@kruma.net', N'987654321', N'N', N'A', N'ADMIN', NULL, N'ADMIN', CAST(0x0000A5E8013BEAA4 AS DateTime))
+GO
+INSERT [CorePersona] ([IdPersona], [ApellidoPaterno], [ApellidoMaterno], [Nombres], [IdTipoDocumento], [NumeroDocumento], [Mail], [Celular], [Sistema], [Estado], [UsuarioCreacion], [FechaCreacion], [UsuarioModificacion], [FechaModificacion]) VALUES (6, N'Usuario', N'Sistema', N'Kruma', 1, N'99999999', N'johncastillor@kruma.net', N'997886121', N'S', N'A', N'ADMIN', CAST(0x0000A5CA012713B3 AS DateTime), N'ADMIN', CAST(0x0000A5CA012713B3 AS DateTime))
+GO

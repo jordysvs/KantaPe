@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "421798365816",
+    "firebase_url": "https://kantademo-4703b.firebaseio.com",
+    "project_id": "kantademo-4703b",
+    "storage_bucket": "kantademo-4703b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421798365816:android:65907368b97e9db4",
+        "android_client_info": {
+          "package_name": "com.kruma.kanta.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "421798365816-9hqfmpqunpg5im7ip0bqnj9et3uv0mjj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNpPI7OqjXXbG-o1BxY27CsMGlpOeEfac"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

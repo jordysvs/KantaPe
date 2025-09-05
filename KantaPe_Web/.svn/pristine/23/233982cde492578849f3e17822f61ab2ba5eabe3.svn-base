@@ -1,0 +1,53 @@
+﻿CREATE PROCEDURE [SecurityInsertarDispositivo]
+/*
+'**********************************************************************************
+'* Procedimiento almacenado de inserción del dispositivo
+'* Input :
+		@pIp - Ip del dispositivo
+		@pNombre - Nombre del dispositivo
+		@pEstado - Estado del dispositivo
+		@pUsuarioCreacion - UsuarioCreacion del dispositivo
+		@pFechaCreacion - FechaCreacion del dispositivo
+		@pUsuarioModificacion - UsuarioModificacion del dispositivo
+		@pFechaModificacion - FechaModificacion del dispositivo
+'* Output : 
+		@pIdDispositivo - IdDispositivo del dispositivo
+'* Creado Por : John Castillo
+'* Fecha Creación : 23-07-2015
+'**********************************************************************************
+*/
+(
+	@pIdDispositivo int out,
+	@pIp varchar(15) = null, 
+	@pNombre varchar(100) = null, 
+	@pEstado char(1) = null, 
+	@pUsuarioCreacion varchar(20) = null
+)
+AS
+BEGIN
+		Select @pIdDispositivo = IsNull(Max(IdDispositivo),0)+1 From SecurityDispositivo Where IdDispositivo > 0
+
+		Insert Into SecurityDispositivo
+		(
+			IdDispositivo,
+			Ip,
+			Nombre,
+			Estado,
+			UsuarioCreacion,
+			FechaCreacion,
+			UsuarioModificacion,
+			FechaModificacion
+		)
+		Values
+		(
+			@pIdDispositivo,
+			@pIp,
+			@pNombre,
+			@pEstado,
+			@pUsuarioCreacion,
+			getdate(),
+			@pUsuarioCreacion,
+			getdate()
+		)
+END
+
